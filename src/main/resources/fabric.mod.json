@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "inventorymanagement",
+  "version": "${version}",
+  "name": "Inventory Management",
+  "description": "Sort and transfer items with the click of a button.",
+  "authors": [
+    "Roundaround"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+  "license": "MIT",
+  "icon": "assets/inventorymanagement/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "me.roundaround.inventorymanagement.InventoryManagementMod"
+    ],
+    "modmenu": [
+      "me.roundaround.inventorymanagement.compat.modmenu.ModMenuImpl"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": "*",
+    "minecraft": "1.18.x",
+    "java": ">=17",
+    "roundalib": ">=0.1.8"
+  }
+}
