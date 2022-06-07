@@ -1,7 +1,7 @@
 package me.roundaround.inventorymanagement.client.gui;
 
-import java.util.List;
-
+import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -13,16 +13,17 @@ public class SortInventoryButton extends InventoryManagementButton {
     // super(parent, x, y, 0, 0, (button) -> {
     // NetworkHandler.sendToServer(new SortInventoryMessage(isPlayerInventory));
     // });
-    super(parent, x, y, 0, 0, (button) -> {
+    super(parent, (HandledScreenAccessor) parent, x, y, 0, 0, (button) -> {
+      InventoryManagementMod.LOGGER.info(((SortInventoryButton) button).getTooltip().getString());
     });
     this.isPlayerInventory = isPlayerInventory;
   }
 
   @Override
-  protected List<Text> getTooltip() {
+  protected Text getTooltip() {
     String key = isPlayerInventory
         ? "inventorymanagement.button.sort_player"
         : "inventorymanagement.button.sort_container";
-    return List.of(new TranslatableText(key));
+    return new TranslatableText(key);
   }
 }
