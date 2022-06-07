@@ -39,7 +39,6 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       int iconOffsetX,
       int iconOffsetY,
       PressAction onPress) {
-    // TODO: Add message back in
     super(
         parentAccessor.getX() + parentAccessor.getBackgroundWidth() + x,
         parentAccessor.getY() + y,
