@@ -8,6 +8,7 @@ import me.roundaround.inventorymanagement.client.gui.AutoStackButton;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
 import me.roundaround.inventorymanagement.client.gui.SortInventoryButton;
 import me.roundaround.inventorymanagement.client.gui.TransferAllButton;
+import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -123,7 +124,7 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Inventory inventory = isPlayerInventory ? player.getInventory() : getContainerInventory(player);
+    Inventory inventory = isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
     if (inventory == null) {
       return;
     }
@@ -162,8 +163,8 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Inventory fromInventory = isPlayerInventory ? getContainerInventory(player) : player.getInventory();
-    Inventory toInventory = isPlayerInventory ? player.getInventory() : getContainerInventory(player);
+    Inventory fromInventory = isPlayerInventory ? InventoryHelper.getContainerInventory(player) : player.getInventory();
+    Inventory toInventory = isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
     if (fromInventory == null || toInventory == null || fromInventory == toInventory) {
       return;
     }
@@ -212,8 +213,8 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Inventory fromInventory = isPlayerInventory ? getContainerInventory(player) : player.getInventory();
-    Inventory toInventory = isPlayerInventory ? player.getInventory() : getContainerInventory(player);
+    Inventory fromInventory = isPlayerInventory ? InventoryHelper.getContainerInventory(player) : player.getInventory();
+    Inventory toInventory = isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
     if (fromInventory == null || toInventory == null || fromInventory == toInventory) {
       return;
     }
@@ -250,19 +251,6 @@ public class InventoryButtonsManager {
   private void addButton(HandledScreen<?> screen, InventoryManagementButton button, boolean isPlayerInventory) {
     Screens.getButtons(screen).add(button);
     (isPlayerInventory ? playerButtons : containerButtons).add(button);
-  }
-
-  private Inventory getContainerInventory(ClientPlayerEntity player) {
-    ScreenHandler currentScreenHandler = player.currentScreenHandler;
-    if (currentScreenHandler == null) {
-      return null;
-    }
-
-    try {
-      return currentScreenHandler.getSlot(0).inventory;
-    } catch (IndexOutOfBoundsException e) {
-      return null;
-    }
   }
 
   private Slot getReferenceSlot(HandledScreen<?> screen, boolean isPlayerInventory) {

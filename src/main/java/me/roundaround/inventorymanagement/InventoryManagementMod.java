@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
+import me.roundaround.inventorymanagement.network.SortInventoryPacket;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 
@@ -16,6 +17,7 @@ public final class InventoryManagementMod implements ModInitializer, ClientModIn
   @Override
   public void onInitialize() {
     CONFIG.init();
+    SortInventoryPacket.registerReceive();
   }
 
   @Override
