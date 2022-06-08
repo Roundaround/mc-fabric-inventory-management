@@ -5,7 +5,9 @@ import org.apache.logging.log4j.Logger;
 
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
+import me.roundaround.inventorymanagement.network.AutoStackPacket;
 import me.roundaround.inventorymanagement.network.SortInventoryPacket;
+import me.roundaround.inventorymanagement.network.TransferAllPacket;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 
@@ -18,6 +20,8 @@ public final class InventoryManagementMod implements ModInitializer, ClientModIn
   public void onInitialize() {
     CONFIG.init();
     SortInventoryPacket.registerReceive();
+    AutoStackPacket.registerReceive();
+    TransferAllPacket.registerReceive();
   }
 
   @Override
