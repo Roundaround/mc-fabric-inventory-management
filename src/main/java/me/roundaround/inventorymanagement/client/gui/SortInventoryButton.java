@@ -1,6 +1,5 @@
 package me.roundaround.inventorymanagement.client.gui;
 
-import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.inventorymanagement.network.SortInventoryPacket;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
