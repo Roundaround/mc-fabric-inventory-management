@@ -33,36 +33,53 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Pair;
 
 public class ItemStackComparator implements Comparator<ItemStack> {
+  // TODO: Create more sorting algorithms & options:
+  // Item/block categories
+  // Place materials together
+  // Allow registering reserve slots
+  // More advanced configurations?
+
   private static final List<Comparator<ItemStack>> SUB_COMPARATORS = List.of(
       Comparator.comparing(ItemStackComparator::getSortName),
-      ConditionalComparator.comparing(s -> s.getItem() instanceof ToolItem, SerialComparator.comparing(
-          Comparator.comparingInt(ItemStackComparator::getTieredItemDamage).reversed(),
-          Comparator.comparingInt(ItemStackComparator::getTieredItemSpeed).reversed())),
-      ConditionalComparator.comparing(s -> s.getItem() instanceof ArmorItem, SerialComparator.comparing(
-          Comparator.comparingInt(ItemStackComparator::getArmorSlot).reversed(),
-          Comparator.comparingInt(ItemStackComparator::getArmorValue).reversed())),
-      ConditionalComparator.comparing(s -> s.getItem() instanceof HorseArmorItem,
+      ConditionalComparator.comparing(
+          s -> s.getItem() instanceof ToolItem,
+          SerialComparator.comparing(
+              Comparator.comparingInt(ItemStackComparator::getTieredItemDamage).reversed(),
+              Comparator.comparingInt(ItemStackComparator::getTieredItemSpeed).reversed())),
+      ConditionalComparator.comparing(
+          s -> s.getItem() instanceof ArmorItem,
+          SerialComparator.comparing(
+              Comparator.comparingInt(ItemStackComparator::getArmorSlot).reversed(),
+              Comparator.comparingInt(ItemStackComparator::getArmorValue).reversed())),
+      ConditionalComparator.comparing(
+          s -> s.getItem() instanceof HorseArmorItem,
           Comparator.comparingInt(ItemStackComparator::getHorseArmorValue).reversed()),
-      ConditionalComparator.comparing(s -> !PotionUtil.getPotionEffects(s).isEmpty(), SerialComparator.comparing(
-          Comparator.comparing(ItemStackComparator::getPotionEffectName),
-          Comparator.comparingInt(ItemStackComparator::getPotionLevel).reversed(),
-          Comparator.comparingInt(ItemStackComparator::getPotionLength).reversed())),
+      ConditionalComparator.comparing(
+          s -> !PotionUtil.getPotionEffects(s).isEmpty(),
+          SerialComparator.comparing(
+              Comparator.comparing(ItemStackComparator::getPotionEffectName),
+              Comparator.comparingInt(ItemStackComparator::getPotionLevel).reversed(),
+              Comparator.comparingInt(ItemStackComparator::getPotionLength).reversed())),
       Comparator.comparingInt(ItemStackComparator::getHasNameAsInt).reversed(),
-      ConditionalComparator.comparing(ItemStack::hasCustomName,
+      ConditionalComparator.comparing(
+          ItemStack::hasCustomName,
           Comparator.comparing(s -> s.getName().getString().toLowerCase(Locale.ROOT))),
       Comparator.comparingInt(ItemStackComparator::getIsEnchantedAsInt).reversed(),
-      ConditionalComparator.comparing(ItemStackComparator::isEnchantedBookOrEnchantedItem,
+      ConditionalComparator.comparing(
+          ItemStackComparator::isEnchantedBookOrEnchantedItem,
           Comparator.comparing(ItemStackComparator::getEnchantmentListAsString)),
       Comparator.comparingInt(ItemStackComparator::getColor),
       Comparator.comparingInt(ItemStack::getCount).reversed(),
       Comparator.comparingInt(ItemStack::getDamage),
       Comparator.comparing(s -> s.getName().getString().toLowerCase(Locale.ROOT)));
+
   private static final List<String> COMMON_SUFFIXES = List.of(
       "log", "wood", "leaves", "planks", "sign", "pressure_plate", "button", "door",
       "trapdoor", "fence", "fence_gate", "stairs", "ore", "boat", "spawn_egg", "soup",
       "seeds", "banner_pattern", "book", "map", "golden_apple", "minecart", "rail",
       "piston", "coral", "coral_wall_fan", "coral_block", "ice");
-  private static final List<String> COLOR_PREFIXES = Arrays.stream(DyeColor.values()).map(DyeColor::getName)
+  private static final List<String> COLOR_PREFIXES = Arrays.stream(DyeColor.values())
+      .map(DyeColor::getName)
       .collect(Collectors.toList());
   private static final List<Pair<String, String>> REGEX_REPLACERS = List.of(
       new Pair<>("^stripped_(.+?)_(log|wood)$", "$2_stripped_$1"),
@@ -223,5 +240,4 @@ public class ItemStackComparator implements Comparator<ItemStack> {
   public static ItemStackComparator comparator() {
     return new ItemStackComparator(SerialComparator.comparing(SUB_COMPARATORS));
   }
-
 }

@@ -66,8 +66,6 @@ public class InventoryHelper {
       ItemStack itemStack = j >= sortedStacks.size() ? ItemStack.EMPTY : sortedStacks.get(j);
       inventory.setStack(i, itemStack);
     }
-
-    inventory.markDirty();
   }
 
   public static void autoStack(PlayerEntity player, boolean fromPlayerInventory) {
@@ -83,9 +81,6 @@ public class InventoryHelper {
     } else {
       autoStackInventories(containerInventory, playerInventory);
     }
-
-    playerInventory.markDirty();
-    containerInventory.markDirty();
   }
 
   public static void transferAll(PlayerEntity player, boolean fromPlayerInventory) {
@@ -96,7 +91,7 @@ public class InventoryHelper {
 
     Inventory playerInventory = player.getInventory();
 
-    SlotRange playerSlotRange = SlotRange.fullRange(playerInventory);
+    SlotRange playerSlotRange = new SlotRange(9, 36);
     SlotRange containerSlotRange = SlotRange.fullRange(containerInventory);
 
     if (player.currentScreenHandler instanceof HorseScreenHandler) {
@@ -148,16 +143,16 @@ public class InventoryHelper {
         }
 
         if (areItemStacksMergeable(toStack, fromStack)) {
-          int itemsToShift = Math.min(
-              toStack.getMaxCount() - toStack.getCount(), fromStack.getCount());
-          if (itemsToShift > 0) {
-            toStack.increment(itemsToShift);
-            fromStack.decrement(itemsToShift);
+          int space = toStack.getMaxCount() - toStack.getCount();
+          int amount = Math.min(space, fromStack.getCount());
+          if (amount > 0) {
+            toStack.increment(amount);
+            fromStack.decrement(amount);
 
             to.setStack(toIdx, toStack);
-            from.setStack(toIdx, fromStack.isEmpty() ? ItemStack.EMPTY : fromStack);
+            from.setStack(fromIdx, fromStack.isEmpty() ? ItemStack.EMPTY : fromStack);
           }
-        } else if (!fromStack.isEmpty() && toStack.isEmpty()) {
+        } else if (toStack.isEmpty() && !fromStack.isEmpty()) {
           to.setStack(toIdx, fromStack);
           from.removeStack(fromIdx);
         }
