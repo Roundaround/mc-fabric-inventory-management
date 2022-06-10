@@ -15,7 +15,6 @@ import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -44,7 +43,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
         parentAccessor.getY() + y,
         WIDTH,
         HEIGHT,
-        new LiteralText(""),
+        Text.literal(""),
         onPress);
 
     this.parent = parent;
@@ -55,7 +54,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   }
 
   protected Text getTooltip() {
-    return new LiteralText("");
+    return Text.literal("");
   }
 
   @Override

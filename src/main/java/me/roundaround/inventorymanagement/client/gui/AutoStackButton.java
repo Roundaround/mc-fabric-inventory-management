@@ -4,7 +4,6 @@ import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.inventorymanagement.network.AutoStackPacket;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 public class AutoStackButton extends InventoryManagementButton {
   private final boolean fromPlayerInventory;
@@ -21,6 +20,6 @@ public class AutoStackButton extends InventoryManagementButton {
     String key = fromPlayerInventory
         ? "inventorymanagement.button.autostack_into"
         : "inventorymanagement.button.autostack_from";
-    return new TranslatableText(key);
+    return Text.translatable(key);
   }
 }

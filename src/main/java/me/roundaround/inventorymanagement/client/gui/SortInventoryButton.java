@@ -4,7 +4,6 @@ import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.inventorymanagement.network.SortInventoryPacket;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 public class SortInventoryButton extends InventoryManagementButton {
   private final boolean isPlayerInventory;
@@ -21,6 +20,6 @@ public class SortInventoryButton extends InventoryManagementButton {
     String key = isPlayerInventory
         ? "inventorymanagement.button.sort_player"
         : "inventorymanagement.button.sort_container";
-    return new TranslatableText(key);
+    return Text.translatable(key);
   }
 }
