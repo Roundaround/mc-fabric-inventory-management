@@ -158,7 +158,7 @@ public class InventoryHelper {
           }
         } else if (toStack.isEmpty() && !fromStack.isEmpty()) {
           to.setStack(toIdx, fromStack);
-          from.removeStack(fromIdx);
+          from.setStack(fromIdx, ItemStack.EMPTY);
         }
       }
     }
