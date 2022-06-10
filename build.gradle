@@ -29,12 +29,8 @@ dependencies {
   modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
   modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-  // ModMenu integration
+  // For testing
   modCompileOnly "com.terraformersmc:modmenu:${project.mod_menu_version}"
-
-  // RoundaLib for config screen
-  modImplementation "me.roundaround:roundalib:${project.roundalib_version}"
-  include "me.roundaround:roundalib:${project.roundalib_version}"
 }
 
 processResources {

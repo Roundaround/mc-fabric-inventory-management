@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
-import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
 import me.roundaround.inventorymanagement.network.AutoStackPacket;
 import me.roundaround.inventorymanagement.network.SortInventoryPacket;
 import me.roundaround.inventorymanagement.network.TransferAllPacket;
@@ -14,11 +13,9 @@ import net.fabricmc.api.ModInitializer;
 public final class InventoryManagementMod implements ModInitializer, ClientModInitializer {
   public static final String MOD_ID = "inventorymanagement";
   public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
-  public static final InventoryManagementConfig CONFIG = new InventoryManagementConfig();
 
   @Override
   public void onInitialize() {
-    CONFIG.init();
     SortInventoryPacket.registerReceive();
     AutoStackPacket.registerReceive();
     TransferAllPacket.registerReceive();

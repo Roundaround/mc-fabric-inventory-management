@@ -20,19 +20,15 @@
     ],
     "client": [
       "me.roundaround.inventorymanagement.InventoryManagementMod"
-    ],
-    "modmenu": [
-      "me.roundaround.inventorymanagement.compat.modmenu.ModMenuImpl"
     ]
   },
   "mixins": [
     "inventorymanagement.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.6",
+    "fabricloader": ">=0.13.3",
     "fabric": "*",
     "minecraft": "1.18.x",
-    "java": ">=17",
-    "roundalib": ">=0.1.8"
+    "java": ">=17"
   }
 }
