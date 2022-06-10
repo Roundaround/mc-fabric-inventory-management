@@ -26,7 +26,6 @@ import net.minecraft.item.SpectralArrowItem;
 import net.minecraft.item.SplashPotionItem;
 import net.minecraft.item.TippedArrowItem;
 import net.minecraft.item.ToolItem;
-import net.minecraft.item.ToolMaterial;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
@@ -104,19 +103,6 @@ public class ItemStackComparator implements Comparator<ItemStack> {
   private static String getSortName(ItemStack itemStack) {
     Item item = itemStack.getItem();
     String itemString = item.toString();
-
-    if (item instanceof ToolItem) {
-      ToolMaterial tier = (ToolMaterial) ((ToolItem) item).getMaterial();
-      return itemString.replaceAll(tier.toString().toLowerCase(Locale.ROOT) + "(en)?_", "");
-    }
-
-    if (item instanceof ArmorItem) {
-      return "armor";
-    }
-
-    if (item instanceof HorseArmorItem) {
-      return "horse_armor";
-    }
 
     if (item instanceof PotionItem) {
       if (item instanceof SplashPotionItem) {
