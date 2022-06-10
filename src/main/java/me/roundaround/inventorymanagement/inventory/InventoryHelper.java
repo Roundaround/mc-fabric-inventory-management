@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import me.roundaround.inventorymanagement.inventory.sorting.ItemStackComparator;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.HorseScreenHandler;
@@ -16,10 +17,9 @@ public class InventoryHelper {
   public static void sortInventory(PlayerEntity player, boolean isPlayerInventory) {
     Inventory containerInventory = getContainerInventory(player);
     Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
-    boolean isEventuallyPlayerInventory = inventory == player.getInventory();
 
-    if (isEventuallyPlayerInventory) {
-      sortInventory(inventory, 9, 36);
+    if (inventory instanceof PlayerInventory) {
+      sortInventory(inventory, SlotRange.playerMainRange());
     } else {
       sortInventory(inventory);
     }
@@ -30,9 +30,13 @@ public class InventoryHelper {
   }
 
   private static void sortInventory(Inventory inventory, int start, int end) {
+    sortInventory(inventory, new SlotRange(start, end));
+  }
+
+  private static void sortInventory(Inventory inventory, SlotRange slotRange) {
     List<ItemStack> stacks = new ArrayList<>();
 
-    for (int i = start; i < end; i++) {
+    for (int i = slotRange.min; i < slotRange.max; i++) {
       stacks.add(inventory.getStack(i).copy());
     }
 
@@ -61,8 +65,8 @@ public class InventoryHelper {
         .sorted(ItemStackComparator.comparator())
         .collect(Collectors.toList());
 
-    for (int i = start; i < end; i++) {
-      int j = i - start;
+    for (int i = slotRange.min; i < slotRange.max; i++) {
+      int j = i - slotRange.min;
       ItemStack itemStack = j >= sortedStacks.size() ? ItemStack.EMPTY : sortedStacks.get(j);
       inventory.setStack(i, itemStack);
     }
@@ -91,11 +95,11 @@ public class InventoryHelper {
 
     Inventory playerInventory = player.getInventory();
 
-    SlotRange playerSlotRange = new SlotRange(9, 36);
+    SlotRange playerSlotRange = SlotRange.playerMainRange();
     SlotRange containerSlotRange = SlotRange.fullRange(containerInventory);
 
     if (player.currentScreenHandler instanceof HorseScreenHandler) {
-      containerSlotRange = new SlotRange(2, containerInventory.size());
+      containerSlotRange = SlotRange.horseMainRange(containerInventory);
     }
 
     if (fromPlayerInventory) {
@@ -191,6 +195,13 @@ public class InventoryHelper {
     public static SlotRange fullRange(Inventory inventory) {
       return new SlotRange(0, inventory.size());
     }
-  }
 
+    public static SlotRange playerMainRange() {
+      return new SlotRange(PlayerInventory.getHotbarSize(), PlayerInventory.MAIN_SIZE);
+    }
+
+    public static SlotRange horseMainRange(Inventory inventory) {
+      return new SlotRange(2, inventory.size());
+    }
+  }
 }
