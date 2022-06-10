@@ -7,8 +7,8 @@ import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.roundalib.config.gui.ConfigScreen;
 
 public class ModMenuImpl implements ModMenuApi {
-    @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return (screen) -> new ConfigScreen(screen, InventoryManagementMod.CONFIG);
-    }
+  @Override
+  public ConfigScreenFactory<?> getModConfigScreenFactory() {
+    return (screen) -> new ConfigScreen(screen, InventoryManagementMod.CONFIG);
+  }
 }
