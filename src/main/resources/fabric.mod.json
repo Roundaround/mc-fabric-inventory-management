@@ -13,7 +13,7 @@
   },
   "license": "MIT",
   "icon": "assets/inventorymanagement/icon.png",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
     "main": [
       "me.roundaround.inventorymanagement.InventoryManagementMod"
