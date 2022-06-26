@@ -6,15 +6,12 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import me.roundaround.inventorymanagement.inventory.sorting.ItemStackComparator;
-import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.HorseScreenHandler;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ShulkerBoxScreenHandler;
 
 public class InventoryHelper {
   public static void sortInventory(PlayerEntity player, boolean isPlayerInventory) {
