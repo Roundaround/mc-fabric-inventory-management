@@ -1,9 +1,14 @@
 package me.roundaround.inventorymanagement.client;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
+import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.gui.AutoStackButton;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
 import me.roundaround.inventorymanagement.client.gui.SortInventoryButton;
@@ -13,6 +18,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -23,12 +30,16 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.ZipResourcePack;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.HopperScreenHandler;
 import net.minecraft.screen.HorseScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
 
 @Environment(EnvType.CLIENT)
@@ -48,6 +59,8 @@ public class InventoryButtonsManager {
   private final Set<Class<? extends Inventory>> transerableInventories = new HashSet<>();
   private final Set<Class<? extends ScreenHandler>> sortableScreenHandlers = new HashSet<>();
   private final Set<Class<? extends ScreenHandler>> transferableScreenHandlers = new HashSet<>();
+
+  private boolean darkMode = false;
 
   private InventoryButtonsManager() {
     registerSortableContainer(PlayerInventory.class);
@@ -86,6 +99,52 @@ public class InventoryButtonsManager {
 
   public void init() {
     ScreenEvents.AFTER_INIT.register(this::onScreenAfterInit);
+
+    // Detect Vanilla Tweaks dark UI and automatically adjust textures to match
+    // if it is loaded
+    ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
+        .registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+          @Override
+          public Identifier getFabricId() {
+            return new Identifier(InventoryManagementMod.MOD_ID, "resource_pack_loader");
+          }
+
+          @Override
+          public void reload(ResourceManager manager) {
+            darkMode = false;
+
+            manager.streamResourcePacks().forEach((pack) -> {
+              if (!(pack instanceof ZipResourcePack)) {
+                return;
+              }
+
+              ZipResourcePack zipPack = (ZipResourcePack) pack;
+
+              if (!zipPack.containsFile("Selected Packs.txt")) {
+                return;
+              }
+
+              try (InputStream stream = zipPack.openRoot("Selected Packs.txt")) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                if (stream != null) {
+                  String str = "";
+                  while ((str = reader.readLine()) != null) {
+                    if (str.trim().equals("DarkUI")) {
+                      darkMode = true;
+                      break;
+                    }
+                  }
+                }
+              } catch (IOException e) {
+
+              }
+            });
+          }
+        });
+  }
+
+  public boolean usingDarkMode() {
+    return darkMode;
   }
 
   private void onScreenAfterInit(MinecraftClient client, Screen screen, float scaledWidth, float scaledHeight) {

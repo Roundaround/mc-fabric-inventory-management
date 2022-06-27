@@ -7,6 +7,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -77,7 +78,9 @@ public abstract class InventoryManagementButton extends ButtonWidget {
     RenderSystem.enableDepthTest();
 
     int u = iconOffsetX * width;
-    int v = iconOffsetY * height + (isHovered() || isFocused() ? height : 0);
+    int v = iconOffsetY * height
+        + (isHovered() || isFocused() ? height : 0)
+        + (InventoryButtonsManager.INSTANCE.usingDarkMode() ? height * 2 : 0);
 
     drawTexture(matrices, x, y, u, v, WIDTH, HEIGHT);
 
