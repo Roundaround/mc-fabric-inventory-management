@@ -14,6 +14,7 @@ import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
 import me.roundaround.inventorymanagement.client.gui.SortInventoryButton;
 import me.roundaround.inventorymanagement.client.gui.TransferAllButton;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
+import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -40,7 +41,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3i;
 
 @Environment(EnvType.CLIENT)
 public class InventoryButtonsManager {
@@ -48,8 +48,6 @@ public class InventoryButtonsManager {
 
   private static final MinecraftClient MINECRAFT = MinecraftClient.getInstance();
   private static final int BUTTON_SPACING = 1;
-  private static final int BUTTON_START_OFFSET_X = -4;
-  private static final int BUTTON_START_OFFSET_Y = -1;
   private static final int BUTTON_SHIFT_X = 0;
   private static final int BUTTON_SHIFT_Y = 1;
 
@@ -202,8 +200,8 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Vec3i position = getButtonPosition(referenceSlot, isPlayerInventory);
-    SortInventoryButton button = new SortInventoryButton(screen, position.getX(), position.getY(), isPlayerInventory);
+    Position position = getButtonPosition(referenceSlot, isPlayerInventory);
+    SortInventoryButton button = new SortInventoryButton(screen, position.x(), position.y(), isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
@@ -252,8 +250,8 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Vec3i position = getButtonPosition(referenceSlot, isPlayerInventory);
-    AutoStackButton button = new AutoStackButton(screen, position.getX(), position.getY(), isPlayerInventory);
+    Position position = getButtonPosition(referenceSlot, isPlayerInventory);
+    AutoStackButton button = new AutoStackButton(screen, position.x(), position.y(), isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
@@ -302,8 +300,8 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Vec3i position = getButtonPosition(referenceSlot, isPlayerInventory);
-    TransferAllButton button = new TransferAllButton(screen, position.getX(), position.getY(), isPlayerInventory);
+    Position position = getButtonPosition(referenceSlot, isPlayerInventory);
+    TransferAllButton button = new TransferAllButton(screen, position.x(), position.y(), isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
@@ -335,15 +333,15 @@ public class InventoryButtonsManager {
         .sum();
   }
 
-  private Vec3i getButtonPosition(Slot referenceSlot, boolean isPlayerInventory) {
-    int x = BUTTON_START_OFFSET_X;
-    int y = referenceSlot.y + BUTTON_START_OFFSET_Y;
+  private Position getButtonPosition(Slot referenceSlot, boolean isPlayerInventory) {
+    int x = InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue().x();
+    int y = referenceSlot.y + InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue().y();
 
     x += BUTTON_SHIFT_X * (InventoryManagementButton.WIDTH + BUTTON_SPACING)
         * (isPlayerInventory ? playerButtons : containerButtons).size();
     y += BUTTON_SHIFT_Y * (InventoryManagementButton.HEIGHT + BUTTON_SPACING)
         * (isPlayerInventory ? playerButtons : containerButtons).size();
 
-    return new Vec3i(x, y, 0);
+    return new Position(x, y);
   }
 }

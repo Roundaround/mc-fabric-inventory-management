@@ -19,7 +19,10 @@
       "me.roundaround.inventorymanagement.InventoryManagementMod"
     ],
     "client": [
-      "me.roundaround.inventorymanagement.InventoryManagementMod"
+      "me.roundaround.inventorymanagement.client.InventoryManagementClientMod"
+    ],
+    "modmenu": [
+      "me.roundaround.inventorymanagement.compat.modmenu.ModMenuImpl"
     ]
   },
   "mixins": [
