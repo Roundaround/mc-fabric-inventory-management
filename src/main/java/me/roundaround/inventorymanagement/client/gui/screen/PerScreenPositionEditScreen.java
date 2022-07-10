@@ -20,7 +20,10 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   private boolean isPlayerInventory;
 
   public PerScreenPositionEditScreen(Screen parent, boolean isPlayerInventory) {
-    super(Text.literal("Placeholder"), parent, generateDummyConfigOption(parent, isPlayerInventory));
+    super(
+        Text.translatable("inventorymanagement.position_edit.title"),
+        parent,
+        generateDummyConfigOption(parent, isPlayerInventory));
     this.isPlayerInventory = isPlayerInventory;
   }
 
@@ -74,7 +77,6 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
 
   @Override
   protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-    // TODO: Inventory player preview and items render on top of background
     renderDarkenBackground(matrixStack, mouseX, mouseY, partialTicks);
   }
 

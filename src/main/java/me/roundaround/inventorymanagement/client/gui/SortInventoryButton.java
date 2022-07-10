@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.client.gui;
 
+import me.roundaround.inventorymanagement.client.gui.screen.ScreenAccessor;
 import me.roundaround.inventorymanagement.network.SortInventoryPacket;
 import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -12,6 +13,25 @@ public class SortInventoryButton extends InventoryManagementButton {
 
   public SortInventoryButton(
       HandledScreen<?> parent,
+      Inventory inventory,
+      Slot referenceSlot,
+      Position offset,
+      boolean isPlayerInventory) {
+    super(
+        parent,
+        inventory,
+        referenceSlot,
+        offset,
+        new Position(0, 0),
+        isPlayerInventory,
+        (button) -> {
+          SortInventoryPacket.sendToServer(isPlayerInventory);
+        });
+    this.isPlayerInventory = isPlayerInventory;
+  }
+
+  public SortInventoryButton(
+      ScreenAccessor parent,
       Inventory inventory,
       Slot referenceSlot,
       Position offset,
