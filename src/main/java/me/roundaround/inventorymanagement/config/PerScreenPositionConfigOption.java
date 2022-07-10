@@ -21,22 +21,23 @@ public class PerScreenPositionConfigOption
     super(other);
   }
 
-  public void set(Screen screen, Position value) {
-    String key = getScreenKey(screen);
+  public void set(Screen screen, boolean isPlayerInventory, Position value) {
+    String key = getScreenKey(screen, isPlayerInventory);
     getValue().put(key, value);
   }
 
-  public Optional<Position> get(Screen screen) {
+  public Optional<Position> get(Screen screen, boolean isPlayerInventory) {
     Map<String, Position> value = getValue();
-    String key = getScreenKey(screen);
+    String key = getScreenKey(screen, isPlayerInventory);
     if (value.containsKey(key)) {
       return Optional.of(value.get(key));
     }
     return Optional.empty();
   }
 
-  public String getScreenKey(Screen screen) {
-    return screen.getClass().getName().replaceAll("\\.", "-");
+  public String getScreenKey(Screen screen, boolean isPlayerInventory) {
+    return screen.getClass().getName().replaceAll("\\.", "-")
+        + (isPlayerInventory ? "-player" : "-container");
   }
 
   @Override

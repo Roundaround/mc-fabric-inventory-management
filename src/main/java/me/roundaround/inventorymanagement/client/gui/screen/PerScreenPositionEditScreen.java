@@ -1,7 +1,6 @@
 package me.roundaround.inventorymanagement.client.gui.screen;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
@@ -16,20 +15,22 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 public class PerScreenPositionEditScreen extends PositionEditScreen {
-  private final List<InventoryManagementButton> playerButtons = new ArrayList<>();
-  private final List<InventoryManagementButton> containerButtons = new ArrayList<>();
+  private final LinkedList<InventoryManagementButton> buttons = new LinkedList<>();
 
-  public PerScreenPositionEditScreen(Screen parent) {
-    super(Text.literal("Placeholder"), parent, generateDummyConfigOption(parent));
+  private boolean isPlayerInventory;
+
+  public PerScreenPositionEditScreen(Screen parent, boolean isPlayerInventory) {
+    super(Text.literal("Placeholder"), parent, generateDummyConfigOption(parent, isPlayerInventory));
+    this.isPlayerInventory = isPlayerInventory;
   }
 
-  private static PositionConfigOption generateDummyConfigOption(Screen parent) {
+  private static PositionConfigOption generateDummyConfigOption(Screen parent, boolean isPlayerInventory) {
     Position currentValue = InventoryManagementMod.CONFIG.SCREEN_POSITIONS
-        .get(parent)
+        .get(parent, isPlayerInventory)
         .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
     PositionConfigOption dummyConfig = PositionConfigOption
         .builder(
-            InventoryManagementMod.CONFIG.SCREEN_POSITIONS.getScreenKey(parent),
+            InventoryManagementMod.CONFIG.SCREEN_POSITIONS.getScreenKey(parent, isPlayerInventory),
             "",
             InventoryManagementMod.CONFIG.DEFAULT_POSITION.getDefault())
         .build();
@@ -41,19 +42,14 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   protected void init() {
     super.init();
 
-    // TODO: Buttons change order when entering this screen
-    // TODO: Adjust buttons on a per-inventory basis
-
-    playerButtons.addAll(InventoryButtonsManager.INSTANCE.getPlayerButtons());
-    containerButtons.addAll(InventoryButtonsManager.INSTANCE.getContainerButtons());
+    buttons.addAll(isPlayerInventory
+        ? InventoryButtonsManager.INSTANCE.getPlayerButtons()
+        : InventoryButtonsManager.INSTANCE.getContainerButtons());
 
     Screens.getButtons(parent).removeIf((button) -> button instanceof InventoryManagementButton);
 
-    for (int i = 0; i < playerButtons.size(); i++) {
-      playerButtons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, getValue()));
-    }
-    for (int i = 0; i < containerButtons.size(); i++) {
-      containerButtons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, getValue()));
+    for (int i = 0; i < buttons.size(); i++) {
+      buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, getValue()));
     }
   }
 
@@ -61,11 +57,8 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   protected void setValue(Position value) {
     super.setValue(value);
 
-    for (int i = 0; i < playerButtons.size(); i++) {
-      playerButtons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, value));
-    }
-    for (int i = 0; i < containerButtons.size(); i++) {
-      containerButtons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, value));
+    for (int i = 0; i < buttons.size(); i++) {
+      buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, getValue()));
     }
   }
 
@@ -81,6 +74,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
 
   @Override
   protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    // TODO: Inventory player preview and items render on top of background
     renderDarkenBackground(matrixStack, mouseX, mouseY, partialTicks);
   }
 
@@ -88,8 +82,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   protected void renderContent(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
     super.renderContent(matrixStack, mouseX, mouseY, partialTicks);
 
-    playerButtons.forEach((button) -> button.render(matrixStack, mouseX, mouseY, partialTicks));
-    containerButtons.forEach((button) -> button.render(matrixStack, mouseX, mouseY, partialTicks));
+    buttons.forEach((button) -> button.render(matrixStack, mouseX, mouseY, partialTicks));
 
     drawTextWithShadow(
         matrixStack,
@@ -103,7 +96,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   @Override
   protected void commitValueToConfig() {
     if (isDirty()) {
-      InventoryManagementMod.CONFIG.SCREEN_POSITIONS.set(parent, getValue());
+      InventoryManagementMod.CONFIG.SCREEN_POSITIONS.set(parent, isPlayerInventory, getValue());
       InventoryManagementMod.CONFIG.saveToFile();
     }
   }

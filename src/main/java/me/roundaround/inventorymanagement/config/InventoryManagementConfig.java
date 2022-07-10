@@ -24,14 +24,12 @@ public class InventoryManagementConfig extends ModConfig {
         PerScreenPositionConfigOption
             .builder("screenPositions", "inventorymanagement.screen_positions.label")
             .hideFromConfigScreen()
-            .addDefaultEntry("testing1", new Position(1, 2))
-            .addDefaultEntry("testing2", new Position(2, 4))
             .setComment("Customize button position on a per-screen basis.")
             .build());
 
     DEFAULT_POSITION = registerConfigOption(
         PositionConfigOption
-            .builder("defaultPosition", "inventorymanagement.default_position.label", new Position(4, -1))
+            .builder("defaultPosition", "inventorymanagement.default_position.label", new Position(-4, -1))
             .hideFromConfigScreen()
             .setComment("Customize a default for button position.")
             .build());

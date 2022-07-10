@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -28,10 +29,8 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   public static final int HEIGHT = 14;
 
   private static final Identifier TEXTURE = new Identifier(InventoryManagementMod.MOD_ID, "textures/gui.png");
-  private static final int SLOT_WIDTH = 16;
 
   private final HandledScreen<?> parent;
-  private final HandledScreenAccessor parentAccessor;
   private final Slot referenceSlot;
   private final Position iconOffset;
 
@@ -39,14 +38,15 @@ public abstract class InventoryManagementButton extends ButtonWidget {
 
   public InventoryManagementButton(
       HandledScreen<?> parent,
-      HandledScreenAccessor parentAccessor,
+      Inventory inventory,
       Slot referenceSlot,
       Position offset,
       Position iconOffset,
+      boolean isPlayerInventory,
       PressAction onPress) {
     super(
-        parentAccessor.getX() + referenceSlot.x + SLOT_WIDTH + offset.x(),
-        parentAccessor.getY() + referenceSlot.y + offset.y(),
+        ((HandledScreenAccessor) parent).getX() + ((HandledScreenAccessor) parent).getBackgroundWidth() + offset.x(),
+        ((HandledScreenAccessor) parent).getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
         Text.literal(""),
@@ -56,11 +56,10 @@ public abstract class InventoryManagementButton extends ButtonWidget {
             return;
           }
 
-          GuiUtil.setScreen(new PerScreenPositionEditScreen(parent));
+          GuiUtil.setScreen(new PerScreenPositionEditScreen(parent, isPlayerInventory));
         });
 
     this.parent = parent;
-    this.parentAccessor = parentAccessor;
     this.referenceSlot = referenceSlot;
     this.offset = offset;
     this.iconOffset = iconOffset;
@@ -76,8 +75,8 @@ public abstract class InventoryManagementButton extends ButtonWidget {
 
   @Override
   public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-    x = parentAccessor.getX() + referenceSlot.x + SLOT_WIDTH + offset.x();
-    y = parentAccessor.getY() + referenceSlot.y + offset.y();
+    x = ((HandledScreenAccessor) parent).getX() + ((HandledScreenAccessor) parent).getBackgroundWidth() + offset.x();
+    y = ((HandledScreenAccessor) parent).getY() + referenceSlot.y + offset.y();
 
     super.render(matrices, mouseX, mouseY, delta);
   }

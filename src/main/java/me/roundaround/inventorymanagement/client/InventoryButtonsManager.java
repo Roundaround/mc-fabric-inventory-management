@@ -6,7 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.gui.AutoStackButton;
@@ -51,12 +52,12 @@ public class InventoryButtonsManager {
   private static final int BUTTON_SHIFT_X = 0;
   private static final int BUTTON_SHIFT_Y = 1;
 
-  private final Set<InventoryManagementButton> playerButtons = new HashSet<>();
-  private final Set<InventoryManagementButton> containerButtons = new HashSet<>();
-  private final Set<Class<? extends Inventory>> sortableInventories = new HashSet<>();
-  private final Set<Class<? extends Inventory>> transerableInventories = new HashSet<>();
-  private final Set<Class<? extends ScreenHandler>> sortableScreenHandlers = new HashSet<>();
-  private final Set<Class<? extends ScreenHandler>> transferableScreenHandlers = new HashSet<>();
+  private final LinkedHashSet<InventoryManagementButton> playerButtons = new LinkedHashSet<>();
+  private final LinkedHashSet<InventoryManagementButton> containerButtons = new LinkedHashSet<>();
+  private final HashSet<Class<? extends Inventory>> sortableInventories = new HashSet<>();
+  private final HashSet<Class<? extends Inventory>> transerableInventories = new HashSet<>();
+  private final HashSet<Class<? extends ScreenHandler>> sortableScreenHandlers = new HashSet<>();
+  private final HashSet<Class<? extends ScreenHandler>> transferableScreenHandlers = new HashSet<>();
 
   private boolean darkMode = false;
 
@@ -203,6 +204,7 @@ public class InventoryButtonsManager {
     Position position = getButtonPosition(screen, isPlayerInventory);
     SortInventoryButton button = new SortInventoryButton(
         screen,
+        inventory,
         referenceSlot,
         position,
         isPlayerInventory);
@@ -257,6 +259,7 @@ public class InventoryButtonsManager {
     Position position = getButtonPosition(screen, isPlayerInventory);
     AutoStackButton button = new AutoStackButton(
         screen,
+        fromInventory,
         referenceSlot,
         position,
         isPlayerInventory);
@@ -311,6 +314,7 @@ public class InventoryButtonsManager {
     Position position = getButtonPosition(screen, isPlayerInventory);
     TransferAllButton button = new TransferAllButton(
         screen,
+        fromInventory,
         referenceSlot,
         position,
         isPlayerInventory);
@@ -346,7 +350,7 @@ public class InventoryButtonsManager {
   }
 
   private Position getButtonPosition(Screen screen, boolean isPlayerInventory) {
-    Position offset = InventoryManagementMod.CONFIG.SCREEN_POSITIONS.get(screen)
+    Position offset = InventoryManagementMod.CONFIG.SCREEN_POSITIONS.get(screen, isPlayerInventory)
         .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
     return getButtonPosition((isPlayerInventory ? playerButtons : containerButtons).size(), offset);
   }
@@ -358,11 +362,11 @@ public class InventoryButtonsManager {
     return new Position(x, y);
   }
 
-  public Set<InventoryManagementButton> getPlayerButtons() {
-    return Set.copyOf(playerButtons);
+  public LinkedList<InventoryManagementButton> getPlayerButtons() {
+    return new LinkedList<>(playerButtons);
   }
 
-  public Set<InventoryManagementButton> getContainerButtons() {
-    return Set.copyOf(containerButtons);
+  public LinkedList<InventoryManagementButton> getContainerButtons() {
+    return new LinkedList<>(containerButtons);
   }
 }
