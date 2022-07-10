@@ -200,8 +200,12 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Position position = getButtonPosition(referenceSlot, isPlayerInventory);
-    SortInventoryButton button = new SortInventoryButton(screen, position.x(), position.y(), isPlayerInventory);
+    Position position = getButtonPosition(screen, isPlayerInventory);
+    SortInventoryButton button = new SortInventoryButton(
+        screen,
+        referenceSlot,
+        position,
+        isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
@@ -250,8 +254,12 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Position position = getButtonPosition(referenceSlot, isPlayerInventory);
-    AutoStackButton button = new AutoStackButton(screen, position.x(), position.y(), isPlayerInventory);
+    Position position = getButtonPosition(screen, isPlayerInventory);
+    AutoStackButton button = new AutoStackButton(
+        screen,
+        referenceSlot,
+        position,
+        isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
@@ -300,8 +308,12 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Position position = getButtonPosition(referenceSlot, isPlayerInventory);
-    TransferAllButton button = new TransferAllButton(screen, position.x(), position.y(), isPlayerInventory);
+    Position position = getButtonPosition(screen, isPlayerInventory);
+    TransferAllButton button = new TransferAllButton(
+        screen,
+        referenceSlot,
+        position,
+        isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
@@ -333,15 +345,24 @@ public class InventoryButtonsManager {
         .sum();
   }
 
-  private Position getButtonPosition(Slot referenceSlot, boolean isPlayerInventory) {
-    int x = InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue().x();
-    int y = referenceSlot.y + InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue().y();
+  private Position getButtonPosition(Screen screen, boolean isPlayerInventory) {
+    Position offset = InventoryManagementMod.CONFIG.SCREEN_POSITIONS.get(screen)
+        .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
+    return getButtonPosition((isPlayerInventory ? playerButtons : containerButtons).size(), offset);
+  }
 
-    x += BUTTON_SHIFT_X * (InventoryManagementButton.WIDTH + BUTTON_SPACING)
-        * (isPlayerInventory ? playerButtons : containerButtons).size();
-    y += BUTTON_SHIFT_Y * (InventoryManagementButton.HEIGHT + BUTTON_SPACING)
-        * (isPlayerInventory ? playerButtons : containerButtons).size();
+  public Position getButtonPosition(int index, Position offset) {
+    int x = offset.x() + BUTTON_SHIFT_X * (InventoryManagementButton.WIDTH + BUTTON_SPACING) * index;
+    int y = offset.y() + BUTTON_SHIFT_Y * (InventoryManagementButton.HEIGHT + BUTTON_SPACING) * index;
 
     return new Position(x, y);
+  }
+
+  public Set<InventoryManagementButton> getPlayerButtons() {
+    return Set.copyOf(playerButtons);
+  }
+
+  public Set<InventoryManagementButton> getContainerButtons() {
+    return Set.copyOf(containerButtons);
   }
 }

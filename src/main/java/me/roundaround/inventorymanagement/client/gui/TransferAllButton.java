@@ -2,16 +2,28 @@ package me.roundaround.inventorymanagement.client.gui;
 
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.inventorymanagement.network.TransferAllPacket;
+import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 
 public class TransferAllButton extends InventoryManagementButton {
   private final boolean fromPlayerInventory;
 
-  public TransferAllButton(HandledScreen<?> parent, int x, int y, boolean fromPlayerInventory) {
-    super(parent, (HandledScreenAccessor) parent, x, y, fromPlayerInventory ? 4 : 3, 0, (button) -> {
-      TransferAllPacket.sendToServer(fromPlayerInventory);
-    });
+  public TransferAllButton(
+      HandledScreen<?> parent,
+      Slot referenceSlot,
+      Position offset,
+      boolean fromPlayerInventory) {
+    super(
+        parent,
+        (HandledScreenAccessor) parent,
+        referenceSlot,
+        offset,
+        new Position(fromPlayerInventory ? 4 : 3, 0),
+        (button) -> {
+          TransferAllPacket.sendToServer(fromPlayerInventory);
+        });
     this.fromPlayerInventory = fromPlayerInventory;
   }
 

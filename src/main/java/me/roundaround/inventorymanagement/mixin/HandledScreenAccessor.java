@@ -12,7 +12,4 @@ public interface HandledScreenAccessor {
 
   @Accessor
   int getY();
-
-  @Accessor
-  int getBackgroundWidth();
 }

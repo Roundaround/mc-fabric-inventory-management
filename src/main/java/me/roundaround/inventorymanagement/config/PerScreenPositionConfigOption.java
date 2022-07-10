@@ -2,10 +2,12 @@ package me.roundaround.inventorymanagement.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import me.roundaround.roundalib.config.option.ConfigOption;
 import me.roundaround.roundalib.config.value.Position;
 import me.roundaround.roundalib.shadow.nightconfig.core.Config;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
 public class PerScreenPositionConfigOption
@@ -17,6 +19,24 @@ public class PerScreenPositionConfigOption
 
   private PerScreenPositionConfigOption(PerScreenPositionConfigOption other) {
     super(other);
+  }
+
+  public void set(Screen screen, Position value) {
+    String key = getScreenKey(screen);
+    getValue().put(key, value);
+  }
+
+  public Optional<Position> get(Screen screen) {
+    Map<String, Position> value = getValue();
+    String key = getScreenKey(screen);
+    if (value.containsKey(key)) {
+      return Optional.of(value.get(key));
+    }
+    return Optional.empty();
+  }
+
+  public String getScreenKey(Screen screen) {
+    return screen.getClass().getName().replaceAll("\\.", "-");
   }
 
   @Override

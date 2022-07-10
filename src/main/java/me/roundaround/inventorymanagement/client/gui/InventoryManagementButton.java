@@ -8,14 +8,18 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
+import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
+import me.roundaround.roundalib.config.gui.GuiUtil;
+import me.roundaround.roundalib.config.value.Position;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -24,45 +28,56 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   public static final int HEIGHT = 14;
 
   private static final Identifier TEXTURE = new Identifier(InventoryManagementMod.MOD_ID, "textures/gui.png");
+  private static final int SLOT_WIDTH = 16;
 
   private final HandledScreen<?> parent;
   private final HandledScreenAccessor parentAccessor;
-  private final int initialX;
-  private final int iconOffsetX;
-  private final int iconOffsetY;
+  private final Slot referenceSlot;
+  private final Position iconOffset;
+
+  private Position offset;
 
   public InventoryManagementButton(
       HandledScreen<?> parent,
       HandledScreenAccessor parentAccessor,
-      int x,
-      int y,
-      int iconOffsetX,
-      int iconOffsetY,
+      Slot referenceSlot,
+      Position offset,
+      Position iconOffset,
       PressAction onPress) {
     super(
-        parentAccessor.getX() + parentAccessor.getBackgroundWidth() + x,
-        parentAccessor.getY() + y,
+        parentAccessor.getX() + referenceSlot.x + SLOT_WIDTH + offset.x(),
+        parentAccessor.getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
         Text.literal(""),
-        onPress);
+        (button) -> {
+          if (!Screen.hasControlDown()) {
+            onPress.onPress(button);
+            return;
+          }
+
+          GuiUtil.setScreen(new PerScreenPositionEditScreen(parent));
+        });
 
     this.parent = parent;
     this.parentAccessor = parentAccessor;
-    this.initialX = x;
-    this.iconOffsetX = iconOffsetX;
-    this.iconOffsetY = iconOffsetY;
+    this.referenceSlot = referenceSlot;
+    this.offset = offset;
+    this.iconOffset = iconOffset;
   }
 
   protected Text getTooltip() {
     return Text.literal("");
   }
 
+  public void setOffset(Position position) {
+    offset = position;
+  }
+
   @Override
   public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-    if (parent instanceof RecipeBookProvider) {
-      x = parentAccessor.getX() + parentAccessor.getBackgroundWidth() + initialX;
-    }
+    x = parentAccessor.getX() + referenceSlot.x + SLOT_WIDTH + offset.x();
+    y = parentAccessor.getY() + referenceSlot.y + offset.y();
 
     super.render(matrices, mouseX, mouseY, delta);
   }
@@ -77,8 +92,8 @@ public abstract class InventoryManagementButton extends ButtonWidget {
     RenderSystem.applyModelViewMatrix();
     RenderSystem.enableDepthTest();
 
-    int u = iconOffsetX * width;
-    int v = iconOffsetY * height
+    int u = iconOffset.x() * width;
+    int v = iconOffset.y() * height
         + (isHovered() || isFocused() ? height : 0)
         + (InventoryButtonsManager.INSTANCE.usingDarkMode() ? height * 2 : 0);
 
