@@ -10,6 +10,7 @@ import me.roundaround.inventorymanagement.client.gui.AutoStackButton;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
 import me.roundaround.inventorymanagement.client.gui.SortInventoryButton;
 import me.roundaround.inventorymanagement.client.gui.TransferAllButton;
+import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.roundalib.config.gui.GuiUtil;
 import me.roundaround.roundalib.config.gui.control.SubScreenControl.SubScreenFactory;
 import me.roundaround.roundalib.config.gui.screen.PositionEditScreen;
@@ -24,7 +25,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class DefaultPositionEditScreen extends PositionEditScreen implements ScreenAccessor {
+public class DefaultPositionEditScreen extends PositionEditScreen implements HandledScreenAccessor {
   private static final Identifier BACKGROUND_TEXTURE = new Identifier("textures/gui/container/generic_54.png");
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 114 + 3 * 18;

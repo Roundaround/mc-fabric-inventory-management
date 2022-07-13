@@ -12,5 +12,9 @@
   "inventorymanagement.position_edit.title": "Edit button position",
   "inventorymanagement.default_position_edit.title": "Edit default button position",
   "inventorymanagement.mod_enabled.label": "Mod enabled",
+  "inventorymanagement.show_sort.label": "Show sort buttons",
+  "inventorymanagement.show_transfer.label": "Show transfer buttons",
+  "inventorymanagement.show_stack.label": "Show autostack buttons",
+  "inventorymanagement.gui_theme.label": "GUI theme",
   "inventorymanagement.default_position.label": "Default button position"
 }

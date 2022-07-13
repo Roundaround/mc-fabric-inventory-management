@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.client.gui;
 
-import me.roundaround.inventorymanagement.client.gui.screen.ScreenAccessor;
+import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.inventorymanagement.network.TransferAllPacket;
 import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -31,7 +31,7 @@ public class TransferAllButton extends InventoryManagementButton {
   }
 
   public TransferAllButton(
-      ScreenAccessor parent,
+      HandledScreenAccessor parent,
       Inventory inventory,
       Slot referenceSlot,
       Position offset,

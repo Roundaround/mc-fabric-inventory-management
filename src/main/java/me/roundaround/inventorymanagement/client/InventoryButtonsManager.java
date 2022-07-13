@@ -59,7 +59,7 @@ public class InventoryButtonsManager {
   private final HashSet<Class<? extends ScreenHandler>> sortableScreenHandlers = new HashSet<>();
   private final HashSet<Class<? extends ScreenHandler>> transferableScreenHandlers = new HashSet<>();
 
-  private boolean darkMode = false;
+  private boolean darkUiDetected = false;
 
   private InventoryButtonsManager() {
     registerSortableContainer(PlayerInventory.class);
@@ -110,7 +110,7 @@ public class InventoryButtonsManager {
 
           @Override
           public void reload(ResourceManager manager) {
-            darkMode = false;
+            darkUiDetected = false;
 
             manager.streamResourcePacks().forEach((pack) -> {
               if (!(pack instanceof ZipResourcePack)) {
@@ -129,7 +129,7 @@ public class InventoryButtonsManager {
                   String str = "";
                   while ((str = reader.readLine()) != null) {
                     if (str.trim().equals("DarkUI")) {
-                      darkMode = true;
+                      darkUiDetected = true;
                       break;
                     }
                   }
@@ -143,7 +143,14 @@ public class InventoryButtonsManager {
   }
 
   public boolean usingDarkMode() {
-    return darkMode;
+    switch (InventoryManagementMod.CONFIG.GUI_THEME.getValue()) {
+      case LIGHT:
+        return false;
+      case DARK:
+        return true;
+      default:
+        return darkUiDetected;
+    }
   }
 
   private void onScreenAfterInit(MinecraftClient client, Screen screen, float scaledWidth, float scaledHeight) {
@@ -168,6 +175,11 @@ public class InventoryButtonsManager {
   }
 
   private void generateSortButton(HandledScreen<?> screen, boolean isPlayerInventory) {
+    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()
+        || !InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
+      return;
+    }
+
     if (screen instanceof InventoryScreen && !isPlayerInventory) {
       return;
     }
@@ -212,6 +224,11 @@ public class InventoryButtonsManager {
   }
 
   private void generateAutoStackButton(HandledScreen<?> screen, boolean isPlayerInventory) {
+    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()
+        || !InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
+      return;
+    }
+
     if (screen instanceof InventoryScreen && !isPlayerInventory) {
       return;
     }
@@ -267,6 +284,11 @@ public class InventoryButtonsManager {
   }
 
   private void generateTransferAllButton(HandledScreen<?> screen, boolean isPlayerInventory) {
+    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()
+        || !InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
+      return;
+    }
+
     if (screen instanceof InventoryScreen && !isPlayerInventory) {
       return;
     }

@@ -9,7 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
-import me.roundaround.inventorymanagement.client.gui.screen.ScreenAccessor;
+import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.roundalib.config.gui.GuiUtil;
 import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.screen.Screen;
@@ -30,7 +30,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
 
   private static final Identifier TEXTURE = new Identifier(InventoryManagementMod.MOD_ID, "textures/gui.png");
 
-  private final ScreenAccessor parent;
+  private final HandledScreenAccessor parent;
   private final Slot referenceSlot;
   private final Position iconOffset;
 
@@ -45,8 +45,12 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       boolean isPlayerInventory,
       PressAction onPress) {
     super(
-        ((ScreenAccessor) parent).getX() + ((ScreenAccessor) parent).getBackgroundWidth() + offset.x(),
-        ((ScreenAccessor) parent).getY() + referenceSlot.y + offset.y(),
+        ((HandledScreenAccessor) parent).getX()
+            + ((HandledScreenAccessor) parent).getBackgroundWidth()
+            + offset.x(),
+        ((HandledScreenAccessor) parent).getY()
+            + referenceSlot.y
+            + offset.y(),
         WIDTH,
         HEIGHT,
         Text.literal(""),
@@ -59,14 +63,14 @@ public abstract class InventoryManagementButton extends ButtonWidget {
           GuiUtil.setScreen(new PerScreenPositionEditScreen(parent, isPlayerInventory));
         });
 
-    this.parent = (ScreenAccessor) parent;
+    this.parent = (HandledScreenAccessor) parent;
     this.referenceSlot = referenceSlot;
     this.offset = offset;
     this.iconOffset = iconOffset;
   }
 
   public InventoryManagementButton(
-      ScreenAccessor parent,
+      HandledScreenAccessor parent,
       Inventory inventory,
       Slot referenceSlot,
       Position offset,
@@ -74,8 +78,8 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       boolean isPlayerInventory,
       PressAction onPress) {
     super(
-        ((ScreenAccessor) parent).getX() + ((ScreenAccessor) parent).getBackgroundWidth() + offset.x(),
-        ((ScreenAccessor) parent).getY() + referenceSlot.y + offset.y(),
+        parent.getX() + parent.getBackgroundWidth() + offset.x(),
+        parent.getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
         Text.literal(""),
@@ -98,8 +102,8 @@ public abstract class InventoryManagementButton extends ButtonWidget {
 
   @Override
   public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-    x = ((ScreenAccessor) parent).getX() + ((ScreenAccessor) parent).getBackgroundWidth() + offset.x();
-    y = ((ScreenAccessor) parent).getY() + referenceSlot.y + offset.y();
+    x = parent.getX() + parent.getBackgroundWidth() + offset.x();
+    y = parent.getY() + referenceSlot.y + offset.y();
 
     super.render(matrices, mouseX, mouseY, delta);
   }
@@ -132,9 +136,13 @@ public abstract class InventoryManagementButton extends ButtonWidget {
     if (tooltip == null) {
       return;
     }
+
+    if (!(parent instanceof Screen)) {
+      return;
+    }
     matrices.push();
     matrices.translate(0, 0, 40);
-    parent.renderTooltip(matrices, List.of(tooltip), Optional.empty(), mouseX, mouseY);
+    ((Screen) parent).renderTooltip(matrices, List.of(tooltip), Optional.empty(), mouseX, mouseY);
     matrices.pop();
   }
 
