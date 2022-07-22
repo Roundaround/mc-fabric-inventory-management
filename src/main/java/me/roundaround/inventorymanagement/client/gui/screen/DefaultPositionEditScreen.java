@@ -52,48 +52,62 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
 
     Inventory containerInventory = new SimpleInventory(27);
     Slot containerSlot = new Slot(containerInventory, 8, BACKGROUND_WIDTH - 16 - 4, 6 + textRenderer.fontHeight + 3);
+    int index = 0;
 
-    containerButtons.add(new SortInventoryButton(
-        this,
-        containerInventory,
-        containerSlot,
-        InventoryButtonsManager.INSTANCE.getButtonPosition(0, offset),
-        true));
-    containerButtons.add(new AutoStackButton(
-        this,
-        containerInventory,
-        containerSlot,
-        InventoryButtonsManager.INSTANCE.getButtonPosition(1, offset),
-        true));
-    containerButtons.add(new TransferAllButton(
-        this,
-        containerInventory,
-        containerSlot,
-        InventoryButtonsManager.INSTANCE.getButtonPosition(2, offset),
-        true));
+    if (InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
+      containerButtons.add(new SortInventoryButton(
+          this,
+          containerInventory,
+          containerSlot,
+          InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
+          true));
+    }
+    if (InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
+      containerButtons.add(new AutoStackButton(
+          this,
+          containerInventory,
+          containerSlot,
+          InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
+          true));
+    }
+    if (InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
+      containerButtons.add(new TransferAllButton(
+          this,
+          containerInventory,
+          containerSlot,
+          InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
+          true));
+    }
 
     Inventory playerInventory = new SimpleInventory(27);
     Slot playerSlot = new Slot(playerInventory, 8, BACKGROUND_WIDTH - 16 - 4,
         BACKGROUND_HEIGHT - 94 + textRenderer.fontHeight + 2);
+    index = 0;
 
-    playerButtons.add(new SortInventoryButton(
-        this,
-        playerInventory,
-        playerSlot,
-        InventoryButtonsManager.INSTANCE.getButtonPosition(0, offset),
-        true));
-    playerButtons.add(new AutoStackButton(
-        this,
-        playerInventory,
-        playerSlot,
-        InventoryButtonsManager.INSTANCE.getButtonPosition(1, offset),
-        true));
-    playerButtons.add(new TransferAllButton(
-        this,
-        playerInventory,
-        playerSlot,
-        InventoryButtonsManager.INSTANCE.getButtonPosition(2, offset),
-        true));
+    if (InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
+      playerButtons.add(new SortInventoryButton(
+          this,
+          playerInventory,
+          playerSlot,
+          InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
+          true));
+    }
+    if (InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
+      playerButtons.add(new AutoStackButton(
+          this,
+          playerInventory,
+          playerSlot,
+          InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
+          true));
+    }
+    if (InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
+      playerButtons.add(new TransferAllButton(
+          this,
+          playerInventory,
+          playerSlot,
+          InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
+          true));
+    }
   }
 
   @Override

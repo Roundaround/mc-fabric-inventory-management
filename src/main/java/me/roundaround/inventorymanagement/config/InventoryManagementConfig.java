@@ -55,6 +55,9 @@ public class InventoryManagementConfig extends ModConfig {
     DEFAULT_POSITION = registerConfigOption(
         PositionConfigOption
             .builder("defaultPosition", "inventorymanagement.default_position.label", new Position(-4, -1))
+            .setDisabledSupplier(() -> {
+              return !SHOW_SORT.getValue() && !SHOW_TRANSFER.getValue() && !SHOW_STACK.getValue();
+            })
             .setComment("Customize a default for button position.")
             .build());
 
