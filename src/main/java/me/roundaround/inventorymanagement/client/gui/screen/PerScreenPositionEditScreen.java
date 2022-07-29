@@ -98,7 +98,11 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   @Override
   protected void commitValueToConfig() {
     if (isDirty()) {
-      InventoryManagementMod.CONFIG.SCREEN_POSITIONS.set(parent, isPlayerInventory, getValue());
+      if (getValue() == configOption.getDefault()) {
+        InventoryManagementMod.CONFIG.SCREEN_POSITIONS.remove(parent, isPlayerInventory);
+      } else {
+        InventoryManagementMod.CONFIG.SCREEN_POSITIONS.set(parent, isPlayerInventory, getValue());
+      }
       InventoryManagementMod.CONFIG.saveToFile();
     }
   }

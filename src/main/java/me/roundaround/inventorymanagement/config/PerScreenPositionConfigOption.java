@@ -26,6 +26,11 @@ public class PerScreenPositionConfigOption
     getValue().put(key, value);
   }
 
+  public void remove(Screen screen, boolean isPlayerInventory) {
+    String key = getScreenKey(screen, isPlayerInventory);
+    getValue().remove(key);
+  }
+
   public Optional<Position> get(Screen screen, boolean isPlayerInventory) {
     Map<String, Position> value = getValue();
     String key = getScreenKey(screen, isPlayerInventory);
