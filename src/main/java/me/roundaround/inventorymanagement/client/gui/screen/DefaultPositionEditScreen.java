@@ -129,7 +129,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     // TODO: Clean this up
     matrixStack.push();
     matrixStack.translate(getX(), getY(), -51);
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
     drawTexture(matrixStack, 0, 0, 0, 0, BACKGROUND_WIDTH, 3 * 18 + 17);

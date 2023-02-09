@@ -119,11 +119,11 @@ public class InventoryButtonsManager {
 
               ZipResourcePack zipPack = (ZipResourcePack) pack;
 
-              if (!zipPack.containsFile("Selected Packs.txt")) {
+              if (zipPack.openRoot("Selected Packs.txt") == null) {
                 return;
               }
 
-              try (InputStream stream = zipPack.openRoot("Selected Packs.txt")) {
+              try (InputStream stream = zipPack.openRoot("Selected Packs.txt").get()) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                 if (stream != null) {
                   String str = "";

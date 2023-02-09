@@ -9,8 +9,6 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 
 public class AutoStackButton extends InventoryManagementButton {
-  private final boolean fromPlayerInventory;
-
   public AutoStackButton(
       HandledScreen<?> parent,
       Inventory inventory,
@@ -26,8 +24,8 @@ public class AutoStackButton extends InventoryManagementButton {
         fromPlayerInventory,
         (button) -> {
           AutoStackPacket.sendToServer(fromPlayerInventory);
-        });
-    this.fromPlayerInventory = fromPlayerInventory;
+        },
+        getTooltip(fromPlayerInventory));
   }
 
   public AutoStackButton(
@@ -45,12 +43,11 @@ public class AutoStackButton extends InventoryManagementButton {
         fromPlayerInventory,
         (button) -> {
           AutoStackPacket.sendToServer(fromPlayerInventory);
-        });
-    this.fromPlayerInventory = fromPlayerInventory;
+        },
+        getTooltip(fromPlayerInventory));
   }
 
-  @Override
-  protected Text getTooltip() {
+  private static Text getTooltip(boolean fromPlayerInventory) {
     String key = fromPlayerInventory
         ? "inventorymanagement.button.autostack_into"
         : "inventorymanagement.button.autostack_from";

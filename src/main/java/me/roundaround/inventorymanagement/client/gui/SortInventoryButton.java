@@ -9,8 +9,6 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 
 public class SortInventoryButton extends InventoryManagementButton {
-  private final boolean isPlayerInventory;
-
   public SortInventoryButton(
       HandledScreen<?> parent,
       Inventory inventory,
@@ -26,8 +24,8 @@ public class SortInventoryButton extends InventoryManagementButton {
         isPlayerInventory,
         (button) -> {
           SortInventoryPacket.sendToServer(isPlayerInventory);
-        });
-    this.isPlayerInventory = isPlayerInventory;
+        },
+        getTooltip(isPlayerInventory));
   }
 
   public SortInventoryButton(
@@ -45,12 +43,11 @@ public class SortInventoryButton extends InventoryManagementButton {
         isPlayerInventory,
         (button) -> {
           SortInventoryPacket.sendToServer(isPlayerInventory);
-        });
-    this.isPlayerInventory = isPlayerInventory;
+        },
+        getTooltip(isPlayerInventory));
   }
 
-  @Override
-  protected Text getTooltip() {
+  private static Text getTooltip(boolean isPlayerInventory) {
     String key = isPlayerInventory
         ? "inventorymanagement.button.sort_player"
         : "inventorymanagement.button.sort_container";

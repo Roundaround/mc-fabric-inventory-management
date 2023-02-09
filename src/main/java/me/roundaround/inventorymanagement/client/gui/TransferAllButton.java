@@ -9,8 +9,6 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 
 public class TransferAllButton extends InventoryManagementButton {
-  private final boolean fromPlayerInventory;
-
   public TransferAllButton(
       HandledScreen<?> parent,
       Inventory inventory,
@@ -26,8 +24,8 @@ public class TransferAllButton extends InventoryManagementButton {
         fromPlayerInventory,
         (button) -> {
           TransferAllPacket.sendToServer(fromPlayerInventory);
-        });
-    this.fromPlayerInventory = fromPlayerInventory;
+        },
+        getTooltip(fromPlayerInventory));
   }
 
   public TransferAllButton(
@@ -45,12 +43,11 @@ public class TransferAllButton extends InventoryManagementButton {
         fromPlayerInventory,
         (button) -> {
           TransferAllPacket.sendToServer(fromPlayerInventory);
-        });
-    this.fromPlayerInventory = fromPlayerInventory;
+        },
+        getTooltip(fromPlayerInventory));
   }
 
-  @Override
-  protected Text getTooltip() {
+  private static Text getTooltip(boolean fromPlayerInventory) {
     String key = fromPlayerInventory
         ? "inventorymanagement.button.transfer_place"
         : "inventorymanagement.button.transfer_take";
