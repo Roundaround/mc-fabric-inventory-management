@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import me.roundaround.roundalib.config.ModConfig;
 import me.roundaround.roundalib.config.option.ConfigOption;
 import me.roundaround.roundalib.config.value.Position;
 import me.roundaround.roundalib.shadow.nightconfig.core.Config;
@@ -81,21 +82,21 @@ public class PerScreenPositionConfigOption
     return new PerScreenPositionConfigOption(this);
   }
 
-  public static Builder builder(String id, String labelI18nKey) {
-    return new Builder(id, labelI18nKey);
+  public static Builder builder(ModConfig config, String id, String labelI18nKey) {
+    return new Builder(config, id, labelI18nKey);
   }
 
-  public static Builder builder(String id, Text label) {
-    return new Builder(id, label);
+  public static Builder builder(ModConfig config, String id, Text label) {
+    return new Builder(config, id, label);
   }
 
-  public static class Builder extends ConfigOption.Builder<Map<String, Position>, Builder> {
-    public Builder(String id, Text label) {
-      super(id, label, new HashMap<>());
+  public static class Builder extends ConfigOption.AbstractBuilder<Map<String, Position>, Builder> {
+    private Builder(ModConfig config, String id, Text label) {
+      super(config, id, label, new HashMap<String, Position>());
     }
 
-    public Builder(String id, String labelI18nKey) {
-      super(id, labelI18nKey, new HashMap<>());
+    private Builder(ModConfig config, String id, String labelI18nKey) {
+      super(config, id, labelI18nKey, new HashMap<>());
     }
 
     public Builder addDefaultEntry(String key, Position position) {

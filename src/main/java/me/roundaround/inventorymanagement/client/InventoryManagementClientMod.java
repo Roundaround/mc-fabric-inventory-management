@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.client;
 
+import me.roundaround.inventorymanagement.event.HandleScreenInputCallback;
 import org.lwjgl.glfw.GLFW;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
@@ -12,7 +13,6 @@ import me.roundaround.roundalib.config.gui.control.SubScreenControl;
 import me.roundaround.roundalib.config.gui.control.ControlFactoryRegistry.RegistrationException;
 import me.roundaround.roundalib.config.gui.widget.OptionRowWidget;
 import me.roundaround.roundalib.config.option.PositionConfigOption;
-import me.roundaround.roundalib.event.HandleScreenInputCallback;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;

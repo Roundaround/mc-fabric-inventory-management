@@ -1,7 +1,5 @@
 package me.roundaround.inventorymanagement.client.gui.screen;
 
-import java.util.LinkedList;
-
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
@@ -13,6 +11,8 @@ import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+
+import java.util.LinkedList;
 
 public class PerScreenPositionEditScreen extends PositionEditScreen {
   private final LinkedList<InventoryManagementButton> buttons = new LinkedList<>();
@@ -33,6 +33,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
         .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
     PositionConfigOption dummyConfig = PositionConfigOption
         .builder(
+            InventoryManagementMod.CONFIG,
             InventoryManagementMod.CONFIG.SCREEN_POSITIONS.getScreenKey(parent, isPlayerInventory),
             "",
             InventoryManagementMod.CONFIG.DEFAULT_POSITION.getDefault())

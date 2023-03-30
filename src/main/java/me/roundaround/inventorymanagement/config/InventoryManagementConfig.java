@@ -22,31 +22,31 @@ public class InventoryManagementConfig extends ModConfig {
 
     MOD_ENABLED = registerConfigOption(
         BooleanConfigOption
-            .builder("modEnabled", "inventorymanagement.mod_enabled.label")
+            .builder(this, "modEnabled", this.i18n("mod_enabled.label"))
             .setComment("Simple toggle for the mod! Set to false to disable.")
             .build());
 
     SHOW_SORT = registerConfigOption(
         BooleanConfigOption
-            .yesNoBuilder("showSort", "inventorymanagement.show_sort.label")
+            .yesNoBuilder(this, "showSort", this.i18n("show_sort.label"))
             .setComment("Whether or not to show sort buttons in the UI.")
             .build());
 
     SHOW_TRANSFER = registerConfigOption(
         BooleanConfigOption
-            .yesNoBuilder("showTransfer", "inventorymanagement.show_transfer.label")
+            .yesNoBuilder(this, "showTransfer", this.i18n("show_transfer.label"))
             .setComment("Whether or not to show transfer buttons in the UI.")
             .build());
 
     SHOW_STACK = registerConfigOption(
         BooleanConfigOption
-            .yesNoBuilder("showStack", "inventorymanagement.show_stack.label")
+            .yesNoBuilder(this, "showStack", this.i18n("show_stack.label"))
             .setComment("Whether or not to show autostack buttons in the UI.")
             .build());
 
     GUI_THEME = registerConfigOption(
         OptionListConfigOption
-            .builder("guiTheme", "inventorymanagement.gui_theme.label", GuiTheme.getDefault())
+            .builder(this, "guiTheme", this.i18n("gui_theme.label"), GuiTheme.getDefault())
             .setComment("Whether the buttons should use light theme (vanilla),",
                 "dark theme (VanillaTweaks dark UI), or automatically choose ",
                 "based on whether you have VanillaTweaks dark UI enabled.")
@@ -54,7 +54,7 @@ public class InventoryManagementConfig extends ModConfig {
 
     DEFAULT_POSITION = registerConfigOption(
         PositionConfigOption
-            .builder("defaultPosition", "inventorymanagement.default_position.label", new Position(-4, -1))
+            .builder(this, "defaultPosition", this.i18n("default_position.label"), new Position(-4, -1))
             .setDisabledSupplier(() -> {
               return !SHOW_SORT.getValue() && !SHOW_TRANSFER.getValue() && !SHOW_STACK.getValue();
             })
@@ -63,9 +63,13 @@ public class InventoryManagementConfig extends ModConfig {
 
     SCREEN_POSITIONS = registerConfigOption(
         PerScreenPositionConfigOption
-            .builder("screenPositions", "inventorymanagement.screen_positions.label")
+            .builder(this, "screenPositions", this.i18n("screen_positions.label"))
             .hideFromConfigScreen()
             .setComment("Customize button position on a per-screen basis.")
             .build());
+  }
+  
+  private String i18n(String key) {
+    return this.getModId() + "." + key;
   }
 }
