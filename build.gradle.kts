@@ -4,17 +4,15 @@ plugins {
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
+group = project.property("maven_group").toString()
+version = project.property("mod_version").toString()
+
 val targetJavaVersion = 17
 val fullVersion = project.property("mod_version").toString() + "+" + project.property("minecraft_version").toString()
 
-val zipped by configurations.creating {
+val roundalibResources by configurations.creating {
   isCanBeConsumed = true
   isCanBeResolved = true
-}
-
-configurations.configureEach {
-  version = project.property("mod_version").toString()
-  group = project.property("maven_group").toString()
 }
 
 repositories {
@@ -32,12 +30,12 @@ dependencies {
 
   modImplementation("me.roundaround:roundalib:${project.property("roundalib_version")}")
   shadow("me.roundaround:roundalib:${project.property("roundalib_version")}")
-  zipped(
-    group = "me.roundaround",
-    name = "roundalib",
-    version = project.property("roundalib_version").toString(),
-    classifier = "resources",
-    ext = "zip"
+  roundalibResources(
+      group = "me.roundaround",
+      name = "roundalib",
+      version = project.property("roundalib_version").toString(),
+      classifier = "resources",
+      ext = "zip"
   )
 }
 
@@ -59,16 +57,21 @@ tasks.jar {
   }
 }
 
+tasks.create<Copy>("copyRoundaLibTextures") {
+  from(zipTree(roundalibResources.singleFile).files.filter {
+    it.path.contains("roundalib/textures/")
+  })
+
+  into(sourceSets.main.get().output.resourcesDir.toString() + "/assets/" + project.property("archive_base_name") + "/textures")
+}
+
 tasks.processResources {
+  dependsOn(tasks.named("copyRoundaLibTextures"))
+
   inputs.property("version", project.version)
 
   filesMatching("fabric.mod.json") {
     expand("version" to project.version)
-  }
-
-  from(zipTree(zipped.singleFile.absolutePath).asPath) {
-    include("*/**")
-    into(layout.buildDirectory.dir("resources/imported"))
   }
 }
 
