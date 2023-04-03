@@ -4,5 +4,5 @@ pluginManagement {
     maven("https://maven.fabricmc.net/")
   }
 
-  includeBuild("../../roundalib-gradle")
+  includeBuild("../mc-roundalib-gradle")
 }
