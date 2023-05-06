@@ -3,8 +3,8 @@ package me.roundaround.inventorymanagement.client.gui.screen;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
-import me.roundaround.roundalib.config.gui.GuiUtil;
-import me.roundaround.roundalib.config.gui.screen.PositionEditScreen;
+import me.roundaround.roundalib.client.gui.GuiUtil;
+import me.roundaround.roundalib.client.gui.screen.PositionEditScreen;
 import me.roundaround.roundalib.config.option.PositionConfigOption;
 import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
@@ -17,27 +17,24 @@ import java.util.LinkedList;
 public class PerScreenPositionEditScreen extends PositionEditScreen {
   private final LinkedList<InventoryManagementButton> buttons = new LinkedList<>();
 
-  private boolean isPlayerInventory;
+  private final boolean isPlayerInventory;
 
   public PerScreenPositionEditScreen(Screen parent, boolean isPlayerInventory) {
-    super(
-        Text.translatable("inventorymanagement.position_edit.title"),
+    super(Text.translatable("inventorymanagement.position_edit.title"),
         parent,
         generateDummyConfigOption(parent, isPlayerInventory));
     this.isPlayerInventory = isPlayerInventory;
   }
 
-  private static PositionConfigOption generateDummyConfigOption(Screen parent, boolean isPlayerInventory) {
-    Position currentValue = InventoryManagementMod.CONFIG.SCREEN_POSITIONS
-        .get(parent, isPlayerInventory)
-        .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
-    PositionConfigOption dummyConfig = PositionConfigOption
-        .builder(
-            InventoryManagementMod.CONFIG,
-            InventoryManagementMod.CONFIG.SCREEN_POSITIONS.getScreenKey(parent, isPlayerInventory),
-            "",
-            InventoryManagementMod.CONFIG.DEFAULT_POSITION.getDefault())
-        .build();
+  private static PositionConfigOption generateDummyConfigOption(
+      Screen parent, boolean isPlayerInventory) {
+    Position currentValue =
+        InventoryManagementMod.CONFIG.SCREEN_POSITIONS.get(parent, isPlayerInventory)
+            .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
+    PositionConfigOption dummyConfig = PositionConfigOption.builder(InventoryManagementMod.CONFIG,
+        InventoryManagementMod.CONFIG.SCREEN_POSITIONS.getScreenKey(parent, isPlayerInventory),
+        "",
+        InventoryManagementMod.CONFIG.DEFAULT_POSITION.getDefault()).build();
     dummyConfig.setValue(currentValue);
     return dummyConfig;
   }
@@ -77,18 +74,19 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   }
 
   @Override
-  protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+  protected void renderBackground(
+      MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
     renderDarkenBackground(matrixStack, mouseX, mouseY, partialTicks);
   }
 
   @Override
-  protected void renderContent(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+  protected void renderContent(
+      MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
     super.renderContent(matrixStack, mouseX, mouseY, partialTicks);
 
     buttons.forEach((button) -> button.render(matrixStack, mouseX, mouseY, partialTicks));
 
-    drawTextWithShadow(
-        matrixStack,
+    drawTextWithShadow(matrixStack,
         textRenderer,
         Text.literal(getValue().toString()),
         4,

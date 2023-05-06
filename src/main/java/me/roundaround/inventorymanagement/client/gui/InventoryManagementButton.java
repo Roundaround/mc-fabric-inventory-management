@@ -2,12 +2,11 @@ package me.roundaround.inventorymanagement.client.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
-import me.roundaround.roundalib.config.gui.GuiUtil;
+import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
