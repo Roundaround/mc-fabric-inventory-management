@@ -128,7 +128,7 @@ public class InventoryButtonsManager {
                 if (stream != null) {
                   String str = "";
                   while ((str = reader.readLine()) != null) {
-                    if (str.trim().equals("DarkUI")) {
+                    if (str.trim().startsWith("DarkUI")) {
                       darkUiDetected = true;
                       break;
                     }

@@ -16,6 +16,8 @@ public final class InventoryManagementMod implements ModInitializer {
 
   @Override
   public void onInitialize() {
+    CONFIG.init();
+
     SortInventoryPacket.registerReceive();
     AutoStackPacket.registerReceive();
     TransferAllPacket.registerReceive();
