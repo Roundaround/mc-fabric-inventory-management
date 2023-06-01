@@ -1,10 +1,5 @@
 package me.roundaround.inventorymanagement.inventory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
-
 import me.roundaround.inventorymanagement.inventory.sorting.ItemStackComparator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -13,10 +8,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.HorseScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+
 public class InventoryHelper {
   public static void sortInventory(PlayerEntity player, boolean isPlayerInventory) {
     Inventory containerInventory = getContainerInventory(player);
-    Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
+    Inventory inventory = isPlayerInventory || containerInventory == null
+        ? player.getInventory()
+        : containerInventory;
 
     if (inventory instanceof PlayerInventory) {
       sortInventory(inventory, SlotRange.playerMainRange());
@@ -103,8 +105,7 @@ public class InventoryHelper {
     }
 
     if (fromPlayerInventory) {
-      transferEntireInventory(
-          playerInventory,
+      transferEntireInventory(playerInventory,
           containerInventory,
           playerSlotRange,
           containerSlotRange,
@@ -112,8 +113,7 @@ public class InventoryHelper {
           player.currentScreenHandler,
           player);
     } else {
-      transferEntireInventory(
-          containerInventory,
+      transferEntireInventory(containerInventory,
           playerInventory,
           containerSlotRange,
           playerSlotRange,
@@ -124,25 +124,13 @@ public class InventoryHelper {
   }
 
   private static void autoStackInventories(
-      Inventory from,
-      Inventory to,
-      PlayerEntity player) {
-    autoStackInventories(
-        from,
-        to,
-        SlotRange.fullRange(from),
-        SlotRange.fullRange(to),
-        player);
+      Inventory from, Inventory to, PlayerEntity player) {
+    autoStackInventories(from, to, SlotRange.fullRange(from), SlotRange.fullRange(to), player);
   }
 
   private static void autoStackInventories(
-      Inventory from,
-      Inventory to,
-      SlotRange fromRange,
-      SlotRange toRange,
-      PlayerEntity player) {
-    transferEntireInventory(
-        from,
+      Inventory from, Inventory to, SlotRange fromRange, SlotRange toRange, PlayerEntity player) {
+    transferEntireInventory(from,
         to,
         fromRange,
         toRange,
@@ -157,15 +145,7 @@ public class InventoryHelper {
       SlotRange toRange,
       BiFunction<ItemStack, ItemStack, Boolean> predicate,
       PlayerEntity player) {
-    transferEntireInventory(
-        from,
-        to,
-        fromRange,
-        toRange,
-        predicate,
-        null,
-        null,
-        player);
+    transferEntireInventory(from, to, fromRange, toRange, predicate, null, null, player);
   }
 
   private static void transferEntireInventory(
@@ -176,8 +156,7 @@ public class InventoryHelper {
       ScreenHandler fromScreenHandler,
       ScreenHandler toScreenHandler,
       PlayerEntity player) {
-    transferEntireInventory(
-        from,
+    transferEntireInventory(from,
         to,
         fromRange,
         toRange,
@@ -235,7 +214,8 @@ public class InventoryHelper {
     }
   }
 
-  private static boolean canTakeItemFromSlot(ScreenHandler screenHandler, int idx, PlayerEntity player) {
+  private static boolean canTakeItemFromSlot(
+      ScreenHandler screenHandler, int idx, PlayerEntity player) {
     if (screenHandler == null) {
       return true;
     }
@@ -246,7 +226,8 @@ public class InventoryHelper {
     }
   }
 
-  private static boolean canPlaceItemInSlot(ScreenHandler screenHandler, int idx, ItemStack itemStack) {
+  private static boolean canPlaceItemInSlot(
+      ScreenHandler screenHandler, int idx, ItemStack itemStack) {
     if (screenHandler == null) {
       return true;
     }
@@ -271,9 +252,7 @@ public class InventoryHelper {
   }
 
   public static boolean areItemStacksMergeable(ItemStack a, ItemStack b) {
-    return !a.isEmpty() && !b.isEmpty() &&
-        a.getItem() == b.getItem() &&
-        ItemStack.areNbtEqual(a, b);
+    return !a.isEmpty() && !b.isEmpty() && ItemStack.canCombine(a, b);
   }
 
   static class SlotRange {

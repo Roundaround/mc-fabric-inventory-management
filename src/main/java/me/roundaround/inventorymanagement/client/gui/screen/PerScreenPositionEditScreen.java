@@ -8,6 +8,7 @@ import me.roundaround.roundalib.client.gui.screen.PositionEditScreen;
 import me.roundaround.roundalib.config.option.PositionConfigOption;
 import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -64,30 +65,30 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   }
 
   @Override
-  public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+  public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+    MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(0, 0, -51);
-    parent.render(matrixStack, mouseX, mouseY, partialTicks);
+    parent.render(drawContext, mouseX, mouseY, partialTicks);
     matrixStack.pop();
 
-    super.render(matrixStack, mouseX, mouseY, partialTicks);
+    super.render(drawContext, mouseX, mouseY, partialTicks);
   }
 
   @Override
   protected void renderBackground(
-      MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-    renderDarkenBackground(matrixStack, mouseX, mouseY, partialTicks);
+      DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+    renderDarkenBackground(drawContext, mouseX, mouseY, partialTicks);
   }
 
   @Override
   protected void renderContent(
-      MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-    super.renderContent(matrixStack, mouseX, mouseY, partialTicks);
+      DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+    super.renderContent(drawContext, mouseX, mouseY, partialTicks);
 
-    buttons.forEach((button) -> button.render(matrixStack, mouseX, mouseY, partialTicks));
+    buttons.forEach((button) -> button.render(drawContext, mouseX, mouseY, partialTicks));
 
-    drawTextWithShadow(matrixStack,
-        textRenderer,
+    drawContext.drawTextWithShadow(textRenderer,
         Text.literal(getValue().toString()),
         4,
         4,

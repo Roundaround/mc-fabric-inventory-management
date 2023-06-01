@@ -13,6 +13,7 @@ import me.roundaround.roundalib.client.gui.screen.PositionEditScreen;
 import me.roundaround.roundalib.client.gui.widget.config.SubScreenControl;
 import me.roundaround.roundalib.config.option.PositionConfigOption;
 import me.roundaround.roundalib.config.value.Position;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -125,38 +126,38 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
 
   @Override
   protected void renderBackground(
-      MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-    renderTextureBackground(matrixStack, mouseX, mouseY, partialTicks);
+      DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+    renderTextureBackground(drawContext, mouseX, mouseY, partialTicks);
 
     // TODO: Clean this up
+    MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(getX(), getY(), -51);
     RenderSystem.setShader(GameRenderer::getPositionTexProgram);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-    RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-    drawTexture(matrixStack, 0, 0, 0, 0, BACKGROUND_WIDTH, 3 * 18 + 17);
-    drawTexture(matrixStack, 0, 3 * 18 + 17, 0, 126, BACKGROUND_WIDTH, 96);
-    textRenderer.draw(matrixStack, Text.translatable("container.chest"), 8, 6, 0x404040);
-    textRenderer.draw(matrixStack,
+    drawContext.drawTexture(BACKGROUND_TEXTURE, 0, 0, 0, 0, BACKGROUND_WIDTH, 3 * 18 + 17);
+    drawContext.drawTexture(BACKGROUND_TEXTURE, 0, 3 * 18 + 17, 0, 126, BACKGROUND_WIDTH, 96);
+    drawContext.drawText(textRenderer, Text.translatable("container.chest"), 8, 6, 0x404040, false);
+    drawContext.drawText(textRenderer,
         Text.translatable("container.inventory"),
         8,
         BACKGROUND_HEIGHT - 94,
-        0x404040);
+        0x404040,
+        false);
     matrixStack.pop();
 
-    renderDarkenBackground(matrixStack, mouseX, mouseY, partialTicks);
+    renderDarkenBackground(drawContext, mouseX, mouseY, partialTicks);
   }
 
   @Override
   protected void renderContent(
-      MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-    super.renderContent(matrixStack, mouseX, mouseY, partialTicks);
+      DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
+    super.renderContent(drawContext, mouseX, mouseY, partialTicks);
 
-    containerButtons.forEach((button) -> button.render(matrixStack, mouseX, mouseY, partialTicks));
-    playerButtons.forEach((button) -> button.render(matrixStack, mouseX, mouseY, partialTicks));
+    containerButtons.forEach((button) -> button.render(drawContext, mouseX, mouseY, partialTicks));
+    playerButtons.forEach((button) -> button.render(drawContext, mouseX, mouseY, partialTicks));
 
-    drawTextWithShadow(matrixStack,
-        textRenderer,
+    drawContext.drawTextWithShadow(textRenderer,
         Text.literal(getValue().toString()),
         4,
         4,

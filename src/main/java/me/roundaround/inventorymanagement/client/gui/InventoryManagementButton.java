@@ -8,12 +8,12 @@ import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEdi
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.config.value.Position;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
@@ -23,7 +23,8 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   public static final int WIDTH = 14;
   public static final int HEIGHT = 14;
 
-  private static final Identifier TEXTURE = new Identifier(InventoryManagementMod.MOD_ID, "textures/gui.png");
+  private static final Identifier TEXTURE =
+      new Identifier(InventoryManagementMod.MOD_ID, "textures/gui.png");
 
   private final HandledScreenAccessor parent;
   private final Slot referenceSlot;
@@ -40,13 +41,9 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       boolean isPlayerInventory,
       PressAction onPress,
       Text tooltip) {
-    super(
-        ((HandledScreenAccessor) parent).getX()
-            + ((HandledScreenAccessor) parent).getBackgroundWidth()
-            + offset.x(),
-        ((HandledScreenAccessor) parent).getY()
-            + referenceSlot.y
-            + offset.y(),
+    super(((HandledScreenAccessor) parent).getX() +
+            ((HandledScreenAccessor) parent).getBackgroundWidth() + offset.x(),
+        ((HandledScreenAccessor) parent).getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
         Text.literal(""),
@@ -77,8 +74,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       boolean isPlayerInventory,
       PressAction onPress,
       Text tooltip) {
-    super(
-        parent.getX() + parent.getBackgroundWidth() + offset.x(),
+    super(parent.getX() + parent.getBackgroundWidth() + offset.x(),
         parent.getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
@@ -100,28 +96,27 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   }
 
   @Override
-  public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+  public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
     setX(parent.getX() + parent.getBackgroundWidth() + offset.x());
     setY(parent.getY() + referenceSlot.y + offset.y());
 
-    super.render(matrices, mouseX, mouseY, delta);
+    super.render(drawContext, mouseX, mouseY, delta);
   }
 
   @Override
-  public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+  public void renderButton(DrawContext drawContext, int mouseX, int mouseY, float delta) {
     RenderSystem.setShaderColor(1, 1, 1, 1);
     RenderSystem.enableBlend();
-    RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+    RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA,
+        GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
     RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-    RenderSystem.setShaderTexture(0, TEXTURE);
     RenderSystem.applyModelViewMatrix();
     RenderSystem.enableDepthTest();
 
     int u = iconOffset.x() * width;
-    int v = iconOffset.y() * height
-        + (isHovered() || isFocused() ? height : 0)
-        + (InventoryButtonsManager.INSTANCE.usingDarkMode() ? height * 2 : 0);
+    int v = iconOffset.y() * height + (isHovered() || isFocused() ? height : 0) +
+        (InventoryButtonsManager.INSTANCE.usingDarkMode() ? height * 2 : 0);
 
-    drawTexture(matrices, getX(), getY(), u, v, WIDTH, HEIGHT);
+    drawContext.drawTexture(TEXTURE, getX(), getY(), u, v, WIDTH, HEIGHT);
   }
 }
