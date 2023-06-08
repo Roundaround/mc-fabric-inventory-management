@@ -11,6 +11,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
+import java.util.Objects;
+
 public class ConfigControlRegister {
   private static final MinecraftClient client = MinecraftClient.getInstance();
 
@@ -35,9 +37,10 @@ public class ConfigControlRegister {
         .getValue()
         .toString()));
 
-    parent.getOption().subscribeToValueChanges(client.currentScreen, (prev, curr) -> {
-      ((ButtonWidget) control.children().get(0)).setMessage(Text.literal(curr.toString()));
-    });
+    parent.getOption()
+        .subscribeToValueChanges(Objects.requireNonNull(client.currentScreen).hashCode(),
+            (prev, curr) -> ((ButtonWidget) control.children()
+                .get(0)).setMessage(Text.literal(curr.toString())));
 
     return control;
   }
