@@ -15,7 +15,6 @@ public class InventoryManagementConfig extends ModConfig {
   public final BooleanConfigOption SHOW_SORT;
   public final BooleanConfigOption SHOW_TRANSFER;
   public final BooleanConfigOption SHOW_STACK;
-  public final OptionListConfigOption<GuiTheme> GUI_THEME;
   public final PositionConfigOption DEFAULT_POSITION;
   public final PerScreenPositionConfigOption SCREEN_POSITIONS;
 
@@ -44,16 +43,6 @@ public class InventoryManagementConfig extends ModConfig {
             "showStack",
             this.i18n("show_stack.label"))
         .setComment("Whether or not to show autostack buttons in the UI.")
-        .build());
-
-    GUI_THEME = registerConfigOption(OptionListConfigOption.builder(this,
-            "guiTheme",
-            this.i18n("gui_theme.label"),
-            Arrays.asList(GuiTheme.values()),
-            GuiTheme.getDefault())
-        .setComment("Whether the buttons should use light theme (vanilla),",
-            "dark theme (VanillaTweaks dark UI), or automatically choose ",
-            "based on whether you have VanillaTweaks dark UI enabled.")
         .build());
 
     DEFAULT_POSITION = registerConfigOption(PositionConfigOption.builder(this,

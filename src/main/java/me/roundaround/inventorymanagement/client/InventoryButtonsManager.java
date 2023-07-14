@@ -1,14 +1,5 @@
 package me.roundaround.inventorymanagement.client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.gui.AutoStackButton;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
@@ -20,8 +11,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -32,16 +21,13 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.resource.ZipResourcePack;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.HopperScreenHandler;
-import net.minecraft.screen.HorseScreenHandler;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ShulkerBoxScreenHandler;
+import net.minecraft.screen.*;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.Identifier;
+
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 @Environment(EnvType.CLIENT)
 public class InventoryButtonsManager {
@@ -57,9 +43,8 @@ public class InventoryButtonsManager {
   private final HashSet<Class<? extends Inventory>> sortableInventories = new HashSet<>();
   private final HashSet<Class<? extends Inventory>> transerableInventories = new HashSet<>();
   private final HashSet<Class<? extends ScreenHandler>> sortableScreenHandlers = new HashSet<>();
-  private final HashSet<Class<? extends ScreenHandler>> transferableScreenHandlers = new HashSet<>();
-
-  private boolean darkUiDetected = false;
+  private final HashSet<Class<? extends ScreenHandler>> transferableScreenHandlers =
+      new HashSet<>();
 
   private InventoryButtonsManager() {
     registerSortableContainer(PlayerInventory.class);
@@ -98,62 +83,10 @@ public class InventoryButtonsManager {
 
   public void init() {
     ScreenEvents.AFTER_INIT.register(this::onScreenAfterInit);
-
-    // Detect Vanilla Tweaks dark UI and automatically adjust textures to match
-    // if it is loaded
-    ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
-        .registerReloadListener(new SimpleSynchronousResourceReloadListener() {
-          @Override
-          public Identifier getFabricId() {
-            return new Identifier(InventoryManagementMod.MOD_ID, "resource_pack_loader");
-          }
-
-          @Override
-          public void reload(ResourceManager manager) {
-            darkUiDetected = false;
-
-            manager.streamResourcePacks().forEach((pack) -> {
-              if (!(pack instanceof ZipResourcePack)) {
-                return;
-              }
-
-              ZipResourcePack zipPack = (ZipResourcePack) pack;
-
-              if (zipPack.openRoot("Selected Packs.txt") == null) {
-                return;
-              }
-
-              try (InputStream stream = zipPack.openRoot("Selected Packs.txt").get()) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-                if (stream != null) {
-                  String str = "";
-                  while ((str = reader.readLine()) != null) {
-                    if (str.trim().startsWith("DarkUI")) {
-                      darkUiDetected = true;
-                      break;
-                    }
-                  }
-                }
-              } catch (IOException e) {
-
-              }
-            });
-          }
-        });
   }
 
-  public boolean usingDarkMode() {
-    switch (InventoryManagementMod.CONFIG.GUI_THEME.getValue()) {
-      case LIGHT:
-        return false;
-      case DARK:
-        return true;
-      default:
-        return darkUiDetected;
-    }
-  }
-
-  private void onScreenAfterInit(MinecraftClient client, Screen screen, float scaledWidth, float scaledHeight) {
+  private void onScreenAfterInit(
+      MinecraftClient client, Screen screen, float scaledWidth, float scaledHeight) {
     if (!(screen instanceof HandledScreen)) {
       return;
     }
@@ -175,8 +108,8 @@ public class InventoryButtonsManager {
   }
 
   private void generateSortButton(HandledScreen<?> screen, boolean isPlayerInventory) {
-    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()
-        || !InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
+    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue() ||
+        !InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
       return;
     }
 
@@ -194,13 +127,15 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Inventory inventory = isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
+    Inventory inventory =
+        isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
     if (inventory == null) {
       return;
     }
 
     if (inventory instanceof SimpleInventory) {
-      if (sortableScreenHandlers.stream().noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
+      if (sortableScreenHandlers.stream()
+          .noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
         return;
       }
     } else {
@@ -214,18 +149,14 @@ public class InventoryButtonsManager {
     }
 
     Position position = getButtonPosition(screen, isPlayerInventory);
-    SortInventoryButton button = new SortInventoryButton(
-        screen,
-        inventory,
-        referenceSlot,
-        position,
-        isPlayerInventory);
+    SortInventoryButton button =
+        new SortInventoryButton(screen, inventory, referenceSlot, position, isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
   private void generateAutoStackButton(HandledScreen<?> screen, boolean isPlayerInventory) {
-    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()
-        || !InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
+    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue() ||
+        !InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
       return;
     }
 
@@ -243,14 +174,17 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Inventory fromInventory = isPlayerInventory ? InventoryHelper.getContainerInventory(player) : player.getInventory();
-    Inventory toInventory = isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
+    Inventory fromInventory =
+        isPlayerInventory ? InventoryHelper.getContainerInventory(player) : player.getInventory();
+    Inventory toInventory =
+        isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
     if (fromInventory == null || toInventory == null || fromInventory == toInventory) {
       return;
     }
 
     if (fromInventory instanceof SimpleInventory) {
-      if (transferableScreenHandlers.stream().noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
+      if (transferableScreenHandlers.stream()
+          .noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
         return;
       }
     } else {
@@ -260,7 +194,8 @@ public class InventoryButtonsManager {
     }
 
     if (toInventory instanceof SimpleInventory) {
-      if (transferableScreenHandlers.stream().noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
+      if (transferableScreenHandlers.stream()
+          .noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
         return;
       }
     } else {
@@ -274,18 +209,14 @@ public class InventoryButtonsManager {
     }
 
     Position position = getButtonPosition(screen, isPlayerInventory);
-    AutoStackButton button = new AutoStackButton(
-        screen,
-        fromInventory,
-        referenceSlot,
-        position,
-        isPlayerInventory);
+    AutoStackButton button =
+        new AutoStackButton(screen, fromInventory, referenceSlot, position, isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
   private void generateTransferAllButton(HandledScreen<?> screen, boolean isPlayerInventory) {
-    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()
-        || !InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
+    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue() ||
+        !InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
       return;
     }
 
@@ -303,14 +234,17 @@ public class InventoryButtonsManager {
       return;
     }
 
-    Inventory fromInventory = isPlayerInventory ? InventoryHelper.getContainerInventory(player) : player.getInventory();
-    Inventory toInventory = isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
+    Inventory fromInventory =
+        isPlayerInventory ? InventoryHelper.getContainerInventory(player) : player.getInventory();
+    Inventory toInventory =
+        isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
     if (fromInventory == null || toInventory == null || fromInventory == toInventory) {
       return;
     }
 
     if (fromInventory instanceof SimpleInventory) {
-      if (transferableScreenHandlers.stream().noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
+      if (transferableScreenHandlers.stream()
+          .noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
         return;
       }
     } else {
@@ -320,7 +254,8 @@ public class InventoryButtonsManager {
     }
 
     if (toInventory instanceof SimpleInventory) {
-      if (transferableScreenHandlers.stream().noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
+      if (transferableScreenHandlers.stream()
+          .noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
         return;
       }
     } else {
@@ -334,16 +269,13 @@ public class InventoryButtonsManager {
     }
 
     Position position = getButtonPosition(screen, isPlayerInventory);
-    TransferAllButton button = new TransferAllButton(
-        screen,
-        fromInventory,
-        referenceSlot,
-        position,
-        isPlayerInventory);
+    TransferAllButton button =
+        new TransferAllButton(screen, fromInventory, referenceSlot, position, isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
-  private void addButton(HandledScreen<?> screen, InventoryManagementButton button, boolean isPlayerInventory) {
+  private void addButton(
+      HandledScreen<?> screen, InventoryManagementButton button, boolean isPlayerInventory) {
     Screens.getButtons(screen).add(button);
     (isPlayerInventory ? playerButtons : containerButtons).add(button);
   }
@@ -358,7 +290,8 @@ public class InventoryButtonsManager {
   private int getNumberOfBulkInventorySlots(HandledScreen<?> screen, boolean isPlayerInventory) {
     return screen.getScreenHandler().slots.stream()
         .filter(slot -> isPlayerInventory == (slot.inventory instanceof PlayerInventory))
-        .filter(slot -> !(screen.getScreenHandler() instanceof HorseScreenHandler) || slot.getIndex() >= 2)
+        .filter(slot -> !(screen.getScreenHandler() instanceof HorseScreenHandler) ||
+            slot.getIndex() >= 2)
         .mapToInt(slot -> 1)
         .sum();
   }
@@ -366,7 +299,8 @@ public class InventoryButtonsManager {
   private int getNumberOfNonPlayerBulkInventorySlots(HandledScreen<?> screen) {
     return screen.getScreenHandler().slots.stream()
         .filter(slot -> !(slot.inventory instanceof PlayerInventory))
-        .filter(slot -> !(screen.getScreenHandler() instanceof HorseScreenHandler) || slot.getIndex() >= 2)
+        .filter(slot -> !(screen.getScreenHandler() instanceof HorseScreenHandler) ||
+            slot.getIndex() >= 2)
         .mapToInt(slot -> 1)
         .sum();
   }
@@ -378,8 +312,10 @@ public class InventoryButtonsManager {
   }
 
   public Position getButtonPosition(int index, Position offset) {
-    int x = offset.x() + BUTTON_SHIFT_X * (InventoryManagementButton.WIDTH + BUTTON_SPACING) * index;
-    int y = offset.y() + BUTTON_SHIFT_Y * (InventoryManagementButton.HEIGHT + BUTTON_SPACING) * index;
+    int x =
+        offset.x() + BUTTON_SHIFT_X * (InventoryManagementButton.WIDTH + BUTTON_SPACING) * index;
+    int y =
+        offset.y() + BUTTON_SHIFT_Y * (InventoryManagementButton.HEIGHT + BUTTON_SPACING) * index;
 
     return new Position(x, y);
   }

@@ -3,7 +3,6 @@ package me.roundaround.inventorymanagement.client.gui;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
-import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.roundalib.client.gui.GuiUtil;
@@ -114,8 +113,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
     RenderSystem.enableDepthTest();
 
     int u = iconOffset.x() * width;
-    int v = iconOffset.y() * height + (isHovered() || isFocused() ? height : 0) +
-        (InventoryButtonsManager.INSTANCE.usingDarkMode() ? height * 2 : 0);
+    int v = iconOffset.y() * height + (isHovered() || isFocused() ? height : 0);
 
     drawContext.drawTexture(TEXTURE, getX(), getY(), u, v, WIDTH, HEIGHT);
   }

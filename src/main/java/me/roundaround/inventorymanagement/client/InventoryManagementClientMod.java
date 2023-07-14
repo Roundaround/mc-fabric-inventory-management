@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.client;
 
+import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
 import me.roundaround.inventorymanagement.compat.roundalib.ConfigControlRegister;
@@ -8,8 +9,13 @@ import me.roundaround.roundalib.client.gui.GuiUtil;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class InventoryManagementClientMod implements ClientModInitializer {
@@ -18,6 +24,15 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     InventoryButtonsManager.INSTANCE.init();
     ConfigControlRegister.init();
     initKeyBindings();
+
+    FabricLoader.getInstance()
+        .getModContainer(InventoryManagementMod.MOD_ID)
+        .ifPresent((container) -> ResourceManagerHelper.registerBuiltinResourcePack(new Identifier(
+                InventoryManagementMod.MOD_ID,
+                "inventorymanagement-dark-ui"),
+            container,
+            Text.literal("Inventory Management Dark UI"),
+            ResourcePackActivationType.NORMAL));
   }
 
   private void initKeyBindings() {
