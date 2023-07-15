@@ -22,7 +22,7 @@ public class PerScreenConfigOption
 
   @Override
   public ConfigOption<PerScreenConfig, Builder> copy() {
-    return null;
+    return new PerScreenConfigOption(this);
   }
 
   @Override
