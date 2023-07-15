@@ -5,6 +5,22 @@ import me.roundaround.roundalib.config.value.Position;
 import java.util.HashMap;
 
 public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfig> {
+  public static HashMap<String, HashMap<String, String>> serialize(PerScreenConfig config) {
+    HashMap<String, HashMap<String, String>> serialized = new HashMap<>();
+    for (Entry<String, ScreenConfig> entry : config.entrySet()) {
+      serialized.put(entry.getKey(), ScreenConfig.serialize(entry.getValue()));
+    }
+    return serialized;
+  }
+
+  public static PerScreenConfig deserialize(HashMap<String, HashMap<String, String>> serialized) {
+    PerScreenConfig config = new PerScreenConfig();
+    for (Entry<String, HashMap<String, String>> entry : serialized.entrySet()) {
+      config.put(entry.getKey(), ScreenConfig.deserialize(entry.getValue()));
+    }
+    return config;
+  }
+
   record ScreenConfig(ButtonVisibility playerSideSortVisibility,
                       ButtonVisibility playerSideTransferVisibility,
                       ButtonVisibility containerSideSortVisibility,
