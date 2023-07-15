@@ -1,9 +1,12 @@
 package me.roundaround.inventorymanagement.config.option;
 
+import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.inventorymanagement.config.value.PerScreenConfig;
 import me.roundaround.roundalib.config.ModConfig;
 import me.roundaround.roundalib.config.option.ConfigOption;
+import me.roundaround.roundalib.config.value.Position;
 import me.roundaround.roundalib.shadow.nightconfig.core.Config;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
 import java.util.HashMap;
@@ -18,6 +21,58 @@ public class PerScreenConfigOption
 
   protected PerScreenConfigOption(PerScreenConfigOption other) {
     super(other);
+  }
+
+  public void setPlayerSideSortVisibility(Screen screen, ButtonVisibility value) {
+    this.setValue(this.getValue().setPlayerSideSortVisibility(getScreenKey(screen), value));
+  }
+
+  public void clearPlayerSideSortVisibility(Screen screen) {
+    this.setValue(this.getValue().clearPlayerSideSortVisibility(getScreenKey(screen)));
+  }
+
+  public void setPlayerSideTransferVisibility(Screen screen, ButtonVisibility value) {
+    this.setValue(this.getValue().setPlayerSideTransferVisibility(getScreenKey(screen), value));
+  }
+
+  public void clearPlayerSideTransferVisibility(Screen screen) {
+    this.setValue(this.getValue().clearPlayerSideTransferVisibility(getScreenKey(screen)));
+  }
+
+  public void setContainerSideSortVisibility(Screen screen, ButtonVisibility value) {
+    this.setValue(this.getValue().setContainerSideSortVisibility(getScreenKey(screen), value));
+  }
+
+  public void clearContainerSideSortVisibility(Screen screen) {
+    this.setValue(this.getValue().clearContainerSideSortVisibility(getScreenKey(screen)));
+  }
+
+  public void setContainerSideTransferVisibility(Screen screen, ButtonVisibility value) {
+    this.setValue(this.getValue().setContainerSideTransferVisibility(getScreenKey(screen), value));
+  }
+
+  public void clearContainerSideTransferVisibility(Screen screen) {
+    this.setValue(this.getValue().clearContainerSideTransferVisibility(getScreenKey(screen)));
+  }
+
+  public void setPlayerSideOffset(Screen screen, Position position) {
+    getValue().setPlayerSideOffset(getScreenKey(screen), position);
+  }
+
+  public void clearPlayerSideOffset(Screen screen) {
+    this.setValue(this.getValue().clearPlayerSideOffset(getScreenKey(screen)));
+  }
+
+  public void setContainerSideOffset(Screen screen, Position position) {
+    getValue().setContainerSideOffset(getScreenKey(screen), position);
+  }
+
+  public void clearContainerSideOffset(Screen screen) {
+    this.setValue(this.getValue().clearContainerSideOffset(getScreenKey(screen)));
+  }
+
+  public String getScreenKey(Screen screen) {
+    return screen.getClass().getName().replaceAll("\\.", "-");
   }
 
   @Override
