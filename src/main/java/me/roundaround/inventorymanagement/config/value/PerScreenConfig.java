@@ -21,7 +21,7 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     return config;
   }
 
-  record ScreenConfig(ButtonVisibility playerSideSortVisibility,
+  public record ScreenConfig(ButtonVisibility playerSideSortVisibility,
                       ButtonVisibility playerSideTransferVisibility,
                       ButtonVisibility containerSideSortVisibility,
                       ButtonVisibility containerSideTransferVisibility,
