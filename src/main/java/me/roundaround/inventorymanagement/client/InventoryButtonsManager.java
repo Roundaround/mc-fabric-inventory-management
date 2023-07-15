@@ -1,10 +1,10 @@
 package me.roundaround.inventorymanagement.client;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
-import me.roundaround.inventorymanagement.client.gui.AutoStackButton;
-import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
-import me.roundaround.inventorymanagement.client.gui.SortInventoryButton;
-import me.roundaround.inventorymanagement.client.gui.TransferAllButton;
+import me.roundaround.inventorymanagement.client.gui.widget.button.AutoStackButton;
+import me.roundaround.inventorymanagement.client.gui.widget.button.InventoryManagementButton;
+import me.roundaround.inventorymanagement.client.gui.widget.button.SortInventoryButton;
+import me.roundaround.inventorymanagement.client.gui.widget.button.TransferAllButton;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.api.EnvType;

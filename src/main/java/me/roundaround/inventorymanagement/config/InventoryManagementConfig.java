@@ -1,14 +1,11 @@
 package me.roundaround.inventorymanagement.config;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.config.option.PerScreenPositionConfigOption;
 import me.roundaround.roundalib.config.ModConfig;
 import me.roundaround.roundalib.config.option.BooleanConfigOption;
-import me.roundaround.roundalib.config.option.OptionListConfigOption;
 import me.roundaround.roundalib.config.option.PositionConfigOption;
-import me.roundaround.roundalib.config.value.GuiTheme;
 import me.roundaround.roundalib.config.value.Position;
-
-import java.util.Arrays;
 
 public class InventoryManagementConfig extends ModConfig {
   public final BooleanConfigOption MOD_ENABLED;
