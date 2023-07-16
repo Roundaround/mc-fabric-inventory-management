@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.client.gui.screen;
 
-import me.roundaround.inventorymanagement.client.gui.widget.ConfigListWidget;
+import me.roundaround.inventorymanagement.client.gui.widget.PerScreenConfigListWidget;
+import me.roundaround.inventorymanagement.config.option.PerScreenConfigOption;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -10,10 +11,12 @@ public class PerScreenConfigScreen extends Screen {
   private static final int LIST_MIN_WIDTH = 400;
 
   private final Screen parent;
+  private final PerScreenConfigOption configOption;
 
-  public PerScreenConfigScreen(Screen parent, Text title) {
+  public PerScreenConfigScreen(Screen parent, Text title, PerScreenConfigOption configOption) {
     super(title);
     this.parent = parent;
+    this.configOption = configOption;
   }
 
   @Override
@@ -23,7 +26,13 @@ public class PerScreenConfigScreen extends Screen {
     int listHeight = this.height - 64;
     int listTop = 32;
 
-    addDrawableChild(new ConfigListWidget(this.client, listLeft, listTop, listWidth, listHeight));
+    addDrawableChild(new PerScreenConfigListWidget(this.client,
+        listLeft,
+        listTop,
+        listWidth,
+        listHeight,
+        this.configOption,
+        this.parent));
   }
 
   @Override

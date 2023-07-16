@@ -1,19 +1,33 @@
 package me.roundaround.inventorymanagement.client.gui.widget;
 
+import me.roundaround.inventorymanagement.config.option.PerScreenConfigOption;
 import me.roundaround.roundalib.client.gui.widget.LabelWidget;
 import me.roundaround.roundalib.client.gui.widget.VariableHeightListWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
 import java.util.List;
 
-public class ConfigListWidget extends VariableHeightListWidget<ConfigListWidget.Entry> {
+public class PerScreenConfigListWidget
+    extends VariableHeightListWidget<PerScreenConfigListWidget.Entry> {
+  private final PerScreenConfigOption configOption;
+  private final Screen screen;
 
-  public ConfigListWidget(
-      MinecraftClient client, int left, int top, int width, int height) {
+  public PerScreenConfigListWidget(
+      MinecraftClient client,
+      int left,
+      int top,
+      int width,
+      int height,
+      PerScreenConfigOption configOption,
+      Screen screen) {
     super(client, left, top, width, height);
+
+    this.configOption = configOption;
+    this.screen = screen;
 
     this.addEntry(new GroupEntry(this.client, this, Text.of("Enable/disable buttons")));
     this.addEntry(new GroupEntry(this.client, this, Text.of("Location")));
@@ -22,7 +36,7 @@ public class ConfigListWidget extends VariableHeightListWidget<ConfigListWidget.
   }
 
   public abstract static class Entry extends VariableHeightListWidget.Entry<Entry> {
-    protected Entry(MinecraftClient client, ConfigListWidget parent, int height) {
+    protected Entry(MinecraftClient client, PerScreenConfigListWidget parent, int height) {
       super(client, parent, height);
     }
   }
@@ -32,7 +46,7 @@ public class ConfigListWidget extends VariableHeightListWidget<ConfigListWidget.
 
     protected final LabelWidget labelWidget;
 
-    protected GroupEntry(MinecraftClient client, ConfigListWidget parent, Text label) {
+    protected GroupEntry(MinecraftClient client, PerScreenConfigListWidget parent, Text label) {
       super(client, parent, HEIGHT);
 
       this.labelWidget = LabelWidget.builder(client,

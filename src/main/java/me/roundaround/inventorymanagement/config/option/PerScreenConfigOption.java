@@ -23,6 +23,10 @@ public class PerScreenConfigOption
     super(other);
   }
 
+  public PerScreenConfig.ScreenConfig get(Screen screen) {
+    return this.getValue().get(getScreenKey(screen));
+  }
+
   public void clear(Screen screen) {
     this.setValue(this.getValue().clear(getScreenKey(screen)));
   }
@@ -115,9 +119,17 @@ public class PerScreenConfigOption
     return serialized;
   }
 
+  public static Builder builder(ModConfig config, String id, String labelI18nKey) {
+    return builder(config, id, Text.translatable(labelI18nKey));
+  }
+
+  public static Builder builder(ModConfig config, String id, Text label) {
+    return new Builder(config, id, label);
+  }
+
   public static class Builder extends ConfigOption.AbstractBuilder<PerScreenConfig, Builder> {
-    public Builder(ModConfig config, String id, Text label, PerScreenConfig defaultValue) {
-      super(config, id, label, defaultValue);
+    public Builder(ModConfig config, String id, Text label) {
+      super(config, id, label, new PerScreenConfig());
     }
 
     @Override

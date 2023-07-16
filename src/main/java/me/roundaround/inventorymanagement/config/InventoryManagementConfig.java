@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.config;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.config.option.PerScreenConfigOption;
 import me.roundaround.inventorymanagement.config.option.PerScreenPositionConfigOption;
 import me.roundaround.roundalib.config.ModConfig;
 import me.roundaround.roundalib.config.option.BooleanConfigOption;
@@ -14,6 +15,7 @@ public class InventoryManagementConfig extends ModConfig {
   public final BooleanConfigOption SHOW_STACK;
   public final PositionConfigOption DEFAULT_POSITION;
   public final PerScreenPositionConfigOption SCREEN_POSITIONS;
+  public final PerScreenConfigOption PER_SCREEN_CONFIGS;
 
   public InventoryManagementConfig() {
     super(InventoryManagementMod.MOD_ID);
@@ -57,6 +59,10 @@ public class InventoryManagementConfig extends ModConfig {
         .hideFromConfigScreen()
         .setComment("Customize button position on a per-screen basis.")
         .build());
+
+    PER_SCREEN_CONFIGS = registerConfigOption(PerScreenConfigOption.builder(this,
+        "perScreenConfigs",
+        this.i18n("per_screen_configs.label")).build());
   }
 
   private String i18n(String key) {
