@@ -11,6 +11,14 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     return this;
   }
 
+  public ButtonVisibility getPlayerSideSortVisibility(String key) {
+    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
+    if (screenConfig == null) {
+      return null;
+    }
+    return screenConfig.getPlayerSideSortVisibility();
+  }
+
   public PerScreenConfig setPlayerSideSortVisibility(String key, ButtonVisibility value) {
     PerScreenConfig.ScreenConfig screenConfig = this.get(key);
     if (screenConfig == null) {
@@ -37,6 +45,14 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     }
 
     return this;
+  }
+
+  public ButtonVisibility getPlayerSideTransferVisibility(String key) {
+    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
+    if (screenConfig == null) {
+      return null;
+    }
+    return screenConfig.getPlayerSideTransferVisibility();
   }
 
   public PerScreenConfig setPlayerSideTransferVisibility(String key, ButtonVisibility value) {
@@ -67,6 +83,14 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     return this;
   }
 
+  public ButtonVisibility getContainerSideSortVisibility(String key) {
+    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
+    if (screenConfig == null) {
+      return null;
+    }
+    return screenConfig.getContainerSideSortVisibility();
+  }
+
   public PerScreenConfig setContainerSideSortVisibility(String key, ButtonVisibility value) {
     PerScreenConfig.ScreenConfig screenConfig = this.get(key);
     if (screenConfig == null) {
@@ -93,6 +117,14 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     }
 
     return this;
+  }
+
+  public ButtonVisibility getContainerSideTransferVisibility(String key) {
+    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
+    if (screenConfig == null) {
+      return null;
+    }
+    return screenConfig.getContainerSideTransferVisibility();
   }
 
   public PerScreenConfig setContainerSideTransferVisibility(String key, ButtonVisibility value) {
@@ -123,6 +155,14 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     return this;
   }
 
+  public Position getPlayerSideOffset(String key) {
+    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
+    if (screenConfig == null) {
+      return null;
+    }
+    return screenConfig.getPlayerSideOffset();
+  }
+
   public PerScreenConfig setPlayerSideOffset(String key, Position position) {
     PerScreenConfig.ScreenConfig screenConfig = this.get(key);
     if (screenConfig == null) {
@@ -149,6 +189,14 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     }
 
     return this;
+  }
+
+  public Position getContainerSideOffset(String key) {
+    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
+    if (screenConfig == null) {
+      return null;
+    }
+    return screenConfig.getContainerSideOffset();
   }
 
   public PerScreenConfig setContainerSideOffset(String key, Position position) {

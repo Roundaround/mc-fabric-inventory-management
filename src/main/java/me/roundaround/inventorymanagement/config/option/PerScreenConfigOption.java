@@ -23,12 +23,12 @@ public class PerScreenConfigOption
     super(other);
   }
 
-  public PerScreenConfig.ScreenConfig get(Screen screen) {
-    return this.getValue().get(getScreenKey(screen));
-  }
-
   public void clear(Screen screen) {
     this.setValue(this.getValue().clear(getScreenKey(screen)));
+  }
+
+  public ButtonVisibility getPlayerSideSortVisibility(Screen screen) {
+    return this.getValue().getPlayerSideSortVisibility(getScreenKey(screen));
   }
 
   public void setPlayerSideSortVisibility(Screen screen, ButtonVisibility value) {
@@ -39,12 +39,20 @@ public class PerScreenConfigOption
     this.setValue(this.getValue().clearPlayerSideSortVisibility(getScreenKey(screen)));
   }
 
+  public ButtonVisibility getPlayerSideTransferVisibility(Screen screen) {
+    return this.getValue().getPlayerSideTransferVisibility(getScreenKey(screen));
+  }
+
   public void setPlayerSideTransferVisibility(Screen screen, ButtonVisibility value) {
     this.setValue(this.getValue().setPlayerSideTransferVisibility(getScreenKey(screen), value));
   }
 
   public void clearPlayerSideTransferVisibility(Screen screen) {
     this.setValue(this.getValue().clearPlayerSideTransferVisibility(getScreenKey(screen)));
+  }
+
+  public ButtonVisibility getContainerSideSortVisibility(Screen screen) {
+    return this.getValue().getContainerSideSortVisibility(getScreenKey(screen));
   }
 
   public void setContainerSideSortVisibility(Screen screen, ButtonVisibility value) {
@@ -55,6 +63,10 @@ public class PerScreenConfigOption
     this.setValue(this.getValue().clearContainerSideSortVisibility(getScreenKey(screen)));
   }
 
+  public ButtonVisibility getContainerSideTransferVisibility(Screen screen) {
+    return this.getValue().getContainerSideTransferVisibility(getScreenKey(screen));
+  }
+
   public void setContainerSideTransferVisibility(Screen screen, ButtonVisibility value) {
     this.setValue(this.getValue().setContainerSideTransferVisibility(getScreenKey(screen), value));
   }
@@ -63,12 +75,20 @@ public class PerScreenConfigOption
     this.setValue(this.getValue().clearContainerSideTransferVisibility(getScreenKey(screen)));
   }
 
+  public Position getPlayerSideOffset(Screen screen) {
+    return this.getValue().getPlayerSideOffset(getScreenKey(screen));
+  }
+
   public void setPlayerSideOffset(Screen screen, Position position) {
     this.setValue(this.getValue().setPlayerSideOffset(getScreenKey(screen), position));
   }
 
   public void clearPlayerSideOffset(Screen screen) {
     this.setValue(this.getValue().clearPlayerSideOffset(getScreenKey(screen)));
+  }
+
+  public Position getContainerSideOffset(Screen screen) {
+    return this.getValue().getContainerSideOffset(getScreenKey(screen));
   }
 
   public void setContainerSideOffset(Screen screen, Position position) {

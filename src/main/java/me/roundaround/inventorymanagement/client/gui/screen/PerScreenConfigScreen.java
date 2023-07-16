@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.client.gui.screen;
 
+import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.gui.widget.PerScreenConfigListWidget;
 import me.roundaround.inventorymanagement.config.option.PerScreenConfigOption;
 import me.roundaround.roundalib.client.gui.GuiUtil;
@@ -37,6 +38,9 @@ public class PerScreenConfigScreen extends Screen {
 
   @Override
   public void close() {
+    // TODO: Check if we actually want to save first!
+    InventoryManagementMod.CONFIG.saveToFile();
+
     if (this.client == null) {
       return;
     }
