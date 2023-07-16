@@ -10,6 +10,8 @@ import me.roundaround.roundalib.config.value.Position;
 import me.roundaround.roundalib.shadow.nightconfig.core.Config;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.function.Function;
 
 public class InventoryManagementConfig extends ModConfig {
   public final BooleanConfigOption MOD_ENABLED;
@@ -67,38 +69,65 @@ public class InventoryManagementConfig extends ModConfig {
 
   @Override
   protected boolean updateConfigVersion(int version, Config config) {
+    Config modConfig = config.get("inventorymanagement");
+    if (modConfig == null) {
+      return false;
+    }
+
     if (version == 1) {
-      Config modConfig = config.get("inventorymanagement");
-
-      Config screenPositionsConfig = modConfig.get("screenPositions");
-      if (screenPositionsConfig == null) {
-        return false;
-      }
-
-      HashMap<String, Position> screenPositions = new HashMap<>();
-      screenPositionsConfig.valueMap().keySet().forEach((key) -> {
-        screenPositions.put(key, Position.deserialize(screenPositionsConfig.get(key)));
-      });
-
-      modConfig.remove("screenPositions");
-
-      PerScreenConfig screenConfigs = new PerScreenConfig();
-      screenPositions.forEach((key, value) -> {
-        String cleanedKey = key.substring(0, key.lastIndexOf('-'));
-        boolean playerSide = key.substring(key.lastIndexOf('-') + 1).equals("player");
-
-        if (playerSide) {
-          screenConfigs.setPlayerSideOffset(cleanedKey, value);
-        } else {
-          screenConfigs.setContainerSideOffset(cleanedKey, value);
-        }
-      });
-
-      modConfig.set("perScreenConfigs", PerScreenConfigOption.serialize(screenConfigs));
-
-      return true;
+      return runMigrations(modConfig,
+          List.of(InventoryManagementConfig::removeThemeFromV1Config,
+              InventoryManagementConfig::migrateV1ScreenPositionsToV2ScreenConfigs));
     }
 
     return false;
+  }
+
+  private static boolean runMigrations(
+      Config modConfig, Iterable<Function<Config, Boolean>> migrators) {
+    boolean migrated = false;
+    for (Function<Config, Boolean> migrator : migrators) {
+      migrated = migrator.apply(modConfig) || migrated;
+    }
+    return migrated;
+  }
+
+  private static boolean removeThemeFromV1Config(Config modConfig) {
+    if (modConfig.isNull("guiTheme")) {
+      return false;
+    }
+
+    modConfig.remove("guiTheme");
+    return true;
+  }
+
+  private static boolean migrateV1ScreenPositionsToV2ScreenConfigs(Config modConfig) {
+    Config screenPositionsConfig = modConfig.get("screenPositions");
+    if (screenPositionsConfig == null) {
+      return false;
+    }
+
+    HashMap<String, Position> screenPositions = new HashMap<>();
+    screenPositionsConfig.valueMap().keySet().forEach((key) -> {
+      screenPositions.put(key, Position.deserialize(screenPositionsConfig.get(key)));
+    });
+
+    modConfig.remove("screenPositions");
+
+    PerScreenConfig screenConfigs = new PerScreenConfig();
+    screenPositions.forEach((key, value) -> {
+      String cleanedKey = key.substring(0, key.lastIndexOf('-'));
+      boolean playerSide = key.substring(key.lastIndexOf('-') + 1).equals("player");
+
+      if (playerSide) {
+        screenConfigs.setPlayerSideOffset(cleanedKey, value);
+      } else {
+        screenConfigs.setContainerSideOffset(cleanedKey, value);
+      }
+    });
+
+    modConfig.set("perScreenConfigs", PerScreenConfigOption.serialize(screenConfigs));
+
+    return true;
   }
 }
