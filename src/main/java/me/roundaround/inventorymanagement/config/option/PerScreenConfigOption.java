@@ -110,14 +110,21 @@ public class PerScreenConfigOption
 
   @Override
   public void deserialize(Object data) {
-    Config deserialized = (Config) data;
-    Map<String, Object> deserializedMap = deserialized.valueMap();
+    Config rawValue = (Config) data;
+    Map<String, Object> rawMap = rawValue.valueMap();
 
-    PerScreenConfig value = new PerScreenConfig();
+    HashMap<String, HashMap<String, String>> deserializedMap = new HashMap<>();
 
-    for (String key : deserializedMap.keySet()) {
-      value.put(key, PerScreenConfig.ScreenConfig.deserialize(deserialized.get(key)));
+    for (String key : rawMap.keySet()) {
+      Config subMap = rawValue.get(key);
+      HashMap<String, String> deserializedSubMap = new HashMap<>();
+      for (String subKey : subMap.valueMap().keySet()) {
+        deserializedSubMap.put(subKey, subMap.get(subKey).toString());
+      }
+      deserializedMap.put(key, deserializedSubMap);
     }
+
+    PerScreenConfig value = PerScreenConfig.deserialize(deserializedMap);
 
     PerScreenConfig defaultValue = getDefault();
     for (String key : defaultValue.keySet()) {
@@ -133,7 +140,11 @@ public class PerScreenConfigOption
     HashMap<String, HashMap<String, String>> value = PerScreenConfig.serialize(getValue());
 
     for (String key : value.keySet()) {
-      serialized.set(key, value.get(key));
+      Config forScreen = Config.inMemory();
+      for (String subKey : value.get(key).keySet()) {
+        forScreen.set(subKey, value.get(key).get(subKey));
+      }
+      serialized.set(key, forScreen);
     }
 
     return serialized;

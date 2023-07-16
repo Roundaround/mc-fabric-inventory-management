@@ -3,6 +3,7 @@ package me.roundaround.inventorymanagement.config.value;
 import me.roundaround.roundalib.config.value.Position;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfig> {
@@ -383,7 +384,7 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
       return serialized;
     }
 
-    public static ScreenConfig deserialize(HashMap<String, String> serialized) {
+    public static ScreenConfig deserialize(Map<String, String> serialized) {
       return new ScreenConfig(getOrNull("playerSideSortVisibility",
           serialized,
           ButtonVisibility::fromId),
@@ -395,7 +396,7 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     }
 
     private static <T> T getOrNull(
-        String key, HashMap<String, String> serialized, Function<String, T> getter) {
+        String key, Map<String, String> serialized, Function<String, T> getter) {
       String value = serialized.get(key);
       if (value == null) {
         return null;
