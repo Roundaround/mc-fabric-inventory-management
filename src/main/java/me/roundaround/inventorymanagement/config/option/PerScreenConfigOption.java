@@ -23,6 +23,10 @@ public class PerScreenConfigOption
     super(other);
   }
 
+  public void clear(Screen screen) {
+    this.setValue(this.getValue().clear(getScreenKey(screen)));
+  }
+
   public void setPlayerSideSortVisibility(Screen screen, ButtonVisibility value) {
     this.setValue(this.getValue().setPlayerSideSortVisibility(getScreenKey(screen), value));
   }
@@ -56,7 +60,7 @@ public class PerScreenConfigOption
   }
 
   public void setPlayerSideOffset(Screen screen, Position position) {
-    getValue().setPlayerSideOffset(getScreenKey(screen), position);
+    this.setValue(this.getValue().setPlayerSideOffset(getScreenKey(screen), position));
   }
 
   public void clearPlayerSideOffset(Screen screen) {
@@ -64,7 +68,7 @@ public class PerScreenConfigOption
   }
 
   public void setContainerSideOffset(Screen screen, Position position) {
-    getValue().setContainerSideOffset(getScreenKey(screen), position);
+    this.setValue(this.getValue().setContainerSideOffset(getScreenKey(screen), position));
   }
 
   public void clearContainerSideOffset(Screen screen) {

@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfig> {
+  public PerScreenConfig clear(String key) {
+    this.remove(key);
+    return this;
+  }
+
   public PerScreenConfig setPlayerSideSortVisibility(String key, ButtonVisibility value) {
     PerScreenConfig.ScreenConfig screenConfig = this.get(key);
     if (screenConfig == null) {
