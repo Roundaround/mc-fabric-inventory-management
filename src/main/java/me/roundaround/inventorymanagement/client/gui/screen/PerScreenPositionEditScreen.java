@@ -29,11 +29,14 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
 
   private static PositionConfigOption generateDummyConfigOption(
       Screen parent, boolean isPlayerInventory) {
-    Position currentValue =
-        InventoryManagementMod.CONFIG.SCREEN_POSITIONS.get(parent, isPlayerInventory)
-            .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
+    // TODO: Update to use new config value
+    Position currentValue = InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue();
+//  Position currentValue =
+//      InventoryManagementMod.CONFIG.SCREEN_POSITIONS.get(parent, isPlayerInventory)
+//          .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
     PositionConfigOption dummyConfig = PositionConfigOption.builder(InventoryManagementMod.CONFIG,
-        InventoryManagementMod.CONFIG.SCREEN_POSITIONS.getScreenKey(parent, isPlayerInventory),
+        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getScreenKey(parent) +
+            (isPlayerInventory ? "-player" : "-container"),
         "",
         InventoryManagementMod.CONFIG.DEFAULT_POSITION.getDefault()).build();
     dummyConfig.setValue(currentValue);
@@ -97,13 +100,13 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
 
   @Override
   protected void commitValueToConfig() {
-    if (isDirty()) {
-      if (getValue() == configOption.getDefault()) {
-        InventoryManagementMod.CONFIG.SCREEN_POSITIONS.remove(parent, isPlayerInventory);
-      } else {
-        InventoryManagementMod.CONFIG.SCREEN_POSITIONS.set(parent, isPlayerInventory, getValue());
-      }
-      InventoryManagementMod.CONFIG.saveToFile();
-    }
+//    if (isDirty()) {
+//      if (getValue() == configOption.getDefault()) {
+//        InventoryManagementMod.CONFIG.SCREEN_POSITIONS.remove(parent, isPlayerInventory);
+//      } else {
+//        InventoryManagementMod.CONFIG.SCREEN_POSITIONS.set(parent, isPlayerInventory, getValue());
+//      }
+//      InventoryManagementMod.CONFIG.saveToFile();
+//    }
   }
 }

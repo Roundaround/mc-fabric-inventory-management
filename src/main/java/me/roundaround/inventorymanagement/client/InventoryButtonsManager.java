@@ -306,8 +306,10 @@ public class InventoryButtonsManager {
   }
 
   private Position getButtonPosition(Screen screen, boolean isPlayerInventory) {
-    Position offset = InventoryManagementMod.CONFIG.SCREEN_POSITIONS.get(screen, isPlayerInventory)
-        .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
+    // TODO: Update to use new config value
+    Position offset = InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue();
+//  Position offset = InventoryManagementMod.CONFIG.SCREEN_POSITIONS.get(screen, isPlayerInventory)
+//      .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
     return getButtonPosition((isPlayerInventory ? playerButtons : containerButtons).size(), offset);
   }
 

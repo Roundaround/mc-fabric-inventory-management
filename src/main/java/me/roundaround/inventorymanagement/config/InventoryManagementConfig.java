@@ -2,11 +2,14 @@ package me.roundaround.inventorymanagement.config;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.config.option.PerScreenConfigOption;
-import me.roundaround.inventorymanagement.config.option.PerScreenPositionConfigOption;
+import me.roundaround.inventorymanagement.config.value.PerScreenConfig;
 import me.roundaround.roundalib.config.ModConfig;
 import me.roundaround.roundalib.config.option.BooleanConfigOption;
 import me.roundaround.roundalib.config.option.PositionConfigOption;
 import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.roundalib.shadow.nightconfig.core.Config;
+
+import java.util.HashMap;
 
 public class InventoryManagementConfig extends ModConfig {
   public final BooleanConfigOption MOD_ENABLED;
@@ -14,11 +17,11 @@ public class InventoryManagementConfig extends ModConfig {
   public final BooleanConfigOption SHOW_TRANSFER;
   public final BooleanConfigOption SHOW_STACK;
   public final PositionConfigOption DEFAULT_POSITION;
-  public final PerScreenPositionConfigOption SCREEN_POSITIONS;
   public final PerScreenConfigOption PER_SCREEN_CONFIGS;
 
   public InventoryManagementConfig() {
-    super(InventoryManagementMod.MOD_ID);
+    super(InventoryManagementMod.MOD_ID,
+        options(InventoryManagementMod.MOD_ID).setConfigVersion(2));
 
     MOD_ENABLED = registerConfigOption(BooleanConfigOption.builder(this,
             "modEnabled",
@@ -53,13 +56,6 @@ public class InventoryManagementConfig extends ModConfig {
         .setComment("Customize a default for button position.")
         .build());
 
-    SCREEN_POSITIONS = registerConfigOption(PerScreenPositionConfigOption.builder(this,
-            "screenPositions",
-            this.i18n("screen_positions.label"))
-        .hideFromConfigScreen()
-        .setComment("Customize button position on a per-screen basis.")
-        .build());
-
     PER_SCREEN_CONFIGS = registerConfigOption(PerScreenConfigOption.builder(this,
         "perScreenConfigs",
         this.i18n("per_screen_configs.label")).build());
@@ -67,5 +63,42 @@ public class InventoryManagementConfig extends ModConfig {
 
   private String i18n(String key) {
     return this.getModId() + "." + key;
+  }
+
+  @Override
+  protected boolean updateConfigVersion(int version, Config config) {
+    if (version == 1) {
+      Config modConfig = config.get("inventorymanagement");
+
+      Config screenPositionsConfig = modConfig.get("screenPositions");
+      if (screenPositionsConfig == null) {
+        return false;
+      }
+
+      HashMap<String, Position> screenPositions = new HashMap<>();
+      screenPositionsConfig.valueMap().keySet().forEach((key) -> {
+        screenPositions.put(key, Position.deserialize(screenPositionsConfig.get(key)));
+      });
+
+      modConfig.remove("screenPositions");
+
+      PerScreenConfig screenConfigs = new PerScreenConfig();
+      screenPositions.forEach((key, value) -> {
+        String cleanedKey = key.substring(0, key.lastIndexOf('-'));
+        boolean playerSide = key.substring(key.lastIndexOf('-') + 1).equals("player");
+
+        if (playerSide) {
+          screenConfigs.setPlayerSideOffset(cleanedKey, value);
+        } else {
+          screenConfigs.setContainerSideOffset(cleanedKey, value);
+        }
+      });
+
+      modConfig.set("perScreenConfigs", PerScreenConfigOption.serialize(screenConfigs));
+
+      return true;
+    }
+
+    return false;
   }
 }

@@ -110,6 +110,15 @@ public class PerScreenConfigOption
 
   @Override
   public void deserialize(Object data) {
+    setValue(PerScreenConfigOption.deserialize(data, getDefault()));
+  }
+
+  @Override
+  public Object serialize() {
+    return PerScreenConfigOption.serialize(getValue());
+  }
+
+  public static PerScreenConfig deserialize(Object data, PerScreenConfig defaultValue) {
     Config rawValue = (Config) data;
     Map<String, Object> rawMap = rawValue.valueMap();
 
@@ -126,18 +135,16 @@ public class PerScreenConfigOption
 
     PerScreenConfig value = PerScreenConfig.deserialize(deserializedMap);
 
-    PerScreenConfig defaultValue = getDefault();
     for (String key : defaultValue.keySet()) {
       value.putIfAbsent(key, defaultValue.get(key));
     }
 
-    setValue(value);
+    return value;
   }
 
-  @Override
-  public Object serialize() {
+  public static Object serialize(PerScreenConfig perScreenConfig) {
     Config serialized = Config.inMemory();
-    HashMap<String, HashMap<String, String>> value = PerScreenConfig.serialize(getValue());
+    HashMap<String, HashMap<String, String>> value = PerScreenConfig.serialize(perScreenConfig);
 
     for (String key : value.keySet()) {
       Config forScreen = Config.inMemory();
