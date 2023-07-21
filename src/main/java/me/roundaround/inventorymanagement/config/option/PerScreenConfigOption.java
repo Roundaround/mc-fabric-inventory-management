@@ -51,6 +51,18 @@ public class PerScreenConfigOption
     this.setValue(this.getValue().clearPlayerSideTransferVisibility(getScreenKey(screen)));
   }
 
+  public ButtonVisibility getPlayerSideStackVisibility(Screen screen) {
+    return this.getValue().getPlayerSideStackVisibility(getScreenKey(screen));
+  }
+
+  public void setPlayerSideStackVisibility(Screen screen, ButtonVisibility value) {
+    this.setValue(this.getValue().setPlayerSideStackVisibility(getScreenKey(screen), value));
+  }
+
+  public void clearPlayerSideStackVisibility(Screen screen) {
+    this.setValue(this.getValue().clearPlayerSideStackVisibility(getScreenKey(screen)));
+  }
+
   public ButtonVisibility getContainerSideSortVisibility(Screen screen) {
     return this.getValue().getContainerSideSortVisibility(getScreenKey(screen));
   }
@@ -73,6 +85,18 @@ public class PerScreenConfigOption
 
   public void clearContainerSideTransferVisibility(Screen screen) {
     this.setValue(this.getValue().clearContainerSideTransferVisibility(getScreenKey(screen)));
+  }
+
+  public ButtonVisibility getContainerSideStackVisibility(Screen screen) {
+    return this.getValue().getContainerSideStackVisibility(getScreenKey(screen));
+  }
+
+  public void setContainerSideStackVisibility(Screen screen, ButtonVisibility value) {
+    this.setValue(this.getValue().setContainerSideStackVisibility(getScreenKey(screen), value));
+  }
+
+  public void clearContainerSideStackVisibility(Screen screen) {
+    this.setValue(this.getValue().clearContainerSideStackVisibility(getScreenKey(screen)));
   }
 
   public Position getPlayerSideOffset(Screen screen) {

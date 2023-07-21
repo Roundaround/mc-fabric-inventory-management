@@ -49,6 +49,12 @@ public class PerScreenConfigListWidget
         () -> this.configOption.clearPlayerSideTransferVisibility(this.screen)));
     this.addEntry(new ButtonVisibilityEntry(this.client,
         this,
+        Text.literal("Player side stack"),
+        () -> this.configOption.getPlayerSideStackVisibility(this.screen),
+        (value) -> this.configOption.setPlayerSideStackVisibility(this.screen, value),
+        () -> this.configOption.clearPlayerSideStackVisibility(this.screen)));
+    this.addEntry(new ButtonVisibilityEntry(this.client,
+        this,
         Text.literal("Container side sort"),
         () -> this.configOption.getContainerSideSortVisibility(this.screen),
         (value) -> this.configOption.setContainerSideSortVisibility(this.screen, value),
@@ -59,6 +65,12 @@ public class PerScreenConfigListWidget
         () -> this.configOption.getContainerSideTransferVisibility(this.screen),
         (value) -> this.configOption.setContainerSideTransferVisibility(this.screen, value),
         () -> this.configOption.clearContainerSideTransferVisibility(this.screen)));
+    this.addEntry(new ButtonVisibilityEntry(this.client,
+        this,
+        Text.literal("Container side stack"),
+        () -> this.configOption.getContainerSideStackVisibility(this.screen),
+        (value) -> this.configOption.setContainerSideStackVisibility(this.screen, value),
+        () -> this.configOption.clearContainerSideStackVisibility(this.screen)));
 
     this.addEntry(new GroupEntry(this.client, this, Text.of("Location")));
     this.addEntry(new GroupEntry(this.client, this, Text.of("Position offset")));

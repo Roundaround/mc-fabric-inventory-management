@@ -4,6 +4,8 @@ import me.roundaround.roundalib.config.value.Position;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfig> {
@@ -13,218 +15,130 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
   }
 
   public ButtonVisibility getPlayerSideSortVisibility(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-    if (screenConfig == null) {
-      return null;
-    }
-    return screenConfig.getPlayerSideSortVisibility();
-  }
-
-  public PerScreenConfig setPlayerSideSortVisibility(String key, ButtonVisibility value) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-    if (screenConfig == null) {
-      screenConfig = new PerScreenConfig.ScreenConfig();
-    }
-    screenConfig.setPlayerSideSortVisibility(value);
-    this.put(key, screenConfig);
-    return this;
-  }
-
-  public PerScreenConfig clearPlayerSideSortVisibility(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-
-    if (screenConfig == null) {
-      return this;
-    }
-
-    screenConfig.clearPlayerSideSortVisibility();
-
-    if (screenConfig.isEmpty()) {
-      this.remove(key);
-    } else {
-      this.put(key, screenConfig);
-    }
-
-    return this;
+    return this.getValue(key, ScreenConfig::getPlayerSideSortVisibility);
   }
 
   public ButtonVisibility getPlayerSideTransferVisibility(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-    if (screenConfig == null) {
-      return null;
-    }
-    return screenConfig.getPlayerSideTransferVisibility();
+    return this.getValue(key, ScreenConfig::getPlayerSideTransferVisibility);
   }
 
-  public PerScreenConfig setPlayerSideTransferVisibility(String key, ButtonVisibility value) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-    if (screenConfig == null) {
-      screenConfig = new PerScreenConfig.ScreenConfig();
-    }
-    screenConfig.setPlayerSideTransferVisibility(value);
-    this.put(key, screenConfig);
-    return this;
-  }
-
-  public PerScreenConfig clearPlayerSideTransferVisibility(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-
-    if (screenConfig == null) {
-      return this;
-    }
-
-    screenConfig.clearPlayerSideTransferVisibility();
-
-    if (screenConfig.isEmpty()) {
-      this.remove(key);
-    } else {
-      this.put(key, screenConfig);
-    }
-
-    return this;
+  public ButtonVisibility getPlayerSideStackVisibility(String key) {
+    return this.getValue(key, ScreenConfig::getPlayerSideStackVisibility);
   }
 
   public ButtonVisibility getContainerSideSortVisibility(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-    if (screenConfig == null) {
-      return null;
-    }
-    return screenConfig.getContainerSideSortVisibility();
-  }
-
-  public PerScreenConfig setContainerSideSortVisibility(String key, ButtonVisibility value) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-    if (screenConfig == null) {
-      screenConfig = new PerScreenConfig.ScreenConfig();
-    }
-    screenConfig.setContainerSideSortVisibility(value);
-    this.put(key, screenConfig);
-    return this;
-  }
-
-  public PerScreenConfig clearContainerSideSortVisibility(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-
-    if (screenConfig == null) {
-      return this;
-    }
-
-    screenConfig.clearContainerSideSortVisibility();
-
-    if (screenConfig.isEmpty()) {
-      this.remove(key);
-    } else {
-      this.put(key, screenConfig);
-    }
-
-    return this;
+    return this.getValue(key, ScreenConfig::getContainerSideSortVisibility);
   }
 
   public ButtonVisibility getContainerSideTransferVisibility(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-    if (screenConfig == null) {
-      return null;
-    }
-    return screenConfig.getContainerSideTransferVisibility();
+    return this.getValue(key, ScreenConfig::getContainerSideTransferVisibility);
   }
 
-  public PerScreenConfig setContainerSideTransferVisibility(String key, ButtonVisibility value) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-    if (screenConfig == null) {
-      screenConfig = new PerScreenConfig.ScreenConfig();
-    }
-    screenConfig.setContainerSideTransferVisibility(value);
-    this.put(key, screenConfig);
-    return this;
-  }
-
-  public PerScreenConfig clearContainerSideTransferVisibility(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-
-    if (screenConfig == null) {
-      return this;
-    }
-
-    screenConfig.clearContainerSideTransferVisibility();
-
-    if (screenConfig.isEmpty()) {
-      this.remove(key);
-    } else {
-      this.put(key, screenConfig);
-    }
-
-    return this;
+  public ButtonVisibility getContainerSideStackVisibility(String key) {
+    return this.getValue(key, ScreenConfig::getContainerSideStackVisibility);
   }
 
   public Position getPlayerSideOffset(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-    if (screenConfig == null) {
-      return null;
-    }
-    return screenConfig.getPlayerSideOffset();
-  }
-
-  public PerScreenConfig setPlayerSideOffset(String key, Position position) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-    if (screenConfig == null) {
-      screenConfig = new PerScreenConfig.ScreenConfig();
-    }
-    screenConfig.setPlayerSideOffset(position);
-    this.put(key, screenConfig);
-    return this;
-  }
-
-  public PerScreenConfig clearPlayerSideOffset(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-
-    if (screenConfig == null) {
-      return this;
-    }
-
-    screenConfig.clearPlayerSideOffset();
-
-    if (screenConfig.isEmpty()) {
-      this.remove(key);
-    } else {
-      this.put(key, screenConfig);
-    }
-
-    return this;
+    return this.getValue(key, ScreenConfig::getPlayerSideOffset);
   }
 
   public Position getContainerSideOffset(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
+    return this.getValue(key, ScreenConfig::getContainerSideOffset);
+  }
+
+  public PerScreenConfig setPlayerSideSortVisibility(String key, ButtonVisibility value) {
+    return this.setValue(key, value, ScreenConfig::setPlayerSideSortVisibility);
+  }
+
+  public PerScreenConfig setPlayerSideTransferVisibility(String key, ButtonVisibility value) {
+    return this.setValue(key, value, ScreenConfig::setPlayerSideTransferVisibility);
+  }
+
+  public PerScreenConfig setPlayerSideStackVisibility(String key, ButtonVisibility value) {
+    return this.setValue(key, value, ScreenConfig::setPlayerSideStackVisibility);
+  }
+
+  public PerScreenConfig setContainerSideSortVisibility(String key, ButtonVisibility value) {
+    return this.setValue(key, value, ScreenConfig::setContainerSideSortVisibility);
+  }
+
+  public PerScreenConfig setContainerSideTransferVisibility(String key, ButtonVisibility value) {
+    return this.setValue(key, value, ScreenConfig::setContainerSideTransferVisibility);
+  }
+
+  public PerScreenConfig setContainerSideStackVisibility(String key, ButtonVisibility value) {
+    return this.setValue(key, value, ScreenConfig::setContainerSideStackVisibility);
+  }
+
+  public PerScreenConfig setPlayerSideOffset(String key, Position value) {
+    return this.setValue(key, value, ScreenConfig::setPlayerSideOffset);
+  }
+
+  public PerScreenConfig setContainerSideOffset(String key, Position value) {
+    return this.setValue(key, value, ScreenConfig::setContainerSideOffset);
+  }
+
+  public PerScreenConfig clearPlayerSideSortVisibility(String key) {
+    return this.clearValue(key, ScreenConfig::clearPlayerSideSortVisibility);
+  }
+
+  public PerScreenConfig clearPlayerSideTransferVisibility(String key) {
+    return this.clearValue(key, ScreenConfig::clearPlayerSideTransferVisibility);
+  }
+
+  public PerScreenConfig clearPlayerSideStackVisibility(String key) {
+    return this.clearValue(key, ScreenConfig::clearPlayerSideStackVisibility);
+  }
+
+  public PerScreenConfig clearContainerSideSortVisibility(String key) {
+    return this.clearValue(key, ScreenConfig::clearContainerSideSortVisibility);
+  }
+
+  public PerScreenConfig clearContainerSideTransferVisibility(String key) {
+    return this.clearValue(key, ScreenConfig::clearContainerSideTransferVisibility);
+  }
+
+  public PerScreenConfig clearContainerSideStackVisibility(String key) {
+    return this.clearValue(key, ScreenConfig::clearContainerSideStackVisibility);
+  }
+
+  public PerScreenConfig clearPlayerSideOffset(String key) {
+    return this.clearValue(key, ScreenConfig::clearPlayerSideOffset);
+  }
+
+  public PerScreenConfig clearContainerSideOffset(String key) {
+    return this.clearValue(key, ScreenConfig::clearContainerSideOffset);
+  }
+
+  private <T> T getValue(String key, Function<ScreenConfig, T> getter) {
+    ScreenConfig screenConfig = this.get(key);
     if (screenConfig == null) {
       return null;
     }
-    return screenConfig.getContainerSideOffset();
+    return getter.apply(screenConfig);
   }
 
-  public PerScreenConfig setContainerSideOffset(String key, Position position) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
+  private <T> PerScreenConfig setValue(String key, T value, BiConsumer<ScreenConfig, T> setter) {
+    ScreenConfig screenConfig = this.get(key);
     if (screenConfig == null) {
-      screenConfig = new PerScreenConfig.ScreenConfig();
+      screenConfig = new ScreenConfig();
     }
-    screenConfig.setContainerSideOffset(position);
+    setter.accept(screenConfig, value);
     this.put(key, screenConfig);
     return this;
   }
 
-  public PerScreenConfig clearContainerSideOffset(String key) {
-    PerScreenConfig.ScreenConfig screenConfig = this.get(key);
-
+  private <T> PerScreenConfig clearValue(String key, Consumer<ScreenConfig> clearer) {
+    ScreenConfig screenConfig = this.get(key);
     if (screenConfig == null) {
       return this;
     }
-
-    screenConfig.clearContainerSideOffset();
-
+    clearer.accept(screenConfig);
     if (screenConfig.isEmpty()) {
       this.remove(key);
     } else {
       this.put(key, screenConfig);
     }
-
     return this;
   }
 
@@ -245,12 +159,14 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
   }
 
   public static class ScreenConfig {
-    private ButtonVisibility playerSideSortVisibility;
-    private ButtonVisibility playerSideTransferVisibility;
-    private ButtonVisibility containerSideSortVisibility;
-    private ButtonVisibility containerSideTransferVisibility;
-    private Position playerSideOffset;
-    private Position containerSideOffset;
+    public ButtonVisibility playerSideSortVisibility;
+    public ButtonVisibility playerSideTransferVisibility;
+    public ButtonVisibility playerSideStackVisibility;
+    public ButtonVisibility containerSideSortVisibility;
+    public ButtonVisibility containerSideTransferVisibility;
+    public ButtonVisibility containerSideStackVisibility;
+    public Position playerSideOffset;
+    public Position containerSideOffset;
 
     public ScreenConfig() {
     }
@@ -258,14 +174,18 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     public ScreenConfig(
         ButtonVisibility playerSideSortVisibility,
         ButtonVisibility playerSideTransferVisibility,
+        ButtonVisibility playerSideStackVisibility,
         ButtonVisibility containerSideSortVisibility,
         ButtonVisibility containerSideTransferVisibility,
+        ButtonVisibility containerSideStackVisibility,
         Position playerSideOffset,
         Position containerSideOffset) {
       this.playerSideSortVisibility = playerSideSortVisibility;
       this.playerSideTransferVisibility = playerSideTransferVisibility;
+      this.playerSideStackVisibility = playerSideStackVisibility;
       this.containerSideSortVisibility = containerSideSortVisibility;
       this.containerSideTransferVisibility = containerSideTransferVisibility;
+      this.containerSideStackVisibility = containerSideStackVisibility;
       this.playerSideOffset = playerSideOffset;
       this.containerSideOffset = containerSideOffset;
     }
@@ -273,40 +193,16 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     public ScreenConfig(ScreenConfig other) {
       this.playerSideSortVisibility = other.playerSideSortVisibility;
       this.playerSideTransferVisibility = other.playerSideTransferVisibility;
+      this.playerSideStackVisibility = other.playerSideStackVisibility;
       this.containerSideSortVisibility = other.containerSideSortVisibility;
       this.containerSideTransferVisibility = other.containerSideTransferVisibility;
+      this.containerSideStackVisibility = other.containerSideStackVisibility;
       this.playerSideOffset = other.playerSideOffset;
       this.containerSideOffset = other.containerSideOffset;
     }
 
-    public boolean isEmpty() {
-      return playerSideSortVisibility == null && playerSideTransferVisibility == null &&
-          containerSideSortVisibility == null && containerSideTransferVisibility == null &&
-          playerSideOffset == null && containerSideOffset == null;
-    }
-
     public ButtonVisibility getPlayerSideSortVisibility() {
       return playerSideSortVisibility;
-    }
-
-    public ButtonVisibility getPlayerSideTransferVisibility() {
-      return playerSideTransferVisibility;
-    }
-
-    public ButtonVisibility getContainerSideSortVisibility() {
-      return containerSideSortVisibility;
-    }
-
-    public ButtonVisibility getContainerSideTransferVisibility() {
-      return containerSideTransferVisibility;
-    }
-
-    public Position getPlayerSideOffset() {
-      return playerSideOffset;
-    }
-
-    public Position getContainerSideOffset() {
-      return containerSideOffset;
     }
 
     public void setPlayerSideSortVisibility(ButtonVisibility playerSideSortVisibility) {
@@ -317,12 +213,32 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
       this.playerSideSortVisibility = null;
     }
 
+    public ButtonVisibility getPlayerSideTransferVisibility() {
+      return playerSideTransferVisibility;
+    }
+
     public void setPlayerSideTransferVisibility(ButtonVisibility playerSideTransferVisibility) {
       this.playerSideTransferVisibility = playerSideTransferVisibility;
     }
 
     public void clearPlayerSideTransferVisibility() {
       this.playerSideTransferVisibility = null;
+    }
+
+    public ButtonVisibility getPlayerSideStackVisibility() {
+      return playerSideStackVisibility;
+    }
+
+    public void setPlayerSideStackVisibility(ButtonVisibility playerSideStackVisibility) {
+      this.playerSideStackVisibility = playerSideStackVisibility;
+    }
+
+    public void clearPlayerSideStackVisibility() {
+      this.playerSideStackVisibility = null;
+    }
+
+    public ButtonVisibility getContainerSideSortVisibility() {
+      return containerSideSortVisibility;
     }
 
     public void setContainerSideSortVisibility(ButtonVisibility containerSideSortVisibility) {
@@ -333,13 +249,32 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
       this.containerSideSortVisibility = null;
     }
 
-    public void setContainerSideTransferVisibility(
-        ButtonVisibility containerSideTransferVisibility) {
+    public ButtonVisibility getContainerSideTransferVisibility() {
+      return containerSideTransferVisibility;
+    }
+
+    public void setContainerSideTransferVisibility(ButtonVisibility containerSideTransferVisibility) {
       this.containerSideTransferVisibility = containerSideTransferVisibility;
     }
 
     public void clearContainerSideTransferVisibility() {
       this.containerSideTransferVisibility = null;
+    }
+
+    public ButtonVisibility getContainerSideStackVisibility() {
+      return containerSideStackVisibility;
+    }
+
+    public void setContainerSideStackVisibility(ButtonVisibility containerSideStackVisibility) {
+      this.containerSideStackVisibility = containerSideStackVisibility;
+    }
+
+    public void clearContainerSideStackVisibility() {
+      this.containerSideStackVisibility = null;
+    }
+
+    public Position getPlayerSideOffset() {
+      return playerSideOffset;
     }
 
     public void setPlayerSideOffset(Position playerSideOffset) {
@@ -350,12 +285,23 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
       this.playerSideOffset = null;
     }
 
+    public Position getContainerSideOffset() {
+      return containerSideOffset;
+    }
+
     public void setContainerSideOffset(Position containerSideOffset) {
       this.containerSideOffset = containerSideOffset;
     }
 
     public void clearContainerSideOffset() {
       this.containerSideOffset = null;
+    }
+
+    public boolean isEmpty() {
+      return playerSideSortVisibility == null && playerSideTransferVisibility == null &&
+          playerSideStackVisibility == null && containerSideSortVisibility == null &&
+          containerSideTransferVisibility == null && containerSideStackVisibility == null &&
+          playerSideOffset == null && containerSideOffset == null;
     }
 
     public static HashMap<String, String> serialize(ScreenConfig config) {
@@ -367,12 +313,18 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
       if (config.playerSideTransferVisibility != null) {
         serialized.put("playerSideTransferVisibility", config.playerSideTransferVisibility.getId());
       }
+      if (config.playerSideStackVisibility != null) {
+        serialized.put("playerSideStackVisibility", config.playerSideStackVisibility.getId());
+      }
       if (config.containerSideSortVisibility != null) {
         serialized.put("containerSideSortVisibility", config.containerSideSortVisibility.getId());
       }
       if (config.containerSideTransferVisibility != null) {
         serialized.put("containerSideTransferVisibility",
             config.containerSideTransferVisibility.getId());
+      }
+      if (config.containerSideStackVisibility != null) {
+        serialized.put("containerSideStackVisibility", config.containerSideStackVisibility.getId());
       }
       if (config.playerSideOffset != null) {
         serialized.put("playerSideOffset", Position.serialize(config.playerSideOffset));
@@ -389,8 +341,10 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
           serialized,
           ButtonVisibility::fromId),
           getOrNull("playerSideTransferVisibility", serialized, ButtonVisibility::fromId),
+          getOrNull("playerSideStackVisibility", serialized, ButtonVisibility::fromId),
           getOrNull("containerSideSortVisibility", serialized, ButtonVisibility::fromId),
           getOrNull("containerSideTransferVisibility", serialized, ButtonVisibility::fromId),
+          getOrNull("containerSideStackVisibility", serialized, ButtonVisibility::fromId),
           getOrNull("playerSideOffset", serialized, Position::deserialize),
           getOrNull("containerSideOffset", serialized, Position::deserialize));
     }
