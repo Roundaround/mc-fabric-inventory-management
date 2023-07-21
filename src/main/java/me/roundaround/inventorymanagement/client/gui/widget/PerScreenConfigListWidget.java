@@ -13,14 +13,9 @@ import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.text.Text;
 
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class PerScreenConfigListWidget
     extends VariableHeightListWidget<PerScreenConfigListWidget.Entry> {
-  private final PerScreenConfigOption configOption;
-  private final Screen screen;
-
   public PerScreenConfigListWidget(
       MinecraftClient client,
       int left,
@@ -31,46 +26,61 @@ public class PerScreenConfigListWidget
       Screen screen) {
     super(client, left, top, width, height);
 
-    this.configOption = configOption;
-    this.screen = screen;
-
     this.addEntry(new GroupEntry(this.client, this, Text.of("Enable/disable buttons")));
     this.addEntry(new ButtonVisibilityEntry(this.client,
         this,
         Text.literal("Player side sort"),
-        () -> this.configOption.getPlayerSideSortVisibility(this.screen),
-        (value) -> this.configOption.setPlayerSideSortVisibility(this.screen, value),
-        () -> this.configOption.clearPlayerSideSortVisibility(this.screen)));
+        screen,
+        configOption,
+        true,
+        PerScreenConfigOption::getSortVisibility,
+        PerScreenConfigOption::setSortVisibility,
+        PerScreenConfigOption::clearSortVisibility));
     this.addEntry(new ButtonVisibilityEntry(this.client,
         this,
         Text.literal("Player side transfer"),
-        () -> this.configOption.getPlayerSideTransferVisibility(this.screen),
-        (value) -> this.configOption.setPlayerSideTransferVisibility(this.screen, value),
-        () -> this.configOption.clearPlayerSideTransferVisibility(this.screen)));
+        screen,
+        configOption,
+        true,
+        PerScreenConfigOption::getTransferVisibility,
+        PerScreenConfigOption::setTransferVisibility,
+        PerScreenConfigOption::clearTransferVisibility));
     this.addEntry(new ButtonVisibilityEntry(this.client,
         this,
         Text.literal("Player side stack"),
-        () -> this.configOption.getPlayerSideStackVisibility(this.screen),
-        (value) -> this.configOption.setPlayerSideStackVisibility(this.screen, value),
-        () -> this.configOption.clearPlayerSideStackVisibility(this.screen)));
+        screen,
+        configOption,
+        true,
+        PerScreenConfigOption::getStackVisibility,
+        PerScreenConfigOption::setStackVisibility,
+        PerScreenConfigOption::clearStackVisibility));
     this.addEntry(new ButtonVisibilityEntry(this.client,
         this,
         Text.literal("Container side sort"),
-        () -> this.configOption.getContainerSideSortVisibility(this.screen),
-        (value) -> this.configOption.setContainerSideSortVisibility(this.screen, value),
-        () -> this.configOption.clearContainerSideSortVisibility(this.screen)));
+        screen,
+        configOption,
+        false,
+        PerScreenConfigOption::getSortVisibility,
+        PerScreenConfigOption::setSortVisibility,
+        PerScreenConfigOption::clearSortVisibility));
     this.addEntry(new ButtonVisibilityEntry(this.client,
         this,
         Text.literal("Container side transfer"),
-        () -> this.configOption.getContainerSideTransferVisibility(this.screen),
-        (value) -> this.configOption.setContainerSideTransferVisibility(this.screen, value),
-        () -> this.configOption.clearContainerSideTransferVisibility(this.screen)));
+        screen,
+        configOption,
+        false,
+        PerScreenConfigOption::getTransferVisibility,
+        PerScreenConfigOption::setTransferVisibility,
+        PerScreenConfigOption::clearTransferVisibility));
     this.addEntry(new ButtonVisibilityEntry(this.client,
         this,
         Text.literal("Container side stack"),
-        () -> this.configOption.getContainerSideStackVisibility(this.screen),
-        (value) -> this.configOption.setContainerSideStackVisibility(this.screen, value),
-        () -> this.configOption.clearContainerSideStackVisibility(this.screen)));
+        screen,
+        configOption,
+        false,
+        PerScreenConfigOption::getStackVisibility,
+        PerScreenConfigOption::setStackVisibility,
+        PerScreenConfigOption::clearStackVisibility));
 
     this.addEntry(new GroupEntry(this.client, this, Text.of("Location")));
     this.addEntry(new GroupEntry(this.client, this, Text.of("Position offset")));
@@ -124,9 +134,12 @@ public class PerScreenConfigListWidget
   public static class ButtonVisibilityEntry extends Entry {
     protected static final int HEIGHT = 20;
 
-    protected final Supplier<ButtonVisibility> getter;
-    protected final Consumer<ButtonVisibility> setter;
-    protected final Runnable resetter;
+    protected final Screen screen;
+    protected final PerScreenConfigOption configOption;
+    protected final boolean isPlayerInventory;
+    protected final TriFunction<PerScreenConfigOption, Screen, Boolean, ButtonVisibility> getter;
+    protected final QuadConsumer<PerScreenConfigOption, Screen, Boolean, ButtonVisibility> setter;
+    protected final TriConsumer<PerScreenConfigOption, Screen, Boolean> resetter;
     protected final LabelWidget labelWidget;
     protected final CyclingButtonWidget<ButtonVisibility> valueButtonWidget;
 
@@ -134,11 +147,17 @@ public class PerScreenConfigListWidget
         MinecraftClient client,
         PerScreenConfigListWidget parent,
         Text label,
-        Supplier<ButtonVisibility> getter,
-        Consumer<ButtonVisibility> setter,
-        Runnable resetter) {
+        Screen screen,
+        PerScreenConfigOption configOption,
+        boolean isPlayerInventory,
+        TriFunction<PerScreenConfigOption, Screen, Boolean, ButtonVisibility> getter,
+        QuadConsumer<PerScreenConfigOption, Screen, Boolean, ButtonVisibility> setter,
+        TriConsumer<PerScreenConfigOption, Screen, Boolean> resetter) {
       super(client, parent, HEIGHT);
 
+      this.screen = screen;
+      this.configOption = configOption;
+      this.isPlayerInventory = isPlayerInventory;
       this.getter = getter;
       this.setter = setter;
       this.resetter = resetter;
@@ -152,7 +171,8 @@ public class PerScreenConfigListWidget
               .hideBackground()
               .build();
 
-      ButtonVisibility initialValue = this.getter.get();
+      ButtonVisibility initialValue =
+          this.getter.apply(this.configOption, this.screen, this.isPlayerInventory);
       this.valueButtonWidget =
           new CyclingButtonWidget.Builder<ButtonVisibility>((value) -> value.getDisplayText(
               InventoryManagementMod.CONFIG)).values(ButtonVisibility.values())
@@ -165,9 +185,12 @@ public class PerScreenConfigListWidget
                   Text.of(""),
                   (button, value) -> {
                     if (value == ButtonVisibility.DEFAULT) {
-                      this.resetter.run();
+                      this.resetter.accept(this.configOption, this.screen, this.isPlayerInventory);
                     } else {
-                      this.setter.accept(value);
+                      this.setter.accept(this.configOption,
+                          this.screen,
+                          this.isPlayerInventory,
+                          value);
                     }
                     button.setMessage(value.getDisplayText(InventoryManagementMod.CONFIG));
                   });
@@ -192,5 +215,20 @@ public class PerScreenConfigListWidget
       this.valueButtonWidget.setY(this.getTop() + this.getHeight() / 2 - 10 - (int) scrollAmount);
       this.valueButtonWidget.render(drawContext, mouseX, mouseY, delta);
     }
+  }
+
+  @FunctionalInterface
+  interface TriFunction<T, U, V, R> {
+    R apply(T t, U u, V v);
+  }
+
+  @FunctionalInterface
+  interface TriConsumer<T, U, V> {
+    void accept(T t, U u, V v);
+  }
+
+  @FunctionalInterface
+  interface QuadConsumer<T, U, V, W> {
+    void accept(T t, U u, V v, W w);
   }
 }

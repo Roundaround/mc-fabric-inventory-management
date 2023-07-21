@@ -128,7 +128,7 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     return this;
   }
 
-  private <T> PerScreenConfig clearValue(String key, Consumer<ScreenConfig> clearer) {
+  private PerScreenConfig clearValue(String key, Consumer<ScreenConfig> clearer) {
     ScreenConfig screenConfig = this.get(key);
     if (screenConfig == null) {
       return this;
