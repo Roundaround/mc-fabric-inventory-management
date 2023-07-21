@@ -6,16 +6,20 @@ import me.roundaround.inventorymanagement.config.option.PerScreenConfigOption;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 
 public class PerScreenConfigScreen extends Screen {
   private static final int LIST_MIN_WIDTH = 400;
+  private static final int BUTTON_WIDTH = 100;
+  private static final int BUTTON_HEIGHT = 20;
 
   private final Screen parent;
   private final PerScreenConfigOption configOption;
 
-  public PerScreenConfigScreen(Screen parent, Text title, PerScreenConfigOption configOption) {
-    super(title);
+  public PerScreenConfigScreen(Screen parent, PerScreenConfigOption configOption) {
+    super(Text.translatable("inventorymanagement.perscreen.title"));
     this.parent = parent;
     this.configOption = configOption;
   }
@@ -34,13 +38,29 @@ public class PerScreenConfigScreen extends Screen {
         listHeight,
         this.configOption,
         this.parent));
+
+    addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, (button) -> this.discardAndExit())
+        .position(width / 2 - BUTTON_WIDTH - 2, height - BUTTON_HEIGHT - 10)
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .build());
+    addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, (button) -> this.saveAndExit())
+        .position(width / 2 + 2, height - BUTTON_HEIGHT - 10)
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .build());
+  }
+
+  private void saveAndExit() {
+    InventoryManagementMod.CONFIG.saveToFile();
+    this.close();
+  }
+
+  private void discardAndExit() {
+    InventoryManagementMod.CONFIG.loadFromFile();
+    this.close();
   }
 
   @Override
   public void close() {
-    // TODO: Check if we actually want to save first!
-    InventoryManagementMod.CONFIG.saveToFile();
-
     if (this.client == null) {
       return;
     }

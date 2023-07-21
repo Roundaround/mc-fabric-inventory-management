@@ -48,7 +48,6 @@ public class InventoryManagementClientMod implements ClientModInitializer {
 
       if (configureKeybind.matchesKey(keyCode, scanCode)) {
         GuiUtil.setScreen(new PerScreenConfigScreen(screen,
-            Text.literal("Placeholder title"),
             InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS));
         return true;
       }
