@@ -5,6 +5,7 @@ import me.roundaround.inventorymanagement.client.gui.widget.button.AutoStackButt
 import me.roundaround.inventorymanagement.client.gui.widget.button.InventoryManagementButton;
 import me.roundaround.inventorymanagement.client.gui.widget.button.SortInventoryButton;
 import me.roundaround.inventorymanagement.client.gui.widget.button.TransferAllButton;
+import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.api.EnvType;
@@ -107,9 +108,26 @@ public class InventoryButtonsManager {
     generateTransferAllButton(handledScreen, true);
   }
 
+  private boolean shouldTryGeneratingSortButton(
+      HandledScreen<?> screen, boolean isPlayerInventory) {
+    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()) {
+      return false;
+    }
+
+    ButtonVisibility sortVisibility =
+        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getSortVisibility(screen,
+            isPlayerInventory);
+
+    if (ButtonVisibility.HIDE.equals(sortVisibility)) {
+      return false;
+    }
+
+    return ButtonVisibility.SHOW.equals(sortVisibility) ||
+        InventoryManagementMod.CONFIG.SHOW_SORT.getValue();
+  }
+
   private void generateSortButton(HandledScreen<?> screen, boolean isPlayerInventory) {
-    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue() ||
-        !InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
+    if (!this.shouldTryGeneratingSortButton(screen, isPlayerInventory)) {
       return;
     }
 
@@ -154,9 +172,26 @@ public class InventoryButtonsManager {
     addButton(screen, button, isPlayerInventory);
   }
 
+  private boolean shouldTryGeneratingStackButton(
+      HandledScreen<?> screen, boolean isPlayerInventory) {
+    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()) {
+      return false;
+    }
+
+    ButtonVisibility stackVisibility =
+        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getStackVisibility(screen,
+            isPlayerInventory);
+
+    if (ButtonVisibility.HIDE.equals(stackVisibility)) {
+      return false;
+    }
+
+    return ButtonVisibility.SHOW.equals(stackVisibility) ||
+        InventoryManagementMod.CONFIG.SHOW_STACK.getValue();
+  }
+
   private void generateAutoStackButton(HandledScreen<?> screen, boolean isPlayerInventory) {
-    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue() ||
-        !InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
+    if (!this.shouldTryGeneratingStackButton(screen, isPlayerInventory)) {
       return;
     }
 
@@ -214,9 +249,26 @@ public class InventoryButtonsManager {
     addButton(screen, button, isPlayerInventory);
   }
 
+  private boolean shouldTryGeneratingTransferButton(
+      HandledScreen<?> screen, boolean isPlayerInventory) {
+    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()) {
+      return false;
+    }
+
+    ButtonVisibility transferVisibility =
+        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getTransferVisibility(screen,
+            isPlayerInventory);
+
+    if (ButtonVisibility.HIDE.equals(transferVisibility)) {
+      return false;
+    }
+
+    return ButtonVisibility.SHOW.equals(transferVisibility) ||
+        InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue();
+  }
+
   private void generateTransferAllButton(HandledScreen<?> screen, boolean isPlayerInventory) {
-    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue() ||
-        !InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
+    if (!this.shouldTryGeneratingTransferButton(screen, isPlayerInventory)) {
       return;
     }
 
