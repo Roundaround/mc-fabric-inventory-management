@@ -52,7 +52,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
             return;
           }
 
-          GuiUtil.setScreen(new PerScreenPositionEditScreen(parent, isPlayerInventory));
+          GuiUtil.setScreen(new PerScreenPositionEditScreen(parent, parent, isPlayerInventory));
         },
         DEFAULT_NARRATION_SUPPLIER);
 
