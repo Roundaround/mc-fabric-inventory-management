@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.client;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
 import me.roundaround.inventorymanagement.client.gui.widget.button.AutoStackButton;
 import me.roundaround.inventorymanagement.client.gui.widget.button.InventoryManagementButton;
 import me.roundaround.inventorymanagement.client.gui.widget.button.SortInventoryButton;
@@ -12,6 +13,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -72,6 +74,10 @@ public class InventoryButtonsManager {
     registerSimpleInventoryTransferableHandler(GenericContainerScreenHandler.class);
     registerSimpleInventoryTransferableHandler(ShulkerBoxScreenHandler.class);
     registerSimpleInventoryTransferableHandler(HorseScreenHandler.class);
+
+    FabricLoader.getInstance()
+        .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
+        .forEach((entrypoint) -> entrypoint.getEntrypoint().onInventoryManagementInit(this));
   }
 
   public void registerSortableContainer(Class<? extends Inventory> clazz) {
