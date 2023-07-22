@@ -42,9 +42,17 @@ public class InventoryButtonsManager {
   private final LinkedHashSet<InventoryManagementButton> playerButtons = new LinkedHashSet<>();
   private final LinkedHashSet<InventoryManagementButton> containerButtons = new LinkedHashSet<>();
   private final HashSet<Class<? extends Inventory>> sortableInventories = new HashSet<>();
-  private final HashSet<Class<? extends Inventory>> transerableInventories = new HashSet<>();
+  private final HashSet<Class<? extends Inventory>> transferableInventories = new HashSet<>();
   private final HashSet<Class<? extends ScreenHandler>> sortableScreenHandlers = new HashSet<>();
   private final HashSet<Class<? extends ScreenHandler>> transferableScreenHandlers =
+      new HashSet<>();
+  private final HashSet<Class<? extends HandledScreen<?>>> sortableScreensPlayerSide =
+      new HashSet<>();
+  private final HashSet<Class<? extends HandledScreen<?>>> transferableScreensPlayerSide =
+      new HashSet<>();
+  private final HashSet<Class<? extends HandledScreen<?>>> sortableScreensContainerSide =
+      new HashSet<>();
+  private final HashSet<Class<? extends HandledScreen<?>>> transferableScreensContainerSide =
       new HashSet<>();
 
   private InventoryButtonsManager() {
@@ -71,7 +79,7 @@ public class InventoryButtonsManager {
   }
 
   public void registerTransferableContainer(Class<? extends Inventory> clazz) {
-    transerableInventories.add(clazz);
+    transferableInventories.add(clazz);
   }
 
   public void registerSimpleInventorySortableHandler(Class<? extends ScreenHandler> clazz) {
@@ -82,20 +90,34 @@ public class InventoryButtonsManager {
     transferableScreenHandlers.add(clazz);
   }
 
+  public void registerSortableScreenPlayerSide(Class<? extends HandledScreen<?>> clazz) {
+    sortableScreensPlayerSide.add(clazz);
+  }
+
+  public void registerTransferableScreenPlayerSide(Class<? extends HandledScreen<?>> clazz) {
+    transferableScreensPlayerSide.add(clazz);
+  }
+
+  public void registerSortableScreenContainerSide(Class<? extends HandledScreen<?>> clazz) {
+    sortableScreensContainerSide.add(clazz);
+  }
+
+  public void registerTransferableScreenContainerSide(Class<? extends HandledScreen<?>> clazz) {
+    transferableScreensContainerSide.add(clazz);
+  }
+
   public void init() {
     ScreenEvents.AFTER_INIT.register(this::onScreenAfterInit);
   }
 
   private void onScreenAfterInit(
       MinecraftClient client, Screen screen, float scaledWidth, float scaledHeight) {
-    if (!(screen instanceof HandledScreen)) {
+    if (!(screen instanceof HandledScreen<?> handledScreen)) {
       return;
     }
 
     playerButtons.clear();
     containerButtons.clear();
-
-    HandledScreen<?> handledScreen = ((HandledScreen<?>) screen);
 
     // Container side
     generateSortButton(handledScreen, false);
@@ -108,221 +130,290 @@ public class InventoryButtonsManager {
     generateTransferAllButton(handledScreen, true);
   }
 
-  private boolean shouldTryGeneratingSortButton(
-      HandledScreen<?> screen, boolean isPlayerInventory) {
+  private boolean shouldTryGeneratingSortButton(Context context) {
     if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()) {
       return false;
     }
 
     ButtonVisibility sortVisibility =
-        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getSortVisibility(screen,
-            isPlayerInventory);
+        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getSortVisibility(context.screen,
+            context.isPlayerInventory);
 
     if (ButtonVisibility.HIDE.equals(sortVisibility)) {
       return false;
     }
 
-    return ButtonVisibility.SHOW.equals(sortVisibility) ||
-        InventoryManagementMod.CONFIG.SHOW_SORT.getValue();
-  }
-
-  private void generateSortButton(HandledScreen<?> screen, boolean isPlayerInventory) {
-    if (!this.shouldTryGeneratingSortButton(screen, isPlayerInventory)) {
-      return;
+    if (!ButtonVisibility.SHOW.equals(sortVisibility) &&
+        !InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
+      return false;
     }
 
-    if (screen instanceof InventoryScreen && !isPlayerInventory) {
-      return;
+    if (context.screen instanceof InventoryScreen && !context.isPlayerInventory) {
+      return false;
     }
 
-    Slot referenceSlot = getReferenceSlot(screen, isPlayerInventory);
-    if (referenceSlot == null) {
-      return;
+    getReferenceSlot(context);
+    if (context.referenceSlot == null) {
+      return false;
     }
 
     ClientPlayerEntity player = MINECRAFT.player;
     if (player == null) {
-      return;
+      return false;
     }
 
-    Inventory inventory =
-        isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
-    if (inventory == null) {
-      return;
+    context.fromInventory = context.isPlayerInventory
+        ? player.getInventory()
+        : InventoryHelper.getContainerInventory(player);
+    if (context.fromInventory == null) {
+      return false;
     }
 
-    if (inventory instanceof SimpleInventory) {
+    if (ButtonVisibility.SHOW.equals(sortVisibility)) {
+      return true;
+    }
+
+    if ((context.isPlayerInventory
+        ? sortableScreensPlayerSide
+        : sortableScreensContainerSide).stream()
+        .anyMatch(clazz -> clazz.isInstance(context.screen))) {
+      return true;
+    }
+
+    if (context.fromInventory instanceof SimpleInventory) {
       if (sortableScreenHandlers.stream()
-          .noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
-        return;
+          .noneMatch(clazz -> clazz.isInstance(context.screen.getScreenHandler()))) {
+        return false;
       }
     } else {
-      if (sortableInventories.stream().noneMatch(clazz -> clazz.isInstance(inventory))) {
-        return;
+      if (sortableInventories.stream()
+          .noneMatch(clazz -> clazz.isInstance(context.fromInventory))) {
+        return false;
       }
     }
 
-    if (getNumberOfBulkInventorySlots(screen, isPlayerInventory) < 3) {
+    if (getNumberOfBulkInventorySlots(context) < 3) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private void generateSortButton(HandledScreen<?> screen, boolean isPlayerInventory) {
+    Context context = new Context(screen, isPlayerInventory);
+
+    if (!this.shouldTryGeneratingSortButton(context)) {
       return;
     }
 
-    Position position = getButtonPosition(screen, isPlayerInventory);
-    SortInventoryButton button =
-        new SortInventoryButton(screen, inventory, referenceSlot, position, isPlayerInventory);
+    Position position = getButtonPosition(context);
+    SortInventoryButton button = new SortInventoryButton(screen,
+        context.fromInventory,
+        context.referenceSlot,
+        position,
+        isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
-  private boolean shouldTryGeneratingStackButton(
-      HandledScreen<?> screen, boolean isPlayerInventory) {
+  private boolean shouldTryGeneratingStackButton(Context context) {
     if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()) {
       return false;
     }
 
     ButtonVisibility stackVisibility =
-        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getStackVisibility(screen,
-            isPlayerInventory);
+        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getStackVisibility(context.screen,
+            context.isPlayerInventory);
 
     if (ButtonVisibility.HIDE.equals(stackVisibility)) {
       return false;
     }
 
-    return ButtonVisibility.SHOW.equals(stackVisibility) ||
-        InventoryManagementMod.CONFIG.SHOW_STACK.getValue();
-  }
-
-  private void generateAutoStackButton(HandledScreen<?> screen, boolean isPlayerInventory) {
-    if (!this.shouldTryGeneratingStackButton(screen, isPlayerInventory)) {
-      return;
+    if (!ButtonVisibility.SHOW.equals(stackVisibility) &&
+        !InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
+      return false;
     }
 
-    if (screen instanceof InventoryScreen && !isPlayerInventory) {
-      return;
+    if (context.screen instanceof InventoryScreen && !context.isPlayerInventory) {
+      return false;
     }
 
-    Slot referenceSlot = getReferenceSlot(screen, isPlayerInventory);
-    if (referenceSlot == null) {
-      return;
+    getReferenceSlot(context);
+    if (context.referenceSlot == null) {
+      return false;
     }
 
     ClientPlayerEntity player = MINECRAFT.player;
     if (player == null) {
-      return;
+      return false;
     }
 
-    Inventory fromInventory =
-        isPlayerInventory ? InventoryHelper.getContainerInventory(player) : player.getInventory();
-    Inventory toInventory =
-        isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
-    if (fromInventory == null || toInventory == null || fromInventory == toInventory) {
-      return;
+    context.fromInventory = context.isPlayerInventory
+        ? InventoryHelper.getContainerInventory(player)
+        : player.getInventory();
+    context.toInventory = context.isPlayerInventory
+        ? player.getInventory()
+        : InventoryHelper.getContainerInventory(player);
+    if (context.fromInventory == null || context.toInventory == null ||
+        context.fromInventory == context.toInventory) {
+      return false;
     }
 
-    if (fromInventory instanceof SimpleInventory) {
+    if (ButtonVisibility.SHOW.equals(stackVisibility)) {
+      return true;
+    }
+
+    if ((context.isPlayerInventory
+        ? transferableScreensPlayerSide
+        : transferableScreensContainerSide).stream()
+        .anyMatch(clazz -> clazz.isInstance(context.screen))) {
+      return true;
+    }
+
+    if (context.fromInventory instanceof SimpleInventory) {
       if (transferableScreenHandlers.stream()
-          .noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
-        return;
+          .noneMatch(clazz -> clazz.isInstance(context.screen.getScreenHandler()))) {
+        return false;
       }
     } else {
-      if (transerableInventories.stream().noneMatch(clazz -> clazz.isInstance(fromInventory))) {
-        return;
+      if (transferableInventories.stream()
+          .noneMatch(clazz -> clazz.isInstance(context.fromInventory))) {
+        return false;
       }
     }
 
-    if (toInventory instanceof SimpleInventory) {
+    if (context.toInventory instanceof SimpleInventory) {
       if (transferableScreenHandlers.stream()
-          .noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
-        return;
+          .noneMatch(clazz -> clazz.isInstance(context.screen.getScreenHandler()))) {
+        return false;
       }
     } else {
-      if (transerableInventories.stream().noneMatch(clazz -> clazz.isInstance(toInventory))) {
-        return;
+      if (transferableInventories.stream()
+          .noneMatch(clazz -> clazz.isInstance(context.toInventory))) {
+        return false;
       }
     }
 
-    if (getNumberOfNonPlayerBulkInventorySlots(screen) < 3) {
+    if (getNumberOfNonPlayerBulkInventorySlots(context) < 3) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private void generateAutoStackButton(HandledScreen<?> screen, boolean isPlayerInventory) {
+    Context context = new Context(screen, isPlayerInventory);
+
+    if (!this.shouldTryGeneratingStackButton(context)) {
       return;
     }
 
-    Position position = getButtonPosition(screen, isPlayerInventory);
-    AutoStackButton button =
-        new AutoStackButton(screen, fromInventory, referenceSlot, position, isPlayerInventory);
+    Position position = getButtonPosition(context);
+    AutoStackButton button = new AutoStackButton(screen,
+        context.fromInventory,
+        context.referenceSlot,
+        position,
+        isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
-  private boolean shouldTryGeneratingTransferButton(
-      HandledScreen<?> screen, boolean isPlayerInventory) {
+  private boolean shouldTryGeneratingTransferButton(Context context) {
     if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()) {
       return false;
     }
 
     ButtonVisibility transferVisibility =
-        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getTransferVisibility(screen,
-            isPlayerInventory);
+        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getTransferVisibility(context.screen,
+            context.isPlayerInventory);
 
     if (ButtonVisibility.HIDE.equals(transferVisibility)) {
       return false;
     }
 
-    return ButtonVisibility.SHOW.equals(transferVisibility) ||
-        InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue();
-  }
-
-  private void generateTransferAllButton(HandledScreen<?> screen, boolean isPlayerInventory) {
-    if (!this.shouldTryGeneratingTransferButton(screen, isPlayerInventory)) {
-      return;
+    if (!ButtonVisibility.SHOW.equals(transferVisibility) &&
+        !InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
+      return false;
     }
 
-    if (screen instanceof InventoryScreen && !isPlayerInventory) {
-      return;
+    if (context.screen instanceof InventoryScreen && !context.isPlayerInventory) {
+      return false;
     }
 
-    Slot referenceSlot = getReferenceSlot(screen, isPlayerInventory);
-    if (referenceSlot == null) {
-      return;
+    getReferenceSlot(context);
+    if (context.referenceSlot == null) {
+      return false;
     }
 
     ClientPlayerEntity player = MINECRAFT.player;
     if (player == null) {
-      return;
+      return false;
     }
 
-    Inventory fromInventory =
-        isPlayerInventory ? InventoryHelper.getContainerInventory(player) : player.getInventory();
-    Inventory toInventory =
-        isPlayerInventory ? player.getInventory() : InventoryHelper.getContainerInventory(player);
-    if (fromInventory == null || toInventory == null || fromInventory == toInventory) {
-      return;
+    context.fromInventory = context.isPlayerInventory
+        ? InventoryHelper.getContainerInventory(player)
+        : player.getInventory();
+    context.toInventory = context.isPlayerInventory
+        ? player.getInventory()
+        : InventoryHelper.getContainerInventory(player);
+    if (context.fromInventory == null || context.toInventory == null ||
+        context.fromInventory == context.toInventory) {
+      return false;
     }
 
-    if (fromInventory instanceof SimpleInventory) {
+    if (ButtonVisibility.SHOW.equals(transferVisibility)) {
+      return true;
+    }
+
+    if ((context.isPlayerInventory
+        ? transferableScreensPlayerSide
+        : transferableScreensContainerSide).stream()
+        .anyMatch(clazz -> clazz.isInstance(context.screen))) {
+      return true;
+    }
+
+    if (context.fromInventory instanceof SimpleInventory) {
       if (transferableScreenHandlers.stream()
-          .noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
-        return;
+          .noneMatch(clazz -> clazz.isInstance(context.screen.getScreenHandler()))) {
+        return false;
       }
     } else {
-      if (transerableInventories.stream().noneMatch(clazz -> clazz.isInstance(fromInventory))) {
-        return;
+      if (transferableInventories.stream()
+          .noneMatch(clazz -> clazz.isInstance(context.fromInventory))) {
+        return false;
       }
     }
 
-    if (toInventory instanceof SimpleInventory) {
+    if (context.toInventory instanceof SimpleInventory) {
       if (transferableScreenHandlers.stream()
-          .noneMatch(clazz -> clazz.isInstance(screen.getScreenHandler()))) {
-        return;
+          .noneMatch(clazz -> clazz.isInstance(context.screen.getScreenHandler()))) {
+        return false;
       }
     } else {
-      if (transerableInventories.stream().noneMatch(clazz -> clazz.isInstance(toInventory))) {
-        return;
+      if (transferableInventories.stream()
+          .noneMatch(clazz -> clazz.isInstance(context.toInventory))) {
+        return false;
       }
     }
 
-    if (getNumberOfNonPlayerBulkInventorySlots(screen) < 3) {
+    if (getNumberOfNonPlayerBulkInventorySlots(context) < 3) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private void generateTransferAllButton(HandledScreen<?> screen, boolean isPlayerInventory) {
+    Context context = new Context(screen, isPlayerInventory);
+
+    if (!this.shouldTryGeneratingTransferButton(context)) {
       return;
     }
 
-    Position position = getButtonPosition(screen, isPlayerInventory);
-    TransferAllButton button =
-        new TransferAllButton(screen, fromInventory, referenceSlot, position, isPlayerInventory);
+    Position position = getButtonPosition(context);
+    TransferAllButton button = new TransferAllButton(screen,
+        context.fromInventory,
+        context.referenceSlot,
+        position,
+        isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
@@ -332,37 +423,40 @@ public class InventoryButtonsManager {
     (isPlayerInventory ? playerButtons : containerButtons).add(button);
   }
 
-  private Slot getReferenceSlot(HandledScreen<?> screen, boolean isPlayerInventory) {
-    return screen.getScreenHandler().slots.stream()
-        .filter(slot -> isPlayerInventory == (slot.inventory instanceof PlayerInventory))
+  private void getReferenceSlot(Context context) {
+    context.referenceSlot = context.screen.getScreenHandler().slots.stream()
+        .filter(slot -> context.isPlayerInventory == (slot.inventory instanceof PlayerInventory))
         .max(Comparator.comparingInt(slot -> slot.x - slot.y))
         .orElse(null);
   }
 
-  private int getNumberOfBulkInventorySlots(HandledScreen<?> screen, boolean isPlayerInventory) {
-    return screen.getScreenHandler().slots.stream()
-        .filter(slot -> isPlayerInventory == (slot.inventory instanceof PlayerInventory))
-        .filter(slot -> !(screen.getScreenHandler() instanceof HorseScreenHandler) ||
+  private int getNumberOfBulkInventorySlots(Context context) {
+    return context.screen.getScreenHandler().slots.stream()
+        .filter(slot -> context.isPlayerInventory == (slot.inventory instanceof PlayerInventory))
+        .filter(slot -> !(context.screen.getScreenHandler() instanceof HorseScreenHandler) ||
             slot.getIndex() >= 2)
         .mapToInt(slot -> 1)
         .sum();
   }
 
-  private int getNumberOfNonPlayerBulkInventorySlots(HandledScreen<?> screen) {
-    return screen.getScreenHandler().slots.stream()
+  private int getNumberOfNonPlayerBulkInventorySlots(Context context) {
+    return context.screen.getScreenHandler().slots.stream()
         .filter(slot -> !(slot.inventory instanceof PlayerInventory))
-        .filter(slot -> !(screen.getScreenHandler() instanceof HorseScreenHandler) ||
+        .filter(slot -> !(context.screen.getScreenHandler() instanceof HorseScreenHandler) ||
             slot.getIndex() >= 2)
         .mapToInt(slot -> 1)
         .sum();
   }
 
-  private Position getButtonPosition(Screen screen, boolean isPlayerInventory) {
-    // TODO: Update to use new config value
-    Position offset = InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue();
-//  Position offset = InventoryManagementMod.CONFIG.SCREEN_POSITIONS.get(screen, isPlayerInventory)
-//      .orElse(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue());
-    return getButtonPosition((isPlayerInventory ? playerButtons : containerButtons).size(), offset);
+  private Position getButtonPosition(Context context) {
+    Position offset = InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getPosition(context.screen,
+        context.isPlayerInventory);
+    if (offset == null) {
+      offset = InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue();
+    }
+
+    return getButtonPosition((context.isPlayerInventory ? playerButtons : containerButtons).size(),
+        offset);
   }
 
   public Position getButtonPosition(int index, Position offset) {
@@ -380,5 +474,18 @@ public class InventoryButtonsManager {
 
   public LinkedList<InventoryManagementButton> getContainerButtons() {
     return new LinkedList<>(containerButtons);
+  }
+
+  private static class Context {
+    public HandledScreen<?> screen;
+    public boolean isPlayerInventory;
+    public Inventory fromInventory;
+    public Inventory toInventory;
+    public Slot referenceSlot;
+
+    public Context(HandledScreen<?> screen, boolean isPlayerInventory) {
+      this.screen = screen;
+      this.isPlayerInventory = isPlayerInventory;
+    }
   }
 }
