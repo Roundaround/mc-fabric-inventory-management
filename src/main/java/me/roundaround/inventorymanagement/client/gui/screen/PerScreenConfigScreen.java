@@ -32,6 +32,7 @@ public class PerScreenConfigScreen extends Screen {
     int listTop = 32;
 
     addDrawableChild(new PerScreenConfigListWidget(this.client,
+        this,
         listLeft,
         listTop,
         listWidth,

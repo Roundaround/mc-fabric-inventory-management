@@ -19,13 +19,16 @@ import java.util.Objects;
 public class PerScreenPositionEditScreen extends PositionEditScreen {
   private final LinkedList<InventoryManagementButton> buttons = new LinkedList<>();
 
+  private final Screen previousScreen;
   private final boolean isPlayerInventory;
 
   public PerScreenPositionEditScreen(
-      Screen parent, Screen workingScreen, boolean isPlayerInventory) {
+      Screen previousScreen, Screen workingScreen, boolean isPlayerInventory) {
     super(Text.translatable("inventorymanagement.position_edit.title"),
-        parent,
+        workingScreen,
         generateDummyConfigOption(workingScreen, isPlayerInventory));
+
+    this.previousScreen = previousScreen;
     this.isPlayerInventory = isPlayerInventory;
 
     this.workingCopy.subscribeToValueChanges(this.hashCode(), (oldValue, newValue) -> {
@@ -111,14 +114,23 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   @Override
   protected void commitValueToConfig() {
     if (isDirty()) {
-      if (getValue() == configOption.getDefault()) {
-        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.clearPosition(parent, isPlayerInventory);
+      if (getValue() == this.configOption.getDefault()) {
+        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.clearPosition(this.parent,
+            this.isPlayerInventory);
       } else {
-        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.setPosition(parent,
-            isPlayerInventory,
+        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.setPosition(this.parent,
+            this.isPlayerInventory,
             getValue());
       }
       InventoryManagementMod.CONFIG.saveToFile();
     }
+  }
+
+  @Override
+  public void close() {
+    if (this.client == null) {
+      return;
+    }
+    this.client.setScreen(this.previousScreen);
   }
 }
