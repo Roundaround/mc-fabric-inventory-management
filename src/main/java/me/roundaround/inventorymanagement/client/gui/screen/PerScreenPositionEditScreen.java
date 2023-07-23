@@ -32,7 +32,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
     this.isPlayerInventory = isPlayerInventory;
 
     this.workingCopy.subscribeToValueChanges(this.hashCode(), (oldValue, newValue) -> {
-      if (Objects.equals(newValue, this.configOption.getValue())) {
+      if (Objects.equals(newValue, this.configOption.getDefault())) {
         for (int i = 0; i < buttons.size(); i++) {
           buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, newValue));
         }
