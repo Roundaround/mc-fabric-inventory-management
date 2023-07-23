@@ -20,6 +20,9 @@ import java.util.List;
 
 public class PerScreenConfigListWidget
     extends VariableHeightListWidget<PerScreenConfigListWidget.Entry> {
+  private static final int BUTTON_WIDTH = 100;
+  private static final int BUTTON_HEIGHT = 20;
+
   private final Screen parent;
 
   public PerScreenConfigListWidget(
@@ -209,10 +212,10 @@ public class PerScreenConfigListWidget
               InventoryManagementMod.CONFIG)).values(ButtonVisibility.values())
               .initially(initialValue == null ? ButtonVisibility.DEFAULT : initialValue)
               .omitKeyText()
-              .build(this.getLeft() + this.getWidth() - 200 - 10,
-                  this.getTop() + this.getHeight() / 2 - 10,
-                  200,
-                  20,
+              .build(this.getLeft() + this.getWidth() - BUTTON_WIDTH - BUTTON_HEIGHT / 2,
+                  this.getTop() + (this.getHeight() - BUTTON_HEIGHT) / 2,
+                  BUTTON_WIDTH,
+                  BUTTON_HEIGHT,
                   Text.of(""),
                   (button, value) -> {
                     if (value == ButtonVisibility.DEFAULT) {
@@ -298,9 +301,9 @@ public class PerScreenConfigListWidget
                 this.workingScreen,
                 this.isPlayerInventory));
           })
-          .position(this.getLeft() + this.getWidth() - 200 - 10,
-              this.getTop() + this.getHeight() / 2 - 10)
-          .size(200, 20)
+          .position(this.getLeft() + this.getWidth() - BUTTON_WIDTH - BUTTON_HEIGHT / 2,
+              this.getTop() + (this.getHeight() - BUTTON_HEIGHT) / 2)
+          .size(BUTTON_WIDTH, BUTTON_HEIGHT)
           .build();
     }
 
