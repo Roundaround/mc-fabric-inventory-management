@@ -1,6 +1,5 @@
 package me.roundaround.inventorymanagement.client.gui.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.widget.button.AutoStackButton;
@@ -15,8 +14,6 @@ import me.roundaround.roundalib.config.option.PositionConfigOption;
 import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.screen.slot.Slot;
@@ -129,22 +126,22 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
       DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
     renderTextureBackground(drawContext, mouseX, mouseY, partialTicks);
 
-    // TODO: Clean this up
-    MatrixStack matrixStack = drawContext.getMatrices();
-    matrixStack.push();
-    matrixStack.translate(getX(), getY(), -51);
-    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-    drawContext.drawTexture(BACKGROUND_TEXTURE, 0, 0, 0, 0, BACKGROUND_WIDTH, 3 * 18 + 17);
-    drawContext.drawTexture(BACKGROUND_TEXTURE, 0, 3 * 18 + 17, 0, 126, BACKGROUND_WIDTH, 96);
-    drawContext.drawText(textRenderer, Text.translatable("container.chest"), 8, 6, 0x404040, false);
+    int x = (this.width - BACKGROUND_WIDTH) / 2;
+    int y = (this.height - BACKGROUND_HEIGHT) / 2;
+    drawContext.drawTexture(BACKGROUND_TEXTURE, x, y, 0, 0, BACKGROUND_WIDTH, 3 * 18 + 17);
+    drawContext.drawTexture(BACKGROUND_TEXTURE, x, y + 3 * 18 + 17, 0, 126, BACKGROUND_WIDTH, 96);
     drawContext.drawText(textRenderer,
-        Text.translatable("container.inventory"),
-        8,
-        BACKGROUND_HEIGHT - 94,
+        Text.translatable("container.chest"),
+        x + 8,
+        y + 6,
         0x404040,
         false);
-    matrixStack.pop();
+    drawContext.drawText(textRenderer,
+        Text.translatable("container.inventory"),
+        x + 8,
+        y + BACKGROUND_HEIGHT - 94,
+        0x404040,
+        false);
 
     renderDarkenBackground(drawContext, mouseX, mouseY, partialTicks);
   }

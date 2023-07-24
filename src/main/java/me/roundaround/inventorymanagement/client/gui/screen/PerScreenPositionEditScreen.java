@@ -32,7 +32,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
     this.isPlayerInventory = isPlayerInventory;
 
     this.workingCopy.subscribeToValueChanges(this.hashCode(), (oldValue, newValue) -> {
-      if (Objects.equals(newValue, this.configOption.getDefault())) {
+      if (Objects.equals(newValue, InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue())) {
         for (int i = 0; i < buttons.size(); i++) {
           buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, newValue));
         }
@@ -51,7 +51,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
     PositionConfigOption dummyConfig = PositionConfigOption.builder(InventoryManagementMod.CONFIG,
         InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getScreenKey(parent),
         "",
-        InventoryManagementMod.CONFIG.DEFAULT_POSITION.getDefault()).build();
+        InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue()).build();
     dummyConfig.setValue(currentValue);
     return dummyConfig;
   }
