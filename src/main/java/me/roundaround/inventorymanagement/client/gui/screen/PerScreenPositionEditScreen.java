@@ -14,7 +14,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.util.LinkedList;
-import java.util.Objects;
 
 public class PerScreenPositionEditScreen extends PositionEditScreen {
   private final LinkedList<InventoryManagementButton> buttons = new LinkedList<>();
@@ -32,10 +31,8 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
     this.isPlayerInventory = isPlayerInventory;
 
     this.workingCopy.subscribeToValueChanges(this.hashCode(), (oldValue, newValue) -> {
-      if (Objects.equals(newValue, InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue())) {
-        for (int i = 0; i < buttons.size(); i++) {
-          buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, newValue));
-        }
+      for (int i = 0; i < buttons.size(); i++) {
+        buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, newValue));
       }
     });
   }

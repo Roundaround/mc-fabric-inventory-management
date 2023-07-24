@@ -35,6 +35,17 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     super(Text.translatable("inventorymanagement.default_position_edit.title"),
         parent,
         configOption);
+
+    this.workingCopy.subscribeToValueChanges(this.hashCode(), (oldValue, newValue) -> {
+        for (int i = 0; i < containerButtons.size(); i++) {
+          containerButtons.get(i)
+              .setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, newValue));
+        }
+      for (int i = 0; i < playerButtons.size(); i++) {
+        playerButtons.get(i)
+            .setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, newValue));
+      }
+    });
   }
 
   public static SubScreenControl.SubScreenFactory<Position, PositionConfigOption> getSubScreenFactory() {
