@@ -60,7 +60,10 @@ public class InventoryManagementConfig extends ModConfig {
 
     PER_SCREEN_CONFIGS = registerConfigOption(PerScreenConfigOption.builder(this,
         "perScreenConfigs",
-        this.i18n("per_screen_configs.label")).build());
+        this.i18n("per_screen_configs.label"))
+        .hideFromConfigScreen()
+        .setComment("Customize settings on a per-screen basis.")
+        .build());
   }
 
   private String i18n(String key) {
