@@ -16,5 +16,10 @@
   "inventorymanagement.show_transfer.label": "Show transfer buttons",
   "inventorymanagement.show_stack.label": "Show autostack buttons",
   "inventorymanagement.gui_theme.label": "GUI theme",
-  "inventorymanagement.default_position.label": "Default button position"
+  "inventorymanagement.default_position.label": "Default button position",
+  "inventorymanagement.perscreen.title": "Per screen configuration",
+  "inventorymanagement.button_visibility.default": "Default/inherit",
+  "inventorymanagement.button_visibility.show": "Always",
+  "inventorymanagement.button_visibility.hide": "Never",
+  "inventorymanagement.perscreen.value.none": "Default/inherit"
 }
