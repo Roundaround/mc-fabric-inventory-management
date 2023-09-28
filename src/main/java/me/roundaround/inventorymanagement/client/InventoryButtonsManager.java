@@ -25,9 +25,7 @@ import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.screen.*;
-import net.minecraft.screen.slot.Slot;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -41,8 +39,9 @@ public class InventoryButtonsManager {
   private static final int BUTTON_SHIFT_X = 0;
   private static final int BUTTON_SHIFT_Y = 1;
 
-  private final LinkedHashSet<InventoryManagementButton> playerButtons = new LinkedHashSet<>();
-  private final LinkedHashSet<InventoryManagementButton> containerButtons = new LinkedHashSet<>();
+  private final LinkedHashSet<InventoryManagementButton<?>> playerButtons = new LinkedHashSet<>();
+  private final LinkedHashSet<InventoryManagementButton<?>> containerButtons =
+      new LinkedHashSet<>();
   private final HashSet<Class<? extends Inventory>> sortableInventories = new HashSet<>();
   private final HashSet<Class<? extends Inventory>> transferableInventories = new HashSet<>();
   private final HashSet<Class<? extends ScreenHandler>> sortableScreenHandlers = new HashSet<>();
@@ -158,11 +157,6 @@ public class InventoryButtonsManager {
       return false;
     }
 
-    getReferenceSlot(context);
-    if (context.referenceSlot == null) {
-      return false;
-    }
-
     ClientPlayerEntity player = MINECRAFT.player;
     if (player == null) {
       return false;
@@ -213,9 +207,8 @@ public class InventoryButtonsManager {
     }
 
     Position position = getButtonPosition(context);
-    SortInventoryButton button = new SortInventoryButton(screen,
-        context.fromInventory,
-        context.referenceSlot,
+    SortInventoryButton<?> button = new SortInventoryButton<>(screen,
+        ButtonBasePositionFunction.getDefault(),
         position,
         isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
@@ -240,11 +233,6 @@ public class InventoryButtonsManager {
     }
 
     if (context.screen instanceof InventoryScreen && !context.isPlayerInventory) {
-      return false;
-    }
-
-    getReferenceSlot(context);
-    if (context.referenceSlot == null) {
       return false;
     }
 
@@ -314,9 +302,8 @@ public class InventoryButtonsManager {
     }
 
     Position position = getButtonPosition(context);
-    AutoStackButton button = new AutoStackButton(screen,
-        context.fromInventory,
-        context.referenceSlot,
+    AutoStackButton<?> button = new AutoStackButton<>(screen,
+        ButtonBasePositionFunction.getDefault(),
         position,
         isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
@@ -341,11 +328,6 @@ public class InventoryButtonsManager {
     }
 
     if (context.screen instanceof InventoryScreen && !context.isPlayerInventory) {
-      return false;
-    }
-
-    getReferenceSlot(context);
-    if (context.referenceSlot == null) {
       return false;
     }
 
@@ -415,25 +397,17 @@ public class InventoryButtonsManager {
     }
 
     Position position = getButtonPosition(context);
-    TransferAllButton button = new TransferAllButton(screen,
-        context.fromInventory,
-        context.referenceSlot,
+    TransferAllButton<?> button = new TransferAllButton<>(screen,
+        ButtonBasePositionFunction.getDefault(),
         position,
         isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
   private void addButton(
-      HandledScreen<?> screen, InventoryManagementButton button, boolean isPlayerInventory) {
+      HandledScreen<?> screen, InventoryManagementButton<?> button, boolean isPlayerInventory) {
     Screens.getButtons(screen).add(button);
     (isPlayerInventory ? playerButtons : containerButtons).add(button);
-  }
-
-  private void getReferenceSlot(Context context) {
-    context.referenceSlot = context.screen.getScreenHandler().slots.stream()
-        .filter(slot -> context.isPlayerInventory == (slot.inventory instanceof PlayerInventory))
-        .max(Comparator.comparingInt(slot -> slot.x - slot.y))
-        .orElse(null);
   }
 
   private int getNumberOfBulkInventorySlots(Context context) {
@@ -474,11 +448,11 @@ public class InventoryButtonsManager {
     return new Position(x, y);
   }
 
-  public LinkedList<InventoryManagementButton> getPlayerButtons() {
+  public LinkedList<InventoryManagementButton<?>> getPlayerButtons() {
     return new LinkedList<>(playerButtons);
   }
 
-  public LinkedList<InventoryManagementButton> getContainerButtons() {
+  public LinkedList<InventoryManagementButton<?>> getContainerButtons() {
     return new LinkedList<>(containerButtons);
   }
 
@@ -487,7 +461,6 @@ public class InventoryButtonsManager {
     public boolean isPlayerInventory;
     public Inventory fromInventory;
     public Inventory toInventory;
-    public Slot referenceSlot;
 
     public Context(HandledScreen<?> screen, boolean isPlayerInventory) {
       this.screen = screen;

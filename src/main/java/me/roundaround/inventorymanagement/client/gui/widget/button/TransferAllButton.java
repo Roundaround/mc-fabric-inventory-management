@@ -1,24 +1,21 @@
 package me.roundaround.inventorymanagement.client.gui.widget.button;
 
+import me.roundaround.inventorymanagement.client.ButtonBasePositionFunction;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.inventorymanagement.network.TransferAllPacket;
 import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 
-public class TransferAllButton extends InventoryManagementButton {
+public class TransferAllButton<T extends HandledScreen<?>> extends InventoryManagementButton<T> {
   public TransferAllButton(
-      HandledScreen<?> parent,
-      Inventory inventory,
-      Slot referenceSlot,
+      T parent,
+      ButtonBasePositionFunction<T> basePositionFunction,
       Position offset,
       boolean fromPlayerInventory) {
-    super(
-        parent,
-        inventory,
-        referenceSlot,
+    super(parent,
+        basePositionFunction,
         offset,
         new Position(fromPlayerInventory ? 4 : 3, 0),
         fromPlayerInventory,
@@ -29,21 +26,15 @@ public class TransferAllButton extends InventoryManagementButton {
   }
 
   public TransferAllButton(
-      HandledScreenAccessor parent,
-      Inventory inventory,
+      HandledScreenAccessor accessor,
       Slot referenceSlot,
       Position offset,
       boolean fromPlayerInventory) {
-    super(
-        parent,
-        inventory,
+    super(accessor,
         referenceSlot,
         offset,
         new Position(fromPlayerInventory ? 4 : 3, 0),
         fromPlayerInventory,
-        (button) -> {
-          TransferAllPacket.sendToServer(fromPlayerInventory);
-        },
         getTooltip(fromPlayerInventory));
   }
 

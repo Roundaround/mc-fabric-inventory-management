@@ -28,8 +28,8 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 114 + 3 * 18;
 
-  private final LinkedList<InventoryManagementButton> containerButtons = new LinkedList<>();
-  private final LinkedList<InventoryManagementButton> playerButtons = new LinkedList<>();
+  private final LinkedList<InventoryManagementButton<?>> containerButtons = new LinkedList<>();
+  private final LinkedList<InventoryManagementButton<?>> playerButtons = new LinkedList<>();
 
   private DefaultPositionEditScreen(Screen parent, PositionConfigOption configOption) {
     super(Text.translatable("inventorymanagement.default_position_edit.title"),
@@ -37,10 +37,10 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
         configOption);
 
     this.workingCopy.subscribeToValueChanges(this.hashCode(), (oldValue, newValue) -> {
-        for (int i = 0; i < containerButtons.size(); i++) {
-          containerButtons.get(i)
-              .setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, newValue));
-        }
+      for (int i = 0; i < containerButtons.size(); i++) {
+        containerButtons.get(i)
+            .setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, newValue));
+      }
       for (int i = 0; i < playerButtons.size(); i++) {
         playerButtons.get(i)
             .setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, newValue));
@@ -67,22 +67,19 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     int index = 0;
 
     if (InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
-      containerButtons.add(new SortInventoryButton(this,
-          containerInventory,
+      containerButtons.add(new SortInventoryButton<>(this,
           containerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
           true));
     }
     if (InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
-      containerButtons.add(new AutoStackButton(this,
-          containerInventory,
+      containerButtons.add(new AutoStackButton<>(this,
           containerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
           true));
     }
     if (InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
-      containerButtons.add(new TransferAllButton(this,
-          containerInventory,
+      containerButtons.add(new TransferAllButton<>(this,
           containerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
           true));
@@ -96,22 +93,19 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     index = 0;
 
     if (InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
-      playerButtons.add(new SortInventoryButton(this,
-          playerInventory,
+      playerButtons.add(new SortInventoryButton<>(this,
           playerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
           true));
     }
     if (InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
-      playerButtons.add(new AutoStackButton(this,
-          playerInventory,
+      playerButtons.add(new AutoStackButton<>(this,
           playerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
           true));
     }
     if (InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
-      playerButtons.add(new TransferAllButton(this,
-          playerInventory,
+      playerButtons.add(new TransferAllButton<>(this,
           playerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
           true));
