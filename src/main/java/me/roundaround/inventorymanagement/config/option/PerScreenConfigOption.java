@@ -1,11 +1,14 @@
 package me.roundaround.inventorymanagement.config.option;
 
+import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.inventorymanagement.config.value.PerScreenConfig;
 import me.roundaround.roundalib.config.ModConfig;
 import me.roundaround.roundalib.config.option.ConfigOption;
 import me.roundaround.roundalib.config.value.Position;
 import me.roundaround.roundalib.shadow.nightconfig.core.Config;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
@@ -118,7 +121,9 @@ public class PerScreenConfigOption
   }
 
   public String getScreenKey(Screen screen) {
-    return screen.getClass().getName().replaceAll("\\.", "-");
+    MappingResolver mappingResolver = FabricLoader.getInstance().getMappingResolver();
+    String unmapped = mappingResolver.unmapClassName("named", screen.getClass().getName());
+    return unmapped.replaceAll("\\.", "-");
   }
 
   private <T> T getValue(
