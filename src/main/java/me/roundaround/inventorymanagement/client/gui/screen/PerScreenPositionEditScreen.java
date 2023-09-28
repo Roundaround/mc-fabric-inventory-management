@@ -46,7 +46,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
     }
 
     PositionConfigOption dummyConfig = PositionConfigOption.builder(InventoryManagementMod.CONFIG,
-        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getScreenKey(parent),
+        InventoryManagementMod.getScreenKey(parent),
         "",
         InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue()).build();
     dummyConfig.setValue(currentValue);

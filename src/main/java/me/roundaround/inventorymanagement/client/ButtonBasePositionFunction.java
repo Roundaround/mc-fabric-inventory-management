@@ -11,22 +11,20 @@ import java.util.Comparator;
 @FunctionalInterface
 public interface ButtonBasePositionFunction<T extends HandledScreen<?>> {
   Position apply(
-      T parentScreen, HandledScreenAccessor accessor, Position offset, boolean isPlayerInventory);
+      T parentScreen, HandledScreenAccessor accessor, boolean isPlayerInventory);
 
   static <T extends HandledScreen<?>> ButtonBasePositionFunction<T> getDefault() {
-    return (parentScreen, accessor, offset, isPlayerInventory) -> {
+    return (parentScreen, accessor, isPlayerInventory) -> {
       Slot referenceSlot = getReferenceSlot(parentScreen, isPlayerInventory);
       int refY = referenceSlot == null ? 0 : referenceSlot.y;
-      return new Position(accessor.getX() + accessor.getBackgroundWidth() + offset.x(),
-          accessor.getY() + refY + offset.y());
+      return new Position(accessor.getX() + accessor.getBackgroundWidth(), accessor.getY() + refY);
     };
   }
 
   static <T extends HandledScreen<?>> ButtonBasePositionFunction<T> forReferenceSlot(Slot referenceSlot) {
-    return (parentScreen, accessor, offset, fromPlayerInventory) -> {
+    return (parentScreen, accessor, fromPlayerInventory) -> {
       int refY = referenceSlot == null ? 0 : referenceSlot.y;
-      return new Position(accessor.getX() + accessor.getBackgroundWidth() + offset.x(),
-          accessor.getY() + refY + offset.y());
+      return new Position(accessor.getX() + accessor.getBackgroundWidth(), accessor.getY() + refY);
     };
   }
 

@@ -19,6 +19,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.gui.screen.ingame.ShulkerBoxScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EnderChestInventory;
@@ -26,6 +27,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.screen.*;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -55,6 +57,8 @@ public class InventoryButtonsManager {
       new HashSet<>();
   private final HashSet<Class<? extends HandledScreen<?>>> transferableScreensContainerSide =
       new HashSet<>();
+  private final HashMap<String, ButtonBasePositionFunction<?>> buttonBasePositionFunctions =
+      new HashMap<>();
 
   private InventoryButtonsManager() {
     registerSortableContainer(PlayerInventory.class);
@@ -73,6 +77,9 @@ public class InventoryButtonsManager {
     registerSimpleInventoryTransferableHandler(GenericContainerScreenHandler.class);
     registerSimpleInventoryTransferableHandler(ShulkerBoxScreenHandler.class);
     registerSimpleInventoryTransferableHandler(HorseScreenHandler.class);
+
+    registerButtonBasePositionFunction(ShulkerBoxScreen.class,
+        (screen, accessor, isPlayerInventory) -> new Position(isPlayerInventory ? 10 : 40, 10));
 
     FabricLoader.getInstance()
         .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
@@ -109,6 +116,11 @@ public class InventoryButtonsManager {
 
   public void registerTransferableScreenContainerSide(Class<? extends HandledScreen<?>> clazz) {
     transferableScreensContainerSide.add(clazz);
+  }
+
+  public <T extends HandledScreen<?>> void registerButtonBasePositionFunction(
+      Class<T> clazz, ButtonBasePositionFunction<T> function) {
+    buttonBasePositionFunctions.put(InventoryManagementMod.getClassKey(clazz), function);
   }
 
   public void init() {
@@ -199,7 +211,8 @@ public class InventoryButtonsManager {
     return true;
   }
 
-  private void generateSortButton(HandledScreen<?> screen, boolean isPlayerInventory) {
+  private <T extends HandledScreen<?>> void generateSortButton(
+      T screen, boolean isPlayerInventory) {
     Context context = new Context(screen, isPlayerInventory);
 
     if (!this.shouldTryGeneratingSortButton(context)) {
@@ -207,10 +220,9 @@ public class InventoryButtonsManager {
     }
 
     Position position = getButtonPosition(context);
-    SortInventoryButton<?> button = new SortInventoryButton<>(screen,
-        ButtonBasePositionFunction.getDefault(),
-        position,
-        isPlayerInventory);
+    ButtonBasePositionFunction<T> positionFunction = getButtonBasePositionFunction(screen);
+    SortInventoryButton<T> button =
+        new SortInventoryButton<>(screen, positionFunction, position, isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
@@ -294,7 +306,8 @@ public class InventoryButtonsManager {
     return true;
   }
 
-  private void generateAutoStackButton(HandledScreen<?> screen, boolean isPlayerInventory) {
+  private <T extends HandledScreen<?>> void generateAutoStackButton(
+      T screen, boolean isPlayerInventory) {
     Context context = new Context(screen, isPlayerInventory);
 
     if (!this.shouldTryGeneratingStackButton(context)) {
@@ -302,10 +315,9 @@ public class InventoryButtonsManager {
     }
 
     Position position = getButtonPosition(context);
-    AutoStackButton<?> button = new AutoStackButton<>(screen,
-        ButtonBasePositionFunction.getDefault(),
-        position,
-        isPlayerInventory);
+    ButtonBasePositionFunction<T> positionFunction = getButtonBasePositionFunction(screen);
+    AutoStackButton<T> button =
+        new AutoStackButton<>(screen, positionFunction, position, isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
@@ -389,7 +401,8 @@ public class InventoryButtonsManager {
     return true;
   }
 
-  private void generateTransferAllButton(HandledScreen<?> screen, boolean isPlayerInventory) {
+  private <T extends HandledScreen<?>> void generateTransferAllButton(
+      T screen, boolean isPlayerInventory) {
     Context context = new Context(screen, isPlayerInventory);
 
     if (!this.shouldTryGeneratingTransferButton(context)) {
@@ -397,10 +410,9 @@ public class InventoryButtonsManager {
     }
 
     Position position = getButtonPosition(context);
-    TransferAllButton<?> button = new TransferAllButton<>(screen,
-        ButtonBasePositionFunction.getDefault(),
-        position,
-        isPlayerInventory);
+    ButtonBasePositionFunction<T> positionFunction = getButtonBasePositionFunction(screen);
+    TransferAllButton<T> button =
+        new TransferAllButton<>(screen, positionFunction, position, isPlayerInventory);
     addButton(screen, button, isPlayerInventory);
   }
 
@@ -446,6 +458,16 @@ public class InventoryButtonsManager {
         offset.y() + BUTTON_SHIFT_Y * (InventoryManagementButton.HEIGHT + BUTTON_SPACING) * index;
 
     return new Position(x, y);
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T extends HandledScreen<?>> ButtonBasePositionFunction<T> getButtonBasePositionFunction(
+      T screen) {
+    // Suppressing unchecked cast warning because the API enforces that the key and implementation
+    // are of the same type.
+    return (ButtonBasePositionFunction<T>) buttonBasePositionFunctions.getOrDefault(
+        InventoryManagementMod.getClassKey(screen.getClass()),
+        ButtonBasePositionFunction.getDefault());
   }
 
   public LinkedList<InventoryManagementButton<?>> getPlayerButtons() {

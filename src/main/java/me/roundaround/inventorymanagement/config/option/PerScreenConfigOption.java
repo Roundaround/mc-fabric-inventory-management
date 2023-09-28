@@ -7,8 +7,6 @@ import me.roundaround.roundalib.config.ModConfig;
 import me.roundaround.roundalib.config.option.ConfigOption;
 import me.roundaround.roundalib.config.value.Position;
 import me.roundaround.roundalib.shadow.nightconfig.core.Config;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
@@ -28,7 +26,7 @@ public class PerScreenConfigOption
   }
 
   public void clear(Screen screen) {
-    this.setValue(this.getValue().clear(getScreenKey(screen)));
+    this.setValue(this.getValue().clear(InventoryManagementMod.getScreenKey(screen)));
   }
 
   public ButtonVisibility getSortVisibility(Screen screen, boolean isPlayerInventory) {
@@ -120,19 +118,13 @@ public class PerScreenConfigOption
         PerScreenConfig::clearContainerSideOffset);
   }
 
-  public String getScreenKey(Screen screen) {
-    MappingResolver mappingResolver = FabricLoader.getInstance().getMappingResolver();
-    String unmapped = mappingResolver.unmapClassName("named", screen.getClass().getName());
-    return unmapped.replaceAll("\\.", "-");
-  }
-
   private <T> T getValue(
       Screen screen,
       boolean isPlayerInventory,
       BiFunction<PerScreenConfig, String, T> getPlayerSide,
       BiFunction<PerScreenConfig, String, T> getContainerSide) {
     PerScreenConfig config = this.getValue();
-    String key = getScreenKey(screen);
+    String key = InventoryManagementMod.getScreenKey(screen);
     return isPlayerInventory
         ? getPlayerSide.apply(config, key)
         : getContainerSide.apply(config, key);
@@ -145,7 +137,7 @@ public class PerScreenConfigOption
       TriFunction<PerScreenConfig, String, T, PerScreenConfig> setContainerSide,
       T value) {
     PerScreenConfig config = this.getValue();
-    String key = getScreenKey(screen);
+    String key = InventoryManagementMod.getScreenKey(screen);
     if (isPlayerInventory) {
       this.setValue(setPlayerSide.apply(config, key, value));
     } else {
@@ -159,7 +151,7 @@ public class PerScreenConfigOption
       BiFunction<PerScreenConfig, String, PerScreenConfig> clearPlayerSide,
       BiFunction<PerScreenConfig, String, PerScreenConfig> clearContainerSide) {
     PerScreenConfig config = this.getValue();
-    String key = getScreenKey(screen);
+    String key = InventoryManagementMod.getScreenKey(screen);
     if (isPlayerInventory) {
       this.setValue(clearPlayerSide.apply(config, key));
     } else {

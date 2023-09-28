@@ -41,14 +41,11 @@ public abstract class InventoryManagementButton<T extends HandledScreen<?>> exte
       boolean isPlayerInventory,
       PressAction onPress,
       Text tooltip) {
-    super(basePositionFunction.apply(parent,
-            (HandledScreenAccessor) parent,
-            offset,
-            isPlayerInventory).x(),
-        basePositionFunction.apply(parent,
-            (HandledScreenAccessor) parent,
-            offset,
-            isPlayerInventory).y(),
+    super(
+        basePositionFunction.apply(parent, (HandledScreenAccessor) parent, isPlayerInventory).x() +
+            offset.x(),
+        basePositionFunction.apply(parent, (HandledScreenAccessor) parent, isPlayerInventory).y() +
+            offset.y(),
         WIDTH,
         HEIGHT,
         Text.literal(""),
@@ -80,11 +77,11 @@ public abstract class InventoryManagementButton<T extends HandledScreen<?>> exte
       boolean isPlayerInventory,
       Text tooltip) {
     super(ButtonBasePositionFunction.forReferenceSlot(referenceSlot)
-            .apply(null, accessor, offset, isPlayerInventory)
-            .x(),
+            .apply(null, accessor, isPlayerInventory)
+            .x() + offset.x(),
         ButtonBasePositionFunction.forReferenceSlot(referenceSlot)
-            .apply(null, accessor, offset, isPlayerInventory)
-            .y(),
+            .apply(null, accessor, isPlayerInventory)
+            .y() + offset.y(),
         WIDTH,
         HEIGHT,
         Text.literal(""),
@@ -108,10 +105,9 @@ public abstract class InventoryManagementButton<T extends HandledScreen<?>> exte
 
   @Override
   public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-    Position position =
-        basePositionFunction.apply(parent, accessor, offset, this.isPlayerInventory);
-    setX(position.x());
-    setY(position.y());
+    Position position = basePositionFunction.apply(parent, accessor, this.isPlayerInventory);
+    setX(position.x() + offset.x());
+    setY(position.y() + offset.y());
 
     super.render(drawContext, mouseX, mouseY, delta);
   }
