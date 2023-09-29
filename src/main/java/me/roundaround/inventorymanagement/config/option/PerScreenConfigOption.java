@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.config.option;
 
-import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.inventorymanagement.config.value.PerScreenConfig;
 import me.roundaround.roundalib.config.ModConfig;
@@ -26,7 +26,7 @@ public class PerScreenConfigOption
   }
 
   public void clear(Screen screen) {
-    this.setValue(this.getValue().clear(InventoryManagementMod.getScreenKey(screen)));
+    this.setValue(this.getValue().clear(InventoryManagementConfig.getScreenKey(screen)));
   }
 
   public ButtonVisibility getSortVisibility(Screen screen, boolean isPlayerInventory) {
@@ -124,7 +124,7 @@ public class PerScreenConfigOption
       BiFunction<PerScreenConfig, String, T> getPlayerSide,
       BiFunction<PerScreenConfig, String, T> getContainerSide) {
     PerScreenConfig config = this.getValue();
-    String key = InventoryManagementMod.getScreenKey(screen);
+    String key = InventoryManagementConfig.getScreenKey(screen);
     return isPlayerInventory
         ? getPlayerSide.apply(config, key)
         : getContainerSide.apply(config, key);
@@ -137,7 +137,7 @@ public class PerScreenConfigOption
       TriFunction<PerScreenConfig, String, T, PerScreenConfig> setContainerSide,
       T value) {
     PerScreenConfig config = this.getValue();
-    String key = InventoryManagementMod.getScreenKey(screen);
+    String key = InventoryManagementConfig.getScreenKey(screen);
     if (isPlayerInventory) {
       this.setValue(setPlayerSide.apply(config, key, value));
     } else {
@@ -151,7 +151,7 @@ public class PerScreenConfigOption
       BiFunction<PerScreenConfig, String, PerScreenConfig> clearPlayerSide,
       BiFunction<PerScreenConfig, String, PerScreenConfig> clearContainerSide) {
     PerScreenConfig config = this.getValue();
-    String key = InventoryManagementMod.getScreenKey(screen);
+    String key = InventoryManagementConfig.getScreenKey(screen);
     if (isPlayerInventory) {
       this.setValue(clearPlayerSide.apply(config, key));
     } else {

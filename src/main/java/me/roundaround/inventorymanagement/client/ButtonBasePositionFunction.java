@@ -22,7 +22,7 @@ public interface ButtonBasePositionFunction<T extends HandledScreen<?>> {
   }
 
   static <T extends HandledScreen<?>> ButtonBasePositionFunction<T> forReferenceSlot(Slot referenceSlot) {
-    return (parentScreen, accessor, fromPlayerInventory) -> {
+    return (nul, accessor, fromPlayerInventory) -> {
       int refY = referenceSlot == null ? 0 : referenceSlot.y;
       return new Position(accessor.getX() + accessor.getBackgroundWidth(), accessor.getY() + refY);
     };
@@ -33,5 +33,11 @@ public interface ButtonBasePositionFunction<T extends HandledScreen<?>> {
         .filter(slot -> isPlayerInventory == (slot.inventory instanceof PlayerInventory))
         .max(Comparator.comparingInt(slot -> slot.x - slot.y))
         .orElse(null);
+  }
+
+  interface Context {
+    HandledScreenAccessor getAccessor();
+    Slot getReferenceSlot();
+    boolean isPlayerInventory();
   }
 }

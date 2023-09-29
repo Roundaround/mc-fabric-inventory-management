@@ -19,7 +19,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.gui.screen.ingame.ShulkerBoxScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EnderChestInventory;
@@ -57,8 +56,8 @@ public class InventoryButtonsManager {
       new HashSet<>();
   private final HashSet<Class<? extends HandledScreen<?>>> transferableScreensContainerSide =
       new HashSet<>();
-  private final HashMap<String, ButtonBasePositionFunction<?>> buttonBasePositionFunctions =
-      new HashMap<>();
+  private final HashMap<Class<? extends HandledScreen<?>>, ButtonBasePositionFunction<?>>
+      buttonBasePositionFunctions = new HashMap<>();
 
   private InventoryButtonsManager() {
     registerSortableContainer(PlayerInventory.class);
@@ -117,7 +116,7 @@ public class InventoryButtonsManager {
 
   public <T extends HandledScreen<?>> void registerButtonBasePositionFunction(
       Class<T> clazz, ButtonBasePositionFunction<T> function) {
-    buttonBasePositionFunctions.put(InventoryManagementMod.getClassKey(clazz), function);
+    buttonBasePositionFunctions.put(clazz, function);
   }
 
   public void init() {
@@ -462,8 +461,7 @@ public class InventoryButtonsManager {
       T screen) {
     // Suppressing unchecked cast warning because the API enforces that the key and implementation
     // are of the same type.
-    return (ButtonBasePositionFunction<T>) buttonBasePositionFunctions.getOrDefault(
-        InventoryManagementMod.getClassKey(screen.getClass()),
+    return (ButtonBasePositionFunction<T>) buttonBasePositionFunctions.getOrDefault(screen.getClass(),
         ButtonBasePositionFunction.getDefault());
   }
 

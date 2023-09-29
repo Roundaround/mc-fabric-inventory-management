@@ -3,6 +3,7 @@ package me.roundaround.inventorymanagement.client.gui.screen;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.widget.button.InventoryManagementButton;
+import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.screen.PositionEditScreen;
 import me.roundaround.roundalib.config.option.PositionConfigOption;
@@ -16,7 +17,7 @@ import net.minecraft.text.Text;
 import java.util.LinkedList;
 
 public class PerScreenPositionEditScreen extends PositionEditScreen {
-  private final LinkedList<InventoryManagementButton> buttons = new LinkedList<>();
+  private final LinkedList<InventoryManagementButton<?>> buttons = new LinkedList<>();
 
   private final Screen previousScreen;
   private final boolean isPlayerInventory;
@@ -46,7 +47,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
     }
 
     PositionConfigOption dummyConfig = PositionConfigOption.builder(InventoryManagementMod.CONFIG,
-        InventoryManagementMod.getScreenKey(parent),
+        InventoryManagementConfig.getScreenKey(parent),
         "",
         InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue()).build();
     dummyConfig.setValue(currentValue);
