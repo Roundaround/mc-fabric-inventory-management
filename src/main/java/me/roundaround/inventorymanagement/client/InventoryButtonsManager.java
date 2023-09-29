@@ -78,9 +78,6 @@ public class InventoryButtonsManager {
     registerSimpleInventoryTransferableHandler(ShulkerBoxScreenHandler.class);
     registerSimpleInventoryTransferableHandler(HorseScreenHandler.class);
 
-    registerButtonBasePositionFunction(ShulkerBoxScreen.class,
-        (screen, accessor, isPlayerInventory) -> new Position(isPlayerInventory ? 10 : 40, 10));
-
     FabricLoader.getInstance()
         .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
         .forEach((entrypoint) -> entrypoint.getEntrypoint().onInventoryManagementInit(this));
