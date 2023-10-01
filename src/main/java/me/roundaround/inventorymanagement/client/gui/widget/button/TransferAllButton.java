@@ -1,41 +1,24 @@
 package me.roundaround.inventorymanagement.client.gui.widget.button;
 
-import me.roundaround.inventorymanagement.client.ButtonBasePositionFunction;
-import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
+import me.roundaround.inventorymanagement.api.ButtonContext;
+import me.roundaround.inventorymanagement.api.PositioningFunction;
 import me.roundaround.inventorymanagement.network.TransferAllPacket;
 import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 
-public class TransferAllButton<T extends HandledScreen<?>> extends InventoryManagementButton<T> {
+public class TransferAllButton<H extends ScreenHandler, S extends HandledScreen<H>>
+    extends ButtonBase<H, S> {
   public TransferAllButton(
-      T parent,
-      ButtonBasePositionFunction<T> basePositionFunction,
-      Position offset,
-      boolean fromPlayerInventory) {
-    super(parent,
-        basePositionFunction,
+      Position offset, PositioningFunction<H, S> positioningFunction, ButtonContext<H, S> context) {
+    super(positioningFunction.apply(context),
         offset,
-        new Position(fromPlayerInventory ? 4 : 3, 0),
-        fromPlayerInventory,
-        (button) -> {
-          TransferAllPacket.sendToServer(fromPlayerInventory);
-        },
-        getTooltip(fromPlayerInventory));
-  }
-
-  public TransferAllButton(
-      HandledScreenAccessor accessor,
-      Slot referenceSlot,
-      Position offset,
-      boolean fromPlayerInventory) {
-    super(accessor,
-        referenceSlot,
-        offset,
-        new Position(fromPlayerInventory ? 4 : 3, 0),
-        fromPlayerInventory,
-        getTooltip(fromPlayerInventory));
+        new Position(context.isPlayerInventory() ? 4 : 3, 0),
+        positioningFunction,
+        context,
+        (button) -> TransferAllPacket.sendToServer(context.isPlayerInventory()),
+        getTooltip(context.isPlayerInventory()));
   }
 
   private static Text getTooltip(boolean fromPlayerInventory) {

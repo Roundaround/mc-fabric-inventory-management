@@ -201,6 +201,39 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
       this.containerSideOffset = other.containerSideOffset;
     }
 
+    public ScreenConfig patch(ScreenConfig other) {
+      if (other == null) {
+        return this;
+      }
+
+      if (other.playerSideSortVisibility != null) {
+        this.playerSideSortVisibility = other.playerSideSortVisibility;
+      }
+      if (other.playerSideTransferVisibility != null) {
+        this.playerSideTransferVisibility = other.playerSideTransferVisibility;
+      }
+      if (other.playerSideStackVisibility != null) {
+        this.playerSideStackVisibility = other.playerSideStackVisibility;
+      }
+      if (other.containerSideSortVisibility != null) {
+        this.containerSideSortVisibility = other.containerSideSortVisibility;
+      }
+      if (other.containerSideTransferVisibility != null) {
+        this.containerSideTransferVisibility = other.containerSideTransferVisibility;
+      }
+      if (other.containerSideStackVisibility != null) {
+        this.containerSideStackVisibility = other.containerSideStackVisibility;
+      }
+      if (other.playerSideOffset != null) {
+        this.playerSideOffset = other.playerSideOffset;
+      }
+      if (other.containerSideOffset != null) {
+        this.containerSideOffset = other.containerSideOffset;
+      }
+
+      return this;
+    }
+
     public ButtonVisibility getPlayerSideSortVisibility() {
       return playerSideSortVisibility;
     }

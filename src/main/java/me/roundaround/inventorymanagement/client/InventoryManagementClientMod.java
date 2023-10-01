@@ -1,6 +1,8 @@
 package me.roundaround.inventorymanagement.client;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.api.InventoryButtonsRegistry;
+import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenConfigScreen;
 import me.roundaround.inventorymanagement.compat.roundalib.ConfigControlRegister;
 import me.roundaround.inventorymanagement.event.HandleScreenInputCallback;
@@ -10,9 +12,16 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.EnderChestInventory;
+import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.screen.HopperScreenHandler;
+import net.minecraft.screen.HorseScreenHandler;
+import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
@@ -22,7 +31,6 @@ public class InventoryManagementClientMod implements ClientModInitializer {
   public void onInitializeClient() {
     InventoryButtonsManager.INSTANCE.init();
     ConfigControlRegister.init();
-    initKeyBindings();
 
     FabricLoader.getInstance()
         .getModContainer(InventoryManagementMod.MOD_ID)
@@ -32,6 +40,9 @@ public class InventoryManagementClientMod implements ClientModInitializer {
             container,
             Text.literal("Inventory Management Dark UI"),
             ResourcePackActivationType.NORMAL));
+
+    initKeyBindings();
+    initButtonRegistry();
   }
 
   private void initKeyBindings() {
@@ -54,5 +65,20 @@ public class InventoryManagementClientMod implements ClientModInitializer {
 
       return false;
     });
+  }
+
+  private void initButtonRegistry() {
+    InventoryButtonsRegistry.INVENTORIES.sortableAndTransferable(PlayerInventory.class);
+    InventoryButtonsRegistry.INVENTORIES.sortableAndTransferable(EnderChestInventory.class);
+    InventoryButtonsRegistry.INVENTORIES.sortableAndTransferable(LootableContainerBlockEntity.class);
+
+    InventoryButtonsRegistry.SCREEN_HANDLERS.sortableAndTransferable(GenericContainerScreenHandler.class);
+    InventoryButtonsRegistry.SCREEN_HANDLERS.sortableAndTransferable(ShulkerBoxScreenHandler.class);
+    InventoryButtonsRegistry.SCREEN_HANDLERS.sortableAndTransferable(HorseScreenHandler.class);
+    InventoryButtonsRegistry.SCREEN_HANDLERS.sortable(HopperScreenHandler.class);
+
+    FabricLoader.getInstance()
+        .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
+        .forEach((entrypoint) -> entrypoint.getEntrypoint().onInventoryManagementInit());
   }
 }

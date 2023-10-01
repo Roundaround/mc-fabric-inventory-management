@@ -2,7 +2,7 @@ package me.roundaround.inventorymanagement.client.gui.screen;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
-import me.roundaround.inventorymanagement.client.gui.widget.button.InventoryManagementButton;
+import me.roundaround.inventorymanagement.client.gui.widget.button.ButtonBase;
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.screen.PositionEditScreen;
@@ -17,7 +17,7 @@ import net.minecraft.text.Text;
 import java.util.LinkedList;
 
 public class PerScreenPositionEditScreen extends PositionEditScreen {
-  private final LinkedList<InventoryManagementButton<?>> buttons = new LinkedList<>();
+  private final LinkedList<ButtonBase<?, ?>> buttons = new LinkedList<>();
 
   private final Screen previousScreen;
   private final boolean isPlayerInventory;
@@ -33,7 +33,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
 
     this.workingCopy.subscribeToValueChanges(this.hashCode(), (oldValue, newValue) -> {
       for (int i = 0; i < buttons.size(); i++) {
-        buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, newValue));
+        buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonOffset(i, newValue));
       }
     });
   }
@@ -62,10 +62,10 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
         ? InventoryButtonsManager.INSTANCE.getPlayerButtons()
         : InventoryButtonsManager.INSTANCE.getContainerButtons());
 
-    Screens.getButtons(parent).removeIf((button) -> button instanceof InventoryManagementButton);
+    Screens.getButtons(parent).removeIf((button) -> button instanceof ButtonBase);
 
     for (int i = 0; i < buttons.size(); i++) {
-      buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, getValue()));
+      buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonOffset(i, getValue()));
     }
   }
 
@@ -74,7 +74,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
     super.setValue(value);
 
     for (int i = 0; i < buttons.size(); i++) {
-      buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, getValue()));
+      buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonOffset(i, getValue()));
     }
   }
 
