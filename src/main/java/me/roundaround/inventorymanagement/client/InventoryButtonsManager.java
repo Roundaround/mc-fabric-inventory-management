@@ -47,18 +47,19 @@ public class InventoryButtonsManager {
       return;
     }
 
-    playerButtons.clear();
-    containerButtons.clear();
-
     // Container side
-    generateSortButton(handledScreen, false);
-    generateAutoStackButton(handledScreen, false);
-    generateTransferAllButton(handledScreen, false);
+    containerButtons.clear();
+    ButtonContext<?, ?> containerContext = new ButtonContext<>(handledScreen, false);
+    generateSortButton(containerContext);
+    generateAutoStackButton(containerContext);
+    generateTransferAllButton(containerContext);
 
     // Player side
-    generateSortButton(handledScreen, true);
-    generateAutoStackButton(handledScreen, true);
-    generateTransferAllButton(handledScreen, true);
+    playerButtons.clear();
+    ButtonContext<?, ?> playerContext = new ButtonContext<>(handledScreen, true);
+    generateSortButton(playerContext);
+    generateAutoStackButton(playerContext);
+    generateTransferAllButton(playerContext);
   }
 
   private boolean shouldTryGeneratingSortButton(ButtonContext<?, ?> context) {
@@ -115,9 +116,7 @@ public class InventoryButtonsManager {
   }
 
   private <H extends ScreenHandler, S extends HandledScreen<H>> void generateSortButton(
-      S screen, boolean isPlayerInventory) {
-    ButtonContext<H, S> context = new ButtonContext<>(screen, isPlayerInventory);
-
+      ButtonContext<H, S> context) {
     if (!this.shouldTryGeneratingSortButton(context)) {
       return;
     }
@@ -126,7 +125,7 @@ public class InventoryButtonsManager {
     PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
     SortInventoryButton<H, S> button =
         new SortInventoryButton<>(offset, positioningFunction, context);
-    addButton(screen, button, isPlayerInventory);
+    addButton(context.getParentScreen(), button, context.isPlayerInventory());
   }
 
   private boolean shouldTryGeneratingStackButton(ButtonContext<?, ?> context) {
@@ -188,9 +187,7 @@ public class InventoryButtonsManager {
   }
 
   private <H extends ScreenHandler, S extends HandledScreen<H>> void generateAutoStackButton(
-      S screen, boolean isPlayerInventory) {
-    ButtonContext<H, S> context = new ButtonContext<>(screen, isPlayerInventory);
-
+      ButtonContext<H, S> context) {
     if (!this.shouldTryGeneratingStackButton(context)) {
       return;
     }
@@ -198,7 +195,7 @@ public class InventoryButtonsManager {
     Position offset = getButtonOffset(context);
     PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
     AutoStackButton<H, S> button = new AutoStackButton<>(offset, positioningFunction, context);
-    addButton(screen, button, isPlayerInventory);
+    addButton(context.getParentScreen(), button, context.isPlayerInventory());
   }
 
   private boolean shouldTryGeneratingTransferButton(ButtonContext<?, ?> context) {
@@ -261,9 +258,7 @@ public class InventoryButtonsManager {
   }
 
   private <H extends ScreenHandler, S extends HandledScreen<H>> void generateTransferAllButton(
-      S screen, boolean isPlayerInventory) {
-    ButtonContext<H, S> context = new ButtonContext<>(screen, isPlayerInventory);
-
+      ButtonContext<H, S> context) {
     if (!this.shouldTryGeneratingTransferButton(context)) {
       return;
     }
@@ -271,7 +266,7 @@ public class InventoryButtonsManager {
     Position offset = getButtonOffset(context);
     PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
     TransferAllButton<H, S> button = new TransferAllButton<>(offset, positioningFunction, context);
-    addButton(screen, button, isPlayerInventory);
+    addButton(context.getParentScreen(), button, context.isPlayerInventory());
   }
 
   private void addButton(
