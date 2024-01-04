@@ -1,31 +1,38 @@
 package me.roundaround.inventorymanagement.client.gui;
 
+import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.inventorymanagement.network.AutoStackPacket;
 import me.roundaround.roundalib.config.value.Position;
+import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class AutoStackButton extends InventoryManagementButton {
+  private static final ButtonTextures TEXTURES_FROM =
+      new ButtonTextures(new Identifier(InventoryManagementMod.MOD_ID, "stack_from"),
+          new Identifier(InventoryManagementMod.MOD_ID, "stack_from_highlighted"));
+  private static final ButtonTextures TEXTURES_TO =
+      new ButtonTextures(new Identifier(InventoryManagementMod.MOD_ID, "stack_to"),
+          new Identifier(InventoryManagementMod.MOD_ID, "stack_to_highlighted"));
+
   public AutoStackButton(
       HandledScreen<?> parent,
       Inventory inventory,
       Slot referenceSlot,
       Position offset,
       boolean fromPlayerInventory) {
-    super(
-        parent,
+    super(parent,
         inventory,
         referenceSlot,
         offset,
-        new Position(fromPlayerInventory ? 2 : 1, 0),
         fromPlayerInventory,
-        (button) -> {
-          AutoStackPacket.sendToServer(fromPlayerInventory);
-        },
-        getTooltip(fromPlayerInventory));
+        (button) -> AutoStackPacket.sendToServer(fromPlayerInventory),
+        getTooltip(fromPlayerInventory),
+        fromPlayerInventory ? TEXTURES_TO : TEXTURES_FROM);
   }
 
   public AutoStackButton(
@@ -34,17 +41,14 @@ public class AutoStackButton extends InventoryManagementButton {
       Slot referenceSlot,
       Position offset,
       boolean fromPlayerInventory) {
-    super(
-        parent,
+    super(parent,
         inventory,
         referenceSlot,
         offset,
-        new Position(fromPlayerInventory ? 2 : 1, 0),
         fromPlayerInventory,
-        (button) -> {
-          AutoStackPacket.sendToServer(fromPlayerInventory);
-        },
-        getTooltip(fromPlayerInventory));
+        (button) -> AutoStackPacket.sendToServer(fromPlayerInventory),
+        getTooltip(fromPlayerInventory),
+        fromPlayerInventory ? TEXTURES_TO : TEXTURES_FROM);
   }
 
   private static Text getTooltip(boolean fromPlayerInventory) {

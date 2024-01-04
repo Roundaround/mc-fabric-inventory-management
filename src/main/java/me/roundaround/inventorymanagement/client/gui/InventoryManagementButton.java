@@ -1,19 +1,20 @@
 package me.roundaround.inventorymanagement.client.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.client.InventoryManagementClientMod;
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -22,12 +23,10 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   public static final int WIDTH = 14;
   public static final int HEIGHT = 14;
 
-  private static final Identifier TEXTURE =
-      new Identifier(InventoryManagementMod.MOD_ID, "textures/gui.png");
-
   private final HandledScreenAccessor parent;
   private final Slot referenceSlot;
-  private final Position iconOffset;
+
+  private final ButtonTextures textures;
 
   private Position offset;
 
@@ -36,16 +35,16 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       Inventory inventory,
       Slot referenceSlot,
       Position offset,
-      Position iconOffset,
       boolean isPlayerInventory,
       PressAction onPress,
-      Text tooltip) {
+      Text tooltip,
+      ButtonTextures textures) {
     super(((HandledScreenAccessor) parent).getX() +
             ((HandledScreenAccessor) parent).getBackgroundWidth() + offset.x(),
         ((HandledScreenAccessor) parent).getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
-        Text.literal(""),
+        ScreenTexts.EMPTY,
         (button) -> {
           if (!Screen.hasControlDown()) {
             onPress.onPress(button);
@@ -58,8 +57,8 @@ public abstract class InventoryManagementButton extends ButtonWidget {
 
     this.parent = (HandledScreenAccessor) parent;
     this.referenceSlot = referenceSlot;
+    this.textures = textures;
     this.offset = offset;
-    this.iconOffset = iconOffset;
 
     setTooltip(Tooltip.of(tooltip));
   }
@@ -69,52 +68,42 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       Inventory inventory,
       Slot referenceSlot,
       Position offset,
-      Position iconOffset,
       boolean isPlayerInventory,
       PressAction onPress,
-      Text tooltip) {
+      Text tooltip,
+      ButtonTextures textures) {
     super(parent.getX() + parent.getBackgroundWidth() + offset.x(),
         parent.getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
-        Text.literal(""),
+        ScreenTexts.EMPTY,
         (button) -> {
         },
         DEFAULT_NARRATION_SUPPLIER);
 
     this.parent = parent;
     this.referenceSlot = referenceSlot;
+    this.textures = textures;
     this.offset = offset;
-    this.iconOffset = iconOffset;
 
     setTooltip(Tooltip.of(tooltip));
   }
 
   public void setOffset(Position position) {
-    offset = position;
+    this.offset = position;
   }
 
   @Override
-  public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-    setX(parent.getX() + parent.getBackgroundWidth() + offset.x());
-    setY(parent.getY() + referenceSlot.y + offset.y());
+  public void renderWidget(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+    setX(this.parent.getX() + this.parent.getBackgroundWidth() + this.offset.x());
+    setY(this.parent.getY() + this.referenceSlot.y + this.offset.y());
 
-    super.render(drawContext, mouseX, mouseY, delta);
-  }
-
-  @Override
-  public void renderButton(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-    RenderSystem.setShaderColor(1, 1, 1, 1);
+    drawContext.setShaderColor(1, 1, 1, 1);
     RenderSystem.enableBlend();
-    RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA,
-        GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-    RenderSystem.applyModelViewMatrix();
     RenderSystem.enableDepthTest();
 
-    int u = iconOffset.x() * width;
-    int v = iconOffset.y() * height + (isHovered() || isFocused() ? height : 0);
-
-    drawContext.drawTexture(TEXTURE, getX(), getY(), u, v, WIDTH, HEIGHT);
+    Identifier identifier = this.textures.get(this.isNarratable(), this.isSelected());
+    Sprite sprite = InventoryManagementClientMod.getGuiAtlasManager().getSprite(identifier);
+    drawContext.drawSprite(this.getX(), this.getY(), 0, this.width, this.height, sprite);
   }
 }
