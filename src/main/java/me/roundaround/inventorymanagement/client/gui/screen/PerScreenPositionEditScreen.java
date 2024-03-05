@@ -90,7 +90,7 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   }
 
   @Override
-  protected void renderBackground(
+  public void renderBackground(
       DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
     renderDarkenBackground(drawContext, mouseX, mouseY, partialTicks);
   }

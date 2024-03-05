@@ -141,7 +141,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
   }
 
   @Override
-  protected void renderBackground(
+  public void renderBackground(
       DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
     renderTextureBackground(drawContext, mouseX, mouseY, partialTicks);
 
