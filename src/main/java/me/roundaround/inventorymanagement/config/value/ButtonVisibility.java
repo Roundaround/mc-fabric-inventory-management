@@ -1,14 +1,11 @@
 package me.roundaround.inventorymanagement.config.value;
 
-import me.roundaround.roundalib.config.ModConfig;
-import me.roundaround.roundalib.config.value.ListOptionValue;
+import me.roundaround.roundalib.config.value.EnumValue;
 
 import java.util.Arrays;
 
-public enum ButtonVisibility implements ListOptionValue<ButtonVisibility> {
-  DEFAULT,
-  SHOW,
-  HIDE;
+public enum ButtonVisibility implements EnumValue<ButtonVisibility> {
+  DEFAULT, SHOW, HIDE;
 
   private final String id;
 
@@ -22,8 +19,8 @@ public enum ButtonVisibility implements ListOptionValue<ButtonVisibility> {
   }
 
   @Override
-  public String getI18nKey(ModConfig config) {
-    return config.getModId() + ".button_visibility." + this.id;
+  public String getI18nKey(String modId) {
+    return String.format("%s.buttonVisibility.%s", modId, this.id);
   }
 
   @Override

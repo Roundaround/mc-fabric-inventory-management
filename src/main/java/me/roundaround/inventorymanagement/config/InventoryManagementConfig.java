@@ -116,9 +116,9 @@ public class InventoryManagementConfig extends ModConfigImpl implements GameScop
     }
 
     HashMap<String, Position> screenPositions = new HashMap<>();
-    screenPositionsConfig.valueMap().keySet().forEach((key) -> {
-      screenPositions.put(key, Position.deserialize(screenPositionsConfig.get(key)));
-    });
+    screenPositionsConfig.valueMap()
+        .keySet()
+        .forEach((key) -> screenPositions.put(key, Position.fromString(screenPositionsConfig.get(key))));
 
     modConfig.remove("screenPositions");
 

@@ -179,7 +179,8 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
         ButtonVisibility containerSideTransferVisibility,
         ButtonVisibility containerSideStackVisibility,
         Position playerSideOffset,
-        Position containerSideOffset) {
+        Position containerSideOffset
+    ) {
       this.playerSideSortVisibility = playerSideSortVisibility;
       this.playerSideTransferVisibility = playerSideTransferVisibility;
       this.playerSideStackVisibility = playerSideStackVisibility;
@@ -333,8 +334,8 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
     public boolean isEmpty() {
       return playerSideSortVisibility == null && playerSideTransferVisibility == null &&
           playerSideStackVisibility == null && containerSideSortVisibility == null &&
-          containerSideTransferVisibility == null && containerSideStackVisibility == null &&
-          playerSideOffset == null && containerSideOffset == null;
+          containerSideTransferVisibility == null && containerSideStackVisibility == null && playerSideOffset == null &&
+          containerSideOffset == null;
     }
 
     public static HashMap<String, String> serialize(ScreenConfig config) {
@@ -353,37 +354,37 @@ public class PerScreenConfig extends HashMap<String, PerScreenConfig.ScreenConfi
         serialized.put("containerSideSortVisibility", config.containerSideSortVisibility.getId());
       }
       if (config.containerSideTransferVisibility != null) {
-        serialized.put("containerSideTransferVisibility",
-            config.containerSideTransferVisibility.getId());
+        serialized.put("containerSideTransferVisibility", config.containerSideTransferVisibility.getId());
       }
       if (config.containerSideStackVisibility != null) {
         serialized.put("containerSideStackVisibility", config.containerSideStackVisibility.getId());
       }
       if (config.playerSideOffset != null) {
-        serialized.put("playerSideOffset", Position.serialize(config.playerSideOffset));
+        serialized.put("playerSideOffset", config.playerSideOffset.toString());
       }
       if (config.containerSideOffset != null) {
-        serialized.put("containerSideOffset", Position.serialize(config.containerSideOffset));
+        serialized.put("containerSideOffset", config.containerSideOffset.toString());
       }
 
       return serialized;
     }
 
     public static ScreenConfig deserialize(Map<String, String> serialized) {
-      return new ScreenConfig(getOrNull("playerSideSortVisibility",
-          serialized,
-          ButtonVisibility::fromId),
+      return new ScreenConfig(
+          getOrNull("playerSideSortVisibility", serialized, ButtonVisibility::fromId),
           getOrNull("playerSideTransferVisibility", serialized, ButtonVisibility::fromId),
           getOrNull("playerSideStackVisibility", serialized, ButtonVisibility::fromId),
           getOrNull("containerSideSortVisibility", serialized, ButtonVisibility::fromId),
           getOrNull("containerSideTransferVisibility", serialized, ButtonVisibility::fromId),
           getOrNull("containerSideStackVisibility", serialized, ButtonVisibility::fromId),
-          getOrNull("playerSideOffset", serialized, Position::deserialize),
-          getOrNull("containerSideOffset", serialized, Position::deserialize));
+          getOrNull("playerSideOffset", serialized, Position::fromString),
+          getOrNull("containerSideOffset", serialized, Position::fromString)
+      );
     }
 
     private static <T> T getOrNull(
-        String key, Map<String, String> serialized, Function<String, T> getter) {
+        String key, Map<String, String> serialized, Function<String, T> getter
+    ) {
       String value = serialized.get(key);
       if (value == null) {
         return null;

@@ -17,8 +17,8 @@
   "inventorymanagement.showStack.label": "Show autostack buttons",
   "inventorymanagement.defaultPosition.label": "Default button position",
   "inventorymanagement.perScreenConfigs.label": "Per screen configuration",
-  "inventorymanagement.button_visibility.default": "Default/inherit",
-  "inventorymanagement.button_visibility.show": "Always",
-  "inventorymanagement.button_visibility.hide": "Never",
+  "inventorymanagement.buttonVisibility.default": "Default/inherit",
+  "inventorymanagement.buttonVisibility.show": "Always",
+  "inventorymanagement.buttonVisibility.hide": "Never",
   "inventorymanagement.perscreen.value.none": "Default/inherit"
 }
