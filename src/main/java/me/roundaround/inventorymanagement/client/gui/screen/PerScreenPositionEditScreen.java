@@ -41,15 +41,15 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   private static PositionConfigOption generateDummyConfigOption(
       Screen parent, boolean isPlayerInventory) {
     Position currentValue =
-        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getPosition(parent, isPlayerInventory);
+        InventoryManagementMod.CONFIG.perScreenConfigs.getPosition(parent, isPlayerInventory);
     if (currentValue == null) {
-      currentValue = InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue();
+      currentValue = InventoryManagementMod.CONFIG.defaultPosition.getValue();
     }
 
     PositionConfigOption dummyConfig = PositionConfigOption.builder(InventoryManagementMod.CONFIG,
         InventoryManagementConfig.getScreenKey(parent),
         "",
-        InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue()).build();
+        InventoryManagementMod.CONFIG.defaultPosition.getValue()).build();
     dummyConfig.setValue(currentValue);
     return dummyConfig;
   }
@@ -113,10 +113,10 @@ public class PerScreenPositionEditScreen extends PositionEditScreen {
   protected void commitValueToConfig() {
     if (isDirty()) {
       if (getValue() == this.configOption.getDefault()) {
-        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.clearPosition(this.parent,
+        InventoryManagementMod.CONFIG.perScreenConfigs.clearPosition(this.parent,
             this.isPlayerInventory);
       } else {
-        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.setPosition(this.parent,
+        InventoryManagementMod.CONFIG.perScreenConfigs.setPosition(this.parent,
             this.isPlayerInventory,
             getValue());
       }

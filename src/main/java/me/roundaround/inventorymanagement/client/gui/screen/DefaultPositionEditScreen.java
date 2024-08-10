@@ -63,7 +63,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     containerButtons.clear();
     playerButtons.clear();
 
-    Position offset = InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue();
+    Position offset = InventoryManagementMod.CONFIG.defaultPosition.getValue();
 
     Inventory containerInventory = new SimpleInventory(27);
     Slot containerSlot =
@@ -84,17 +84,17 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
             playerInventory,
             containerInventory);
 
-    if (InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
+    if (InventoryManagementMod.CONFIG.showSort.getValue()) {
       containerButtons.add(new SortInventoryButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(
           index++,
           offset), PositioningFunction.getDefault(), containerContext));
     }
-    if (InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
+    if (InventoryManagementMod.CONFIG.showStack.getValue()) {
       containerButtons.add(new AutoStackButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(
           index++,
           offset), PositioningFunction.getDefault(), containerContext));
     }
-    if (InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
+    if (InventoryManagementMod.CONFIG.showTransfer.getValue()) {
       containerButtons.add(new TransferAllButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(
           index,
           offset), PositioningFunction.getDefault(), containerContext));
@@ -110,16 +110,16 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
         playerInventory,
         containerInventory);
 
-    if (InventoryManagementMod.CONFIG.SHOW_SORT.getValue()) {
+    if (InventoryManagementMod.CONFIG.showSort.getValue()) {
       playerButtons.add(new SortInventoryButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(
           index++,
           offset), PositioningFunction.getDefault(), playerContext));
     }
-    if (InventoryManagementMod.CONFIG.SHOW_STACK.getValue()) {
+    if (InventoryManagementMod.CONFIG.showStack.getValue()) {
       playerButtons.add(new AutoStackButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index++,
           offset), PositioningFunction.getDefault(), playerContext));
     }
-    if (InventoryManagementMod.CONFIG.SHOW_TRANSFER.getValue()) {
+    if (InventoryManagementMod.CONFIG.showTransfer.getValue()) {
       playerButtons.add(new TransferAllButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(
           index,
           offset), PositioningFunction.getDefault(), playerContext));

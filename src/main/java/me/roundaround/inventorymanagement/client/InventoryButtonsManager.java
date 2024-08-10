@@ -63,7 +63,7 @@ public class InventoryButtonsManager {
   }
 
   private boolean shouldTryGeneratingSortButton(ButtonContext<?, ?> context) {
-    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()) {
+    if (!InventoryManagementMod.CONFIG.modEnabled.getValue()) {
       return false;
     }
 
@@ -74,7 +74,7 @@ public class InventoryButtonsManager {
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
-    Optional.ofNullable(InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getSortVisibility(context.getParentScreen(),
+    Optional.ofNullable(InventoryManagementMod.CONFIG.perScreenConfigs.getSortVisibility(context.getParentScreen(),
         context.isPlayerInventory())).ifPresent(visibilitySettings::add);
 
     // Screen class match
@@ -100,7 +100,7 @@ public class InventoryButtonsManager {
     }
 
     // Global config
-    visibilitySettings.add(InventoryManagementMod.CONFIG.SHOW_SORT.getValue()
+    visibilitySettings.add(InventoryManagementMod.CONFIG.showSort.getValue()
         ? ButtonVisibility.SHOW
         : ButtonVisibility.HIDE);
 
@@ -129,7 +129,7 @@ public class InventoryButtonsManager {
   }
 
   private boolean shouldTryGeneratingStackButton(ButtonContext<?, ?> context) {
-    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()) {
+    if (!InventoryManagementMod.CONFIG.modEnabled.getValue()) {
       return false;
     }
 
@@ -145,7 +145,7 @@ public class InventoryButtonsManager {
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
-    Optional.ofNullable(InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getStackVisibility(context.getParentScreen(),
+    Optional.ofNullable(InventoryManagementMod.CONFIG.perScreenConfigs.getStackVisibility(context.getParentScreen(),
         context.isPlayerInventory())).ifPresent(visibilitySettings::add);
 
     // Screen class match
@@ -171,7 +171,7 @@ public class InventoryButtonsManager {
     }
 
     // Global config
-    visibilitySettings.add(InventoryManagementMod.CONFIG.SHOW_STACK.getValue()
+    visibilitySettings.add(InventoryManagementMod.CONFIG.showStack.getValue()
         ? ButtonVisibility.SHOW
         : ButtonVisibility.HIDE);
 
@@ -199,7 +199,7 @@ public class InventoryButtonsManager {
   }
 
   private boolean shouldTryGeneratingTransferButton(ButtonContext<?, ?> context) {
-    if (!InventoryManagementMod.CONFIG.MOD_ENABLED.getValue()) {
+    if (!InventoryManagementMod.CONFIG.modEnabled.getValue()) {
       return false;
     }
 
@@ -215,7 +215,7 @@ public class InventoryButtonsManager {
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
-    Optional.ofNullable(InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getTransferVisibility(
+    Optional.ofNullable(InventoryManagementMod.CONFIG.perScreenConfigs.getTransferVisibility(
         context.getParentScreen(),
         context.isPlayerInventory())).ifPresent(visibilitySettings::add);
 
@@ -242,7 +242,7 @@ public class InventoryButtonsManager {
     }
 
     // Global config
-    visibilitySettings.add(InventoryManagementMod.CONFIG.SHOW_STACK.getValue()
+    visibilitySettings.add(InventoryManagementMod.CONFIG.showStack.getValue()
         ? ButtonVisibility.SHOW
         : ButtonVisibility.HIDE);
 
@@ -295,10 +295,10 @@ public class InventoryButtonsManager {
 
   private Position getButtonOffset(ButtonContext<?, ?> context) {
     Position offset =
-        InventoryManagementMod.CONFIG.PER_SCREEN_CONFIGS.getPosition(context.getParentScreen(),
+        InventoryManagementMod.CONFIG.perScreenConfigs.getPosition(context.getParentScreen(),
             context.isPlayerInventory());
     if (offset == null) {
-      offset = InventoryManagementMod.CONFIG.DEFAULT_POSITION.getValue();
+      offset = InventoryManagementMod.CONFIG.defaultPosition.getValue();
     }
 
     return getButtonOffset((context.isPlayerInventory() ? playerButtons : containerButtons).size(),

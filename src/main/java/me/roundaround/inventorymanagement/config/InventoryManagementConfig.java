@@ -3,11 +3,13 @@ package me.roundaround.inventorymanagement.config;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.config.option.PerScreenConfigOption;
 import me.roundaround.inventorymanagement.config.value.PerScreenConfig;
-import me.roundaround.roundalib.config.ModConfig;
+import me.roundaround.roundalib.config.ConfigPath;
+import me.roundaround.roundalib.config.manage.ModConfigImpl;
+import me.roundaround.roundalib.config.manage.store.GameScopedFileStore;
 import me.roundaround.roundalib.config.option.BooleanConfigOption;
 import me.roundaround.roundalib.config.option.PositionConfigOption;
 import me.roundaround.roundalib.config.value.Position;
-import me.roundaround.roundalib.shadow.nightconfig.core.Config;
+import me.roundaround.roundalib.nightconfig.core.Config;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.client.gui.screen.Screen;
@@ -16,57 +18,55 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
-public class InventoryManagementConfig extends ModConfig {
-  public final BooleanConfigOption MOD_ENABLED;
-  public final BooleanConfigOption SHOW_SORT;
-  public final BooleanConfigOption SHOW_TRANSFER;
-  public final BooleanConfigOption SHOW_STACK;
-  public final PositionConfigOption DEFAULT_POSITION;
-  public final PerScreenConfigOption PER_SCREEN_CONFIGS;
+public class InventoryManagementConfig extends ModConfigImpl implements GameScopedFileStore {
+  private static InventoryManagementConfig instance = null;
+
+  public static InventoryManagementConfig getInstance() {
+    if (instance == null) {
+      instance = new InventoryManagementConfig();
+    }
+    return instance;
+  }
+
+  public BooleanConfigOption modEnabled;
+  public BooleanConfigOption showSort;
+  public BooleanConfigOption showTransfer;
+  public BooleanConfigOption showStack;
+  public PositionConfigOption defaultPosition;
+  public PerScreenConfigOption perScreenConfigs;
 
   public InventoryManagementConfig() {
-    super(InventoryManagementMod.MOD_ID,
-        options(InventoryManagementMod.MOD_ID).setConfigVersion(2));
+    super(InventoryManagementMod.MOD_ID, 2);
+  }
 
-    MOD_ENABLED = registerConfigOption(BooleanConfigOption.builder(this,
-            "modEnabled",
-            this.i18n("mod_enabled.label"))
+  @Override
+  protected void registerOptions() {
+    modEnabled = this.register(BooleanConfigOption.builder(ConfigPath.of("modEnabled"))
         .setComment("Simple toggle for the mod! Set to false to disable.")
         .build());
 
-    SHOW_SORT = registerConfigOption(BooleanConfigOption.yesNoBuilder(this,
-            "showSort",
-            this.i18n("show_sort.label"))
+    showSort = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showSort"))
         .setComment("Whether or not to show sort buttons in the UI.")
         .build());
 
-    SHOW_TRANSFER = registerConfigOption(BooleanConfigOption.yesNoBuilder(this,
-            "showTransfer",
-            this.i18n("show_transfer.label"))
+    showTransfer = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showTransfer"))
         .setComment("Whether or not to show transfer buttons in the UI.")
         .build());
 
-    SHOW_STACK = registerConfigOption(BooleanConfigOption.yesNoBuilder(this,
-            "showStack",
-            this.i18n("show_stack.label"))
+    showStack = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showStack"))
         .setComment("Whether or not to show autostack buttons in the UI.")
         .build());
 
-    DEFAULT_POSITION = registerConfigOption(PositionConfigOption.builder(this,
-            "defaultPosition",
-            this.i18n("default_position.label"),
-            new Position(-4, -1))
-        .setDisabledSupplier(() -> !SHOW_SORT.getValue() && !SHOW_TRANSFER.getValue() &&
-            !SHOW_STACK.getValue())
+    defaultPosition = this.register(PositionConfigOption.builder(ConfigPath.of("defaultPosition"))
+        .setDefaultValue(new Position(-4, -1))
+        .onUpdate(
+            (option) -> option.setDisabled(!showSort.getValue() && !showTransfer.getValue() && !showStack.getValue()))
         .setComment("Customize a default for button position.")
         .build());
 
-    PER_SCREEN_CONFIGS = registerConfigOption(PerScreenConfigOption.builder(this,
-        "perScreenConfigs",
-        this.i18n("per_screen_configs.label"))
-        .hideFromConfigScreen()
+    perScreenConfigs = this.buildRegistration(PerScreenConfigOption.builder(ConfigPath.of("perScreenConfigs"))
         .setComment("Customize settings on a per-screen basis.")
-        .build());
+        .build()).noGuiControl().commit();
   }
 
   private String i18n(String key) {
@@ -81,16 +81,18 @@ public class InventoryManagementConfig extends ModConfig {
     }
 
     if (version == 1) {
-      return runMigrations(modConfig,
-          List.of(InventoryManagementConfig::removeThemeFromV1Config,
-              InventoryManagementConfig::migrateV1ScreenPositionsToV2ScreenConfigs));
+      return runMigrations(modConfig, List.of(
+          InventoryManagementConfig::removeThemeFromV1Config,
+          InventoryManagementConfig::migrateV1ScreenPositionsToV2ScreenConfigs
+      ));
     }
 
     return false;
   }
 
   private static boolean runMigrations(
-      Config modConfig, Iterable<Function<Config, Boolean>> migrators) {
+      Config modConfig, Iterable<Function<Config, Boolean>> migrators
+  ) {
     boolean migrated = false;
     for (Function<Config, Boolean> migrator : migrators) {
       migrated = migrator.apply(modConfig) || migrated;

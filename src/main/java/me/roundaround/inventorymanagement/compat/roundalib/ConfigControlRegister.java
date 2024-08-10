@@ -21,7 +21,7 @@ public class ConfigControlRegister {
 
   public static void init() {
     try {
-      ControlRegistry.register(InventoryManagementMod.CONFIG.DEFAULT_POSITION.getId(),
+      ControlRegistry.register(InventoryManagementMod.CONFIG.defaultPosition.getId(),
           ConfigControlRegister::defaultPositionEditScreenControlFactory);
     } catch (ControlRegistry.RegistrationException e) {
       // Deal with this later xD
