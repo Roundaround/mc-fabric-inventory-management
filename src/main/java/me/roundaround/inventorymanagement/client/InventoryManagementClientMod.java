@@ -3,7 +3,7 @@ package me.roundaround.inventorymanagement.client;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.api.InventoryButtonsRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
-import me.roundaround.inventorymanagement.client.gui.screen.PerScreenConfigScreen;
+//import me.roundaround.inventorymanagement.client.gui.screen.PerScreenConfigScreen;
 import me.roundaround.inventorymanagement.client.texture.GuiAtlasManager;
 import me.roundaround.inventorymanagement.compat.roundalib.ConfigControlRegister;
 import me.roundaround.inventorymanagement.event.GuiAtlasManagerInitCallback;
@@ -73,20 +73,20 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         GLFW.GLFW_KEY_K,
         "inventorymanagement.keybind.category"));
 
-    HandleScreenInputCallback.EVENT.register((screen, keyCode, scanCode, modifiers) -> {
-      if (!(screen instanceof HandledScreen)) {
-        return false;
-      }
-
-      if (configureKeybind.matchesKey(keyCode, scanCode)) {
-        GuiUtil.setScreen(new PerScreenConfigScreen(screen,
-            InventoryManagementMod.CONFIG.perScreenConfigs
-        ));
-        return true;
-      }
-
-      return false;
-    });
+//    HandleScreenInputCallback.EVENT.register((screen, keyCode, scanCode, modifiers) -> {
+//      if (!(screen instanceof HandledScreen)) {
+//        return false;
+//      }
+//
+//      if (configureKeybind.matchesKey(keyCode, scanCode)) {
+//        GuiUtil.setScreen(new PerScreenConfigScreen(screen,
+//            InventoryManagementMod.CONFIG.perScreenConfigs
+//        ));
+//        return true;
+//      }
+//
+//      return false;
+//    });
   }
 
   private void initButtonRegistry() {

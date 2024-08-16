@@ -20,28 +20,28 @@ public class ConfigControlRegister {
   }
 
   public static void init() {
-    try {
-      ControlRegistry.register(InventoryManagementMod.CONFIG.defaultPosition.getId(),
-          ConfigControlRegister::defaultPositionEditScreenControlFactory);
-    } catch (ControlRegistry.RegistrationException e) {
-      // Deal with this later xD
-    }
+//    try {
+//      ControlRegistry.register(InventoryManagementMod.CONFIG.defaultPosition.getId(),
+//          ConfigControlRegister::defaultPositionEditScreenControlFactory);
+//    } catch (ControlRegistry.RegistrationException e) {
+//      // Deal with this later xD
+//    }
   }
 
-  private static SubScreenControl<Position, PositionConfigOption> defaultPositionEditScreenControlFactory(
-      ConfigListWidget.OptionEntry<Position, PositionConfigOption> parent) {
-    SubScreenControl<Position, PositionConfigOption> control =
-        new SubScreenControl<>(parent, DefaultPositionEditScreen.getSubScreenFactory());
-
-    ((ButtonWidget) control.children().get(0)).setMessage(Text.literal(parent.getOption()
-        .getValue()
-        .toString()));
-
-    parent.getOption()
-        .subscribeToValueChanges(Objects.requireNonNull(client.currentScreen).hashCode(),
-            (prev, curr) -> ((ButtonWidget) control.children()
-                .get(0)).setMessage(Text.literal(curr.toString())));
-
-    return control;
-  }
+//  private static SubScreenControl<Position, PositionConfigOption> defaultPositionEditScreenControlFactory(
+//      ConfigListWidget.OptionEntry<Position, PositionConfigOption> parent) {
+//    SubScreenControl<Position, PositionConfigOption> control =
+//        new SubScreenControl<>(parent, DefaultPositionEditScreen.getSubScreenFactory());
+//
+//    ((ButtonWidget) control.children().get(0)).setMessage(Text.literal(parent.getOption()
+//        .getValue()
+//        .toString()));
+//
+//    parent.getOption()
+//        .subscribeToValueChanges(Objects.requireNonNull(client.currentScreen).hashCode(),
+//            (prev, curr) -> ((ButtonWidget) control.children()
+//                .get(0)).setMessage(Text.literal(curr.toString())));
+//
+//    return control;
+//  }
 }

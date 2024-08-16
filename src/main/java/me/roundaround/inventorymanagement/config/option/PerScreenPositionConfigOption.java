@@ -1,25 +1,18 @@
 package me.roundaround.inventorymanagement.config.option;
 
+import me.roundaround.roundalib.config.ConfigPath;
+import me.roundaround.roundalib.config.option.ConfigOption;
+import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.roundalib.nightconfig.core.Config;
+import net.minecraft.client.gui.screen.Screen;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import me.roundaround.roundalib.config.ModConfig;
-import me.roundaround.roundalib.config.option.ConfigOption;
-import me.roundaround.roundalib.config.value.Position;
-import me.roundaround.roundalib.shadow.nightconfig.core.Config;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-
-public class PerScreenPositionConfigOption
-    extends ConfigOption<Map<String, Position>, PerScreenPositionConfigOption.Builder> {
-
+public class PerScreenPositionConfigOption extends ConfigOption<Map<String, Position>> {
   public PerScreenPositionConfigOption(Builder builder) {
     super(builder);
-  }
-
-  private PerScreenPositionConfigOption(PerScreenPositionConfigOption other) {
-    super(other);
   }
 
   public void set(Screen screen, boolean isPlayerInventory, Position value) {
@@ -42,8 +35,7 @@ public class PerScreenPositionConfigOption
   }
 
   public String getScreenKey(Screen screen, boolean isPlayerInventory) {
-    return screen.getClass().getName().replaceAll("\\.", "-")
-        + (isPlayerInventory ? "-player" : "-container");
+    return screen.getClass().getName().replaceAll("\\.", "-") + (isPlayerInventory ? "-player" : "-container");
   }
 
   @Override
@@ -54,10 +46,10 @@ public class PerScreenPositionConfigOption
     Map<String, Position> value = new HashMap<>();
 
     for (String key : deserializedMap.keySet()) {
-      value.put(key, Position.deserialize(deserialized.get(key)));
+      value.put(key, Position.fromString(deserialized.get(key)));
     }
 
-    Map<String, Position> defaultValue = getDefault();
+    Map<String, Position> defaultValue = this.getDefaultValue();
     for (String key : defaultValue.keySet()) {
       value.putIfAbsent(key, defaultValue.get(key));
     }
@@ -71,32 +63,20 @@ public class PerScreenPositionConfigOption
     Map<String, Position> value = getValue();
 
     for (String key : value.keySet()) {
-      serialized.set(key, Position.serialize(value.get(key)));
+      serialized.set(key, value.get(key).toString());
     }
 
     return serialized;
   }
 
-  @Override
-  public PerScreenPositionConfigOption copy() {
-    return new PerScreenPositionConfigOption(this);
+  public static Builder builder(ConfigPath path) {
+    return new Builder(path);
   }
 
-  public static Builder builder(ModConfig config, String id, String labelI18nKey) {
-    return new Builder(config, id, labelI18nKey);
-  }
-
-  public static Builder builder(ModConfig config, String id, Text label) {
-    return new Builder(config, id, label);
-  }
-
-  public static class Builder extends ConfigOption.AbstractBuilder<Map<String, Position>, Builder> {
-    private Builder(ModConfig config, String id, Text label) {
-      super(config, id, label, new HashMap<String, Position>());
-    }
-
-    private Builder(ModConfig config, String id, String labelI18nKey) {
-      super(config, id, labelI18nKey, new HashMap<>());
+  public static class Builder extends ConfigOption.AbstractBuilder<Map<String, Position>,
+      PerScreenPositionConfigOption, Builder> {
+    private Builder(ConfigPath path) {
+      super(path);
     }
 
     public Builder addDefaultEntry(String key, Position position) {
@@ -105,7 +85,7 @@ public class PerScreenPositionConfigOption
     }
 
     @Override
-    public PerScreenPositionConfigOption build() {
+    public PerScreenPositionConfigOption buildInternal() {
       return new PerScreenPositionConfigOption(this);
     }
   }

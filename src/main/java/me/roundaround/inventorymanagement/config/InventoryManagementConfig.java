@@ -74,13 +74,13 @@ public class InventoryManagementConfig extends ModConfigImpl implements GameScop
   }
 
   @Override
-  protected boolean updateConfigVersion(int version, Config config) {
-    Config modConfig = config.get("inventorymanagement");
+  public boolean performConfigUpdate(int versionSnapshot, Config inMemoryConfigSnapshot) {
+    Config modConfig = inMemoryConfigSnapshot.get("inventorymanagement");
     if (modConfig == null) {
       return false;
     }
 
-    if (version == 1) {
+    if (versionSnapshot == 1) {
       return runMigrations(modConfig, List.of(
           InventoryManagementConfig::removeThemeFromV1Config,
           InventoryManagementConfig::migrateV1ScreenPositionsToV2ScreenConfigs
