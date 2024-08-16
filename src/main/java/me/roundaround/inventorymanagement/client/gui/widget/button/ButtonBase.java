@@ -4,18 +4,14 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.api.ButtonContext;
 import me.roundaround.inventorymanagement.api.PositioningFunction;
-import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
-import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.config.value.Position;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.screen.ScreenTexts;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -43,17 +39,19 @@ public abstract class ButtonBase<H extends ScreenHandler, S extends HandledScree
       Text tooltip,
       Identifier icon
   ) {
-    super(initialPosition.x() + offset.x(), initialPosition.y() + offset.y(), WIDTH, HEIGHT, ScreenTexts.EMPTY,
-        (button) -> {
-          if (!Screen.hasControlDown()) {
-            onPress.onPress(button);
-            return;
-          }
-
-          GuiUtil.setScreen(new PerScreenPositionEditScreen(context.getParentScreen(), context.getParentScreen(),
-              context.isPlayerInventory()
-          ));
-        }, DEFAULT_NARRATION_SUPPLIER
+    super(initialPosition.x() + offset.x(), initialPosition.y() + offset.y(), WIDTH, HEIGHT, ScreenTexts.EMPTY, onPress,
+        //        (button) -> {
+        //          if (!Screen.hasControlDown()) {
+        //            onPress.onPress(button);
+        //            return;
+        //          }
+        //
+        //          GuiUtil.setScreen(new PerScreenPositionEditScreen(context.getParentScreen(), context
+        //          .getParentScreen(),
+        //              context.isPlayerInventory()
+        //          ));
+        //        },
+        DEFAULT_NARRATION_SUPPLIER
     );
 
     this.offset = offset;

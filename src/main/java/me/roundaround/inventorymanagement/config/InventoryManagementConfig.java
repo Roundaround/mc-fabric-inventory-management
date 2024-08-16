@@ -42,18 +42,22 @@ public class InventoryManagementConfig extends ModConfigImpl implements GameScop
   @Override
   protected void registerOptions() {
     modEnabled = this.register(BooleanConfigOption.builder(ConfigPath.of("modEnabled"))
+        .setDefaultValue(true)
         .setComment("Simple toggle for the mod! Set to false to disable.")
         .build());
 
     showSort = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showSort"))
+        .setDefaultValue(true)
         .setComment("Whether or not to show sort buttons in the UI.")
         .build());
 
     showTransfer = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showTransfer"))
+        .setDefaultValue(true)
         .setComment("Whether or not to show transfer buttons in the UI.")
         .build());
 
     showStack = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showStack"))
+        .setDefaultValue(true)
         .setComment("Whether or not to show autostack buttons in the UI.")
         .build());
 
@@ -64,9 +68,9 @@ public class InventoryManagementConfig extends ModConfigImpl implements GameScop
         .setComment("Customize a default for button position.")
         .build());
 
-    perScreenConfigs = this.buildRegistration(PerScreenConfigOption.builder(ConfigPath.of("perScreenConfigs"))
-        .setComment("Customize settings on a per-screen basis.")
-        .build()).noGuiControl().commit();
+    //    perScreenConfigs = this.buildRegistration(PerScreenConfigOption.builder(ConfigPath.of("perScreenConfigs"))
+    //        .setComment("Customize settings on a per-screen basis.")
+    //        .build()).noGuiControl().commit();
   }
 
   private String i18n(String key) {
