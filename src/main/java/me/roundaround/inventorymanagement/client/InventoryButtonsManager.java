@@ -1,6 +1,5 @@
 package me.roundaround.inventorymanagement.client;
 
-import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.api.ButtonContext;
 import me.roundaround.inventorymanagement.api.InventoryButtonsRegistry;
 import me.roundaround.inventorymanagement.api.PositioningFunction;
@@ -8,6 +7,7 @@ import me.roundaround.inventorymanagement.client.gui.widget.button.AutoStackButt
 import me.roundaround.inventorymanagement.client.gui.widget.button.ButtonBase;
 import me.roundaround.inventorymanagement.client.gui.widget.button.SortInventoryButton;
 import me.roundaround.inventorymanagement.client.gui.widget.button.TransferAllButton;
+import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.api.EnvType;
@@ -42,20 +42,21 @@ public class InventoryButtonsManager {
   }
 
   private void onScreenAfterInit(
-      MinecraftClient client, Screen screen, float scaledWidth, float scaledHeight) {
+      MinecraftClient client, Screen screen, float scaledWidth, float scaledHeight
+  ) {
     if (!(screen instanceof HandledScreen<?> handledScreen)) {
       return;
     }
 
     // Container side
-    containerButtons.clear();
+    this.containerButtons.clear();
     ButtonContext<?, ?> containerContext = new ButtonContext<>(handledScreen, false);
     generateSortButton(containerContext);
     generateAutoStackButton(containerContext);
     generateTransferAllButton(containerContext);
 
     // Player side
-    playerButtons.clear();
+    this.playerButtons.clear();
     ButtonContext<?, ?> playerContext = new ButtonContext<>(handledScreen, true);
     generateSortButton(playerContext);
     generateAutoStackButton(playerContext);
@@ -63,7 +64,7 @@ public class InventoryButtonsManager {
   }
 
   private boolean shouldTryGeneratingSortButton(ButtonContext<?, ?> context) {
-    if (!InventoryManagementMod.CONFIG.modEnabled.getValue()) {
+    if (!InventoryManagementConfig.getInstance().modEnabled.getValue()) {
       return false;
     }
 
@@ -74,25 +75,23 @@ public class InventoryButtonsManager {
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
-    Optional.ofNullable(InventoryManagementMod.CONFIG.perScreenConfigs.getSortVisibility(context.getParentScreen(),
-        context.isPlayerInventory())).ifPresent(visibilitySettings::add);
+    Optional.ofNullable(
+        InventoryManagementConfig.getInstance().perScreenConfigs.getSortVisibility(context.getParentScreen(),
+            context.isPlayerInventory()
+        )).ifPresent(visibilitySettings::add);
 
     // Screen class match
-    Optional.ofNullable(InventoryButtonsRegistry.HANDLED_SCREENS.get(context.getParentScreen()
-            .getClass()))
+    Optional.ofNullable(InventoryButtonsRegistry.HANDLED_SCREENS.get(context.getParentScreen().getClass()))
         .map((options) -> options.getSortVisibility(context.isPlayerInventory()))
         .ifPresent(visibilitySettings::add);
 
     // ScreenHandler class match
-    Optional.ofNullable(InventoryButtonsRegistry.SCREEN_HANDLERS.get(context.getScreenHandler()
-            .getClass()))
+    Optional.ofNullable(InventoryButtonsRegistry.SCREEN_HANDLERS.get(context.getScreenHandler().getClass()))
         .map((options) -> options.getSortVisibility(context.isPlayerInventory()))
         .ifPresent(visibilitySettings::add);
 
     // Inventory class match
-    Inventory inventory = context.isPlayerInventory()
-        ? context.getPlayerInventory()
-        : context.getContainerInventory();
+    Inventory inventory = context.isPlayerInventory() ? context.getPlayerInventory() : context.getContainerInventory();
     if (inventory != null) {
       Optional.ofNullable(InventoryButtonsRegistry.INVENTORIES.get(inventory.getClass()))
           .map((options) -> options.getSortVisibility(context.isPlayerInventory()))
@@ -100,9 +99,8 @@ public class InventoryButtonsManager {
     }
 
     // Global config
-    visibilitySettings.add(InventoryManagementMod.CONFIG.showSort.getValue()
-        ? ButtonVisibility.SHOW
-        : ButtonVisibility.HIDE);
+    visibilitySettings.add(
+        InventoryManagementConfig.getInstance().showSort.getValue() ? ButtonVisibility.SHOW : ButtonVisibility.HIDE);
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -116,20 +114,20 @@ public class InventoryButtonsManager {
   }
 
   private <H extends ScreenHandler, S extends HandledScreen<H>> void generateSortButton(
-      ButtonContext<H, S> context) {
+      ButtonContext<H, S> context
+  ) {
     if (!this.shouldTryGeneratingSortButton(context)) {
       return;
     }
 
     Position offset = getButtonOffset(context);
     PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
-    SortInventoryButton<H, S> button =
-        new SortInventoryButton<>(offset, positioningFunction, context);
+    SortInventoryButton<H, S> button = new SortInventoryButton<>(offset, positioningFunction, context);
     addButton(context.getParentScreen(), button, context.isPlayerInventory());
   }
 
   private boolean shouldTryGeneratingStackButton(ButtonContext<?, ?> context) {
-    if (!InventoryManagementMod.CONFIG.modEnabled.getValue()) {
+    if (!InventoryManagementConfig.getInstance().modEnabled.getValue()) {
       return false;
     }
 
@@ -145,25 +143,23 @@ public class InventoryButtonsManager {
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
-    Optional.ofNullable(InventoryManagementMod.CONFIG.perScreenConfigs.getStackVisibility(context.getParentScreen(),
-        context.isPlayerInventory())).ifPresent(visibilitySettings::add);
+    Optional.ofNullable(
+        InventoryManagementConfig.getInstance().perScreenConfigs.getStackVisibility(context.getParentScreen(),
+            context.isPlayerInventory()
+        )).ifPresent(visibilitySettings::add);
 
     // Screen class match
-    Optional.ofNullable(InventoryButtonsRegistry.HANDLED_SCREENS.get(context.getParentScreen()
-            .getClass()))
+    Optional.ofNullable(InventoryButtonsRegistry.HANDLED_SCREENS.get(context.getParentScreen().getClass()))
         .map((options) -> options.getStackVisibility(context.isPlayerInventory()))
         .ifPresent(visibilitySettings::add);
 
     // ScreenHandler class match
-    Optional.ofNullable(InventoryButtonsRegistry.SCREEN_HANDLERS.get(context.getScreenHandler()
-            .getClass()))
+    Optional.ofNullable(InventoryButtonsRegistry.SCREEN_HANDLERS.get(context.getScreenHandler().getClass()))
         .map((options) -> options.getStackVisibility(context.isPlayerInventory()))
         .ifPresent(visibilitySettings::add);
 
     // Inventory class match
-    Inventory inventory = context.isPlayerInventory()
-        ? context.getPlayerInventory()
-        : context.getContainerInventory();
+    Inventory inventory = context.isPlayerInventory() ? context.getPlayerInventory() : context.getContainerInventory();
     if (inventory != null) {
       Optional.ofNullable(InventoryButtonsRegistry.INVENTORIES.get(inventory.getClass()))
           .map((options) -> options.getStackVisibility(context.isPlayerInventory()))
@@ -171,9 +167,8 @@ public class InventoryButtonsManager {
     }
 
     // Global config
-    visibilitySettings.add(InventoryManagementMod.CONFIG.showStack.getValue()
-        ? ButtonVisibility.SHOW
-        : ButtonVisibility.HIDE);
+    visibilitySettings.add(
+        InventoryManagementConfig.getInstance().showStack.getValue() ? ButtonVisibility.SHOW : ButtonVisibility.HIDE);
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -187,7 +182,8 @@ public class InventoryButtonsManager {
   }
 
   private <H extends ScreenHandler, S extends HandledScreen<H>> void generateAutoStackButton(
-      ButtonContext<H, S> context) {
+      ButtonContext<H, S> context
+  ) {
     if (!this.shouldTryGeneratingStackButton(context)) {
       return;
     }
@@ -199,7 +195,7 @@ public class InventoryButtonsManager {
   }
 
   private boolean shouldTryGeneratingTransferButton(ButtonContext<?, ?> context) {
-    if (!InventoryManagementMod.CONFIG.modEnabled.getValue()) {
+    if (!InventoryManagementConfig.getInstance().modEnabled.getValue()) {
       return false;
     }
 
@@ -215,26 +211,23 @@ public class InventoryButtonsManager {
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
-    Optional.ofNullable(InventoryManagementMod.CONFIG.perScreenConfigs.getTransferVisibility(
-        context.getParentScreen(),
-        context.isPlayerInventory())).ifPresent(visibilitySettings::add);
+    Optional.ofNullable(
+        InventoryManagementConfig.getInstance().perScreenConfigs.getTransferVisibility(context.getParentScreen(),
+            context.isPlayerInventory()
+        )).ifPresent(visibilitySettings::add);
 
     // Screen class match
-    Optional.ofNullable(InventoryButtonsRegistry.HANDLED_SCREENS.get(context.getParentScreen()
-            .getClass()))
+    Optional.ofNullable(InventoryButtonsRegistry.HANDLED_SCREENS.get(context.getParentScreen().getClass()))
         .map((options) -> options.getTransferVisibility(context.isPlayerInventory()))
         .ifPresent(visibilitySettings::add);
 
     // ScreenHandler class match
-    Optional.ofNullable(InventoryButtonsRegistry.SCREEN_HANDLERS.get(context.getScreenHandler()
-            .getClass()))
+    Optional.ofNullable(InventoryButtonsRegistry.SCREEN_HANDLERS.get(context.getScreenHandler().getClass()))
         .map((options) -> options.getTransferVisibility(context.isPlayerInventory()))
         .ifPresent(visibilitySettings::add);
 
     // Inventory class match
-    Inventory inventory = context.isPlayerInventory()
-        ? context.getPlayerInventory()
-        : context.getContainerInventory();
+    Inventory inventory = context.isPlayerInventory() ? context.getPlayerInventory() : context.getContainerInventory();
     if (inventory != null) {
       Optional.ofNullable(InventoryButtonsRegistry.INVENTORIES.get(inventory.getClass()))
           .map((options) -> options.getTransferVisibility(context.isPlayerInventory()))
@@ -242,9 +235,8 @@ public class InventoryButtonsManager {
     }
 
     // Global config
-    visibilitySettings.add(InventoryManagementMod.CONFIG.showStack.getValue()
-        ? ButtonVisibility.SHOW
-        : ButtonVisibility.HIDE);
+    visibilitySettings.add(
+        InventoryManagementConfig.getInstance().showStack.getValue() ? ButtonVisibility.SHOW : ButtonVisibility.HIDE);
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -258,7 +250,8 @@ public class InventoryButtonsManager {
   }
 
   private <H extends ScreenHandler, S extends HandledScreen<H>> void generateTransferAllButton(
-      ButtonContext<H, S> context) {
+      ButtonContext<H, S> context
+  ) {
     if (!this.shouldTryGeneratingTransferButton(context)) {
       return;
     }
@@ -270,7 +263,8 @@ public class InventoryButtonsManager {
   }
 
   private void addButton(
-      HandledScreen<?> screen, ButtonBase<?, ?> button, boolean isPlayerInventory) {
+      HandledScreen<?> screen, ButtonBase<?, ?> button, boolean isPlayerInventory
+  ) {
     Screens.getButtons(screen).add(button);
     (isPlayerInventory ? playerButtons : containerButtons).add(button);
   }
@@ -278,8 +272,7 @@ public class InventoryButtonsManager {
   private int getNumberOfBulkInventorySlots(ButtonContext<?, ?> context) {
     return context.getScreenHandler().slots.stream()
         .filter(slot -> context.isPlayerInventory() == (slot.inventory instanceof PlayerInventory))
-        .filter(slot -> !(context.getScreenHandler() instanceof HorseScreenHandler) ||
-            slot.getIndex() >= 2)
+        .filter(slot -> !(context.getScreenHandler() instanceof HorseScreenHandler) || slot.getIndex() >= 2)
         .mapToInt(slot -> 1)
         .sum();
   }
@@ -287,32 +280,30 @@ public class InventoryButtonsManager {
   private int getNumberOfNonPlayerBulkInventorySlots(ButtonContext<?, ?> context) {
     return context.getScreenHandler().slots.stream()
         .filter(slot -> !(slot.inventory instanceof PlayerInventory))
-        .filter(slot -> !(context.getScreenHandler() instanceof HorseScreenHandler) ||
-            slot.getIndex() >= 2)
+        .filter(slot -> !(context.getScreenHandler() instanceof HorseScreenHandler) || slot.getIndex() >= 2)
         .mapToInt(slot -> 1)
         .sum();
   }
 
   private Position getButtonOffset(ButtonContext<?, ?> context) {
-    Position offset =
-        InventoryManagementMod.CONFIG.perScreenConfigs.getPosition(context.getParentScreen(),
-            context.isPlayerInventory());
+    Position offset = InventoryManagementConfig.getInstance().perScreenConfigs.getPosition(context.getParentScreen(),
+        context.isPlayerInventory()
+    );
     if (offset == null) {
-      offset = InventoryManagementMod.CONFIG.defaultPosition.getValue();
+      offset = InventoryManagementConfig.getInstance().defaultPosition.getValue();
     }
 
-    return getButtonOffset((context.isPlayerInventory() ? playerButtons : containerButtons).size(),
-        offset);
+    return getButtonOffset((context.isPlayerInventory() ? playerButtons : containerButtons).size(), offset);
   }
 
   @SuppressWarnings("unchecked")
   private <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> getPositioningFunction(
-      ButtonContext<H, S> context) {
-    PositioningFunction<?, ?> positioningFunction =
-        Optional.ofNullable(InventoryButtonsRegistry.SCREEN_HANDLERS.get(context.getParentScreen()
-                .getClass()))
-            .map(InventoryButtonsRegistry.DefaultOptions::getPositioningFunction)
-            .orElse(null);
+      ButtonContext<H, S> context
+  ) {
+    PositioningFunction<?, ?> positioningFunction = Optional.ofNullable(
+            InventoryButtonsRegistry.SCREEN_HANDLERS.get(context.getParentScreen().getClass()))
+        .map(InventoryButtonsRegistry.DefaultOptions::getPositioningFunction)
+        .orElse(null);
 
     if (positioningFunction == null) {
       return PositioningFunction.getDefault();

@@ -68,9 +68,10 @@ public class InventoryManagementConfig extends ModConfigImpl implements GameScop
         .setComment("Customize a default for button position.")
         .build());
 
-    //    perScreenConfigs = this.buildRegistration(PerScreenConfigOption.builder(ConfigPath.of("perScreenConfigs"))
-    //        .setComment("Customize settings on a per-screen basis.")
-    //        .build()).noGuiControl().commit();
+    perScreenConfigs = this.buildRegistration(PerScreenConfigOption.builder(ConfigPath.of("perScreenConfigs"))
+        .setDefaultValue(new PerScreenConfig())
+        .setComment("Customize settings on a per-screen basis.")
+        .build()).noGuiControl().commit();
   }
 
   private String i18n(String key) {
