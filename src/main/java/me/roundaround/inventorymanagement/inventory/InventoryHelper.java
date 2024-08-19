@@ -24,30 +24,27 @@ public class InventoryHelper {
     }
   }
 
-  private static void sortInventory(Inventory inventory) {
+  public static void sortInventory(Inventory inventory) {
     sortInventory(inventory, 0, inventory.size());
   }
 
-  private static void sortInventory(Inventory inventory, int start, int end) {
+  public static void sortInventory(Inventory inventory, int start, int end) {
     sortInventory(inventory, new SlotRange(start, end));
   }
 
-  private static void sortInventory(Inventory inventory, SlotRange slotRange) {
-    List<ItemStack> stacks = new ArrayList<>();
+  public static void sortInventory(Inventory inventory, SlotRange slotRange) {
+    List<ItemStack> stacks = new ArrayList<>(slotRange.size());
 
-    for (int i = slotRange.min; i < slotRange.max; i++) {
+    for (int i = slotRange.min(); i < slotRange.max(); i++) {
       stacks.add(inventory.getStack(i).copy());
     }
 
-    List<ItemStack> cleanedStacks = stacks.stream()
-        .filter(itemStack -> !itemStack.isEmpty())
-        .map(ItemStack::copy)
-        .toList();
+    stacks = stacks.stream().filter(itemStack -> !itemStack.isEmpty()).toList();
 
-    for (int i = 0; i < cleanedStacks.size(); i++) {
-      for (int j = i + 1; j < cleanedStacks.size(); j++) {
-        ItemStack a = cleanedStacks.get(i);
-        ItemStack b = cleanedStacks.get(j);
+    for (int i = 0; i < stacks.size(); i++) {
+      for (int j = i + 1; j < stacks.size(); j++) {
+        ItemStack a = stacks.get(i);
+        ItemStack b = stacks.get(j);
 
         if (canStacksBeMerged(a, b)) {
           int itemsToShift = Math.min(a.getMaxCount() - a.getCount(), b.getCount());
@@ -59,15 +56,15 @@ public class InventoryHelper {
       }
     }
 
-    List<ItemStack> sortedStacks = cleanedStacks.stream()
+    stacks = stacks.stream()
         .filter(itemStack -> !itemStack.isEmpty())
         .sorted(ItemStackComparator.comparator())
         .toList();
 
-    for (int i = slotRange.min; i < slotRange.max; i++) {
-      int j = i - slotRange.min;
-      ItemStack itemStack = j >= sortedStacks.size() ? ItemStack.EMPTY : sortedStacks.get(j);
-      inventory.setStack(i, itemStack);
+    for (int slotIndex = slotRange.min(); slotIndex < slotRange.max(); slotIndex++) {
+      int stacksIndex = slotIndex - slotRange.min();
+      ItemStack itemStack = stacksIndex < stacks.size() ? stacks.get(stacksIndex) : ItemStack.EMPTY;
+      inventory.setStack(slotIndex, itemStack);
     }
   }
 
@@ -159,8 +156,8 @@ public class InventoryHelper {
       ScreenHandler toScreenHandler,
       PlayerEntity player
   ) {
-    for (int toIdx = toRange.min; toIdx < toRange.max; toIdx++) {
-      for (int fromIdx = fromRange.min; fromIdx < fromRange.max; fromIdx++) {
+    for (int toIdx = toRange.min(); toIdx < toRange.max(); toIdx++) {
+      for (int fromIdx = fromRange.min(); fromIdx < fromRange.max(); fromIdx++) {
         ItemStack fromStack = from.getStack(fromIdx).copy();
         ItemStack toStack = to.getStack(toIdx).copy();
 
@@ -238,13 +235,9 @@ public class InventoryHelper {
         a.getCount() < a.getMaxCount();
   }
 
-  static class SlotRange {
-    public int min;
-    public int max;
-
-    public SlotRange(int min, int max) {
-      this.min = min;
-      this.max = max;
+  public record SlotRange(int min, int max) {
+    public int size() {
+      return this.max - this.min;
     }
 
     public static SlotRange fullRange(Inventory inventory) {

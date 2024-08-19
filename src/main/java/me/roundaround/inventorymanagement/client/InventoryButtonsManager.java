@@ -29,8 +29,10 @@ import java.util.Optional;
 @Environment(EnvType.CLIENT)
 public class InventoryButtonsManager {
   public static final InventoryButtonsManager INSTANCE = new InventoryButtonsManager();
+  public static final int BUTTON_WIDTH = ButtonBase.WIDTH;
+  public static final int BUTTON_HEIGHT = ButtonBase.HEIGHT;
+  public static final int BUTTON_SPACING = 1;
 
-  private static final int BUTTON_SPACING = 1;
   private static final int BUTTON_SHIFT_X = 0;
   private static final int BUTTON_SHIFT_Y = 1;
 
@@ -72,6 +74,10 @@ public class InventoryButtonsManager {
       return false;
     }
 
+    if (!InventoryManagementConfig.getInstance().showSort.getValue()) {
+      return false;
+    }
+
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
@@ -97,10 +103,6 @@ public class InventoryButtonsManager {
           .map((options) -> options.getSortVisibility(context.isPlayerInventory()))
           .ifPresent(visibilitySettings::add);
     }
-
-    // Global config
-    visibilitySettings.add(
-        InventoryManagementConfig.getInstance().showSort.getValue() ? ButtonVisibility.SHOW : ButtonVisibility.HIDE);
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -140,6 +142,10 @@ public class InventoryButtonsManager {
       return false;
     }
 
+    if (!InventoryManagementConfig.getInstance().showStack.getValue()) {
+      return false;
+    }
+
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
@@ -165,10 +171,6 @@ public class InventoryButtonsManager {
           .map((options) -> options.getStackVisibility(context.isPlayerInventory()))
           .ifPresent(visibilitySettings::add);
     }
-
-    // Global config
-    visibilitySettings.add(
-        InventoryManagementConfig.getInstance().showStack.getValue() ? ButtonVisibility.SHOW : ButtonVisibility.HIDE);
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -208,6 +210,10 @@ public class InventoryButtonsManager {
       return false;
     }
 
+    if (!InventoryManagementConfig.getInstance().showTransfer.getValue()) {
+      return false;
+    }
+
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
@@ -233,10 +239,6 @@ public class InventoryButtonsManager {
           .map((options) -> options.getTransferVisibility(context.isPlayerInventory()))
           .ifPresent(visibilitySettings::add);
     }
-
-    // Global config
-    visibilitySettings.add(
-        InventoryManagementConfig.getInstance().showStack.getValue() ? ButtonVisibility.SHOW : ButtonVisibility.HIDE);
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -301,7 +303,7 @@ public class InventoryButtonsManager {
       ButtonContext<H, S> context
   ) {
     PositioningFunction<?, ?> positioningFunction = Optional.ofNullable(
-            InventoryButtonsRegistry.SCREEN_HANDLERS.get(context.getParentScreen().getClass()))
+            InventoryButtonsRegistry.SCREEN_HANDLERS.get(context.getScreenHandler().getClass()))
         .map(InventoryButtonsRegistry.DefaultOptions::getPositioningFunction)
         .orElse(null);
 
