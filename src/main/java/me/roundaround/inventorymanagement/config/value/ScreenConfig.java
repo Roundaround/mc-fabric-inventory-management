@@ -1,6 +1,5 @@
-package me.roundaround.inventorymanagement.api;
+package me.roundaround.inventorymanagement.config.value;
 
-import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.roundalib.config.value.Position;
 
 import java.util.HashMap;
