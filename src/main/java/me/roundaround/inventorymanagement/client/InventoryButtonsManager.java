@@ -85,20 +85,8 @@ public class InventoryButtonsManager {
             context.isPlayerInventory()
         )).ifPresent(visibilitySettings::add);
 
-    // Screen class match
-    InventoryButtonsRegistry.HANDLED_SCREENS_2.isSortable(context.getParentScreen().getClass(), context)
-        .map(ButtonVisibility::of)
-        .ifPresent(visibilitySettings::add);
-
-    // ScreenHandler class match
-    InventoryButtonsRegistry.SCREEN_HANDLERS_2.isSortable(context.getScreenHandler().getClass(), context)
-        .map(ButtonVisibility::of)
-        .ifPresent(visibilitySettings::add);
-
-    // Inventory class match
-    InventoryButtonsRegistry.INVENTORIES_2.isSortable(context.getInventoryClass(), context)
-        .map(ButtonVisibility::of)
-        .ifPresent(visibilitySettings::add);
+    // Defaults based on registry, tied to screen, handler, or inventory
+    visibilitySettings.addAll(InventoryButtonsRegistry.getSortButtonVisibility(context));
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -150,20 +138,8 @@ public class InventoryButtonsManager {
             context.isPlayerInventory()
         )).ifPresent(visibilitySettings::add);
 
-    // Screen class match
-    InventoryButtonsRegistry.HANDLED_SCREENS_2.supportsTransferring(context.getScreenClass(), context)
-        .map(ButtonVisibility::of)
-        .ifPresent(visibilitySettings::add);
-
-    // ScreenHandler class match
-    InventoryButtonsRegistry.SCREEN_HANDLERS_2.supportsTransferring(context.getScreenHandlerClass(), context)
-        .map(ButtonVisibility::of)
-        .ifPresent(visibilitySettings::add);
-
-    // Inventory class match
-    InventoryButtonsRegistry.INVENTORIES_2.supportsTransferring(context.getInventoryClass(), context)
-        .map(ButtonVisibility::of)
-        .ifPresent(visibilitySettings::add);
+    // Defaults based on registry, tied to screen, handler, or inventory
+    visibilitySettings.addAll(InventoryButtonsRegistry.getTransferAndStackButtonVisibility(context));
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -215,20 +191,8 @@ public class InventoryButtonsManager {
             context.isPlayerInventory()
         )).ifPresent(visibilitySettings::add);
 
-    // Screen class match
-    InventoryButtonsRegistry.HANDLED_SCREENS_2.supportsTransferring(context.getScreenClass(), context)
-        .map(ButtonVisibility::of)
-        .ifPresent(visibilitySettings::add);
-
-    // ScreenHandler class match
-    InventoryButtonsRegistry.SCREEN_HANDLERS_2.supportsTransferring(context.getScreenHandlerClass(), context)
-        .map(ButtonVisibility::of)
-        .ifPresent(visibilitySettings::add);
-
-    // Inventory class match
-    InventoryButtonsRegistry.INVENTORIES_2.supportsTransferring(context.getInventoryClass(), context)
-        .map(ButtonVisibility::of)
-        .ifPresent(visibilitySettings::add);
+    // Defaults based on registry, tied to screen, handler, or inventory
+    visibilitySettings.addAll(InventoryButtonsRegistry.getTransferAndStackButtonVisibility(context));
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {

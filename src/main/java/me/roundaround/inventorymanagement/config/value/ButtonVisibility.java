@@ -3,6 +3,7 @@ package me.roundaround.inventorymanagement.config.value;
 import me.roundaround.roundalib.config.value.EnumValue;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 public enum ButtonVisibility implements EnumValue<ButtonVisibility> {
   DEFAULT, SHOW, HIDE;
@@ -52,6 +53,11 @@ public enum ButtonVisibility implements EnumValue<ButtonVisibility> {
       return DEFAULT;
     }
     return visible ? SHOW : HIDE;
+  }
+
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+  public static ButtonVisibility of(Optional<Boolean> optVisible) {
+    return optVisible.map((visible) -> visible ? SHOW : HIDE).orElse(DEFAULT);
   }
 
   public static ButtonVisibility fromId(String id) {

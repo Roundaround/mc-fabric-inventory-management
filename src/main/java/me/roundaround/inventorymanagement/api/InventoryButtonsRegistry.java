@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.api;
 
+import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -8,6 +9,7 @@ import net.minecraft.screen.ScreenHandler;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -18,9 +20,29 @@ public class InventoryButtonsRegistry {
   private InventoryButtonsRegistry() {
   }
 
-  public static final Registry<Class<? extends Inventory>> INVENTORIES_2 = new Registry<>();
   public static final Registry<Class<? extends ScreenHandler>> SCREEN_HANDLERS_2 = new Registry<>();
   public static final Registry<Class<? extends HandledScreen<?>>> HANDLED_SCREENS_2 = new Registry<>();
+  public static final Registry<Class<? extends Inventory>> INVENTORIES_2 = new Registry<>();
+
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> List<ButtonVisibility> getSortButtonVisibility(
+      ButtonContext<H, S> context
+  ) {
+    return Stream.of(
+        SCREEN_HANDLERS_2.isSortable(context.getScreenHandlerClass(), context),
+        HANDLED_SCREENS_2.isSortable(context.getScreenClass(), context),
+        INVENTORIES_2.isSortable(context.getInventoryClass(), context)
+    ).map(ButtonVisibility::of).toList();
+  }
+
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> List<ButtonVisibility> getTransferAndStackButtonVisibility(
+      ButtonContext<H, S> context
+  ) {
+    return Stream.of(
+        SCREEN_HANDLERS_2.supportsTransferring(context.getScreenHandlerClass(), context),
+        HANDLED_SCREENS_2.supportsTransferring(context.getScreenClass(), context),
+        INVENTORIES_2.supportsTransferring(context.getInventoryClass(), context)
+    ).map(ButtonVisibility::of).toList();
+  }
 
   @SuppressWarnings("unchecked")
   public static <H extends ScreenHandler, S extends HandledScreen<H>> Optional<PositioningFunction<H, S>> getPositioningFunction(
