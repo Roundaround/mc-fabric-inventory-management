@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 @Environment(EnvType.CLIENT)
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class InventoryButtonsRegistry {
   private InventoryButtonsRegistry() {
   }
