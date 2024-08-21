@@ -106,11 +106,39 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
     return containerInventory;
   }
 
+  public boolean hasInventory() {
+    return this.isPlayerInventory && this.hasPlayerInventory() ||
+        !this.isPlayerInventory && this.hasContainerInventory();
+  }
+
   public void setReferenceSlot(Slot referenceSlot) {
     this.referenceSlot = referenceSlot;
   }
 
   public Slot getDefaultReferenceSlot() {
     return PositioningFunction.getReferenceSlot(this.parentScreen, this.isPlayerInventory);
+  }
+
+  public Class<? extends Inventory> getInventoryClass() {
+    if (!this.hasInventory()) {
+      return null;
+    }
+    return this.isPlayerInventory ? this.playerInventory.getClass() : this.containerInventory.getClass();
+  }
+
+  @SuppressWarnings("unchecked")
+  public Class<H> getScreenHandlerClass() {
+    if (!this.hasScreenHandler()) {
+      return null;
+    }
+    return (Class<H>) this.getScreenHandler().getClass();
+  }
+
+  @SuppressWarnings("unchecked")
+  public Class<S> getScreenClass() {
+    if (!this.hasParentScreen()) {
+      return null;
+    }
+    return (Class<S>) this.getParentScreen().getClass();
   }
 }

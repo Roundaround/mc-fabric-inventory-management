@@ -47,6 +47,13 @@ public enum ButtonVisibility implements EnumValue<ButtonVisibility> {
     return DEFAULT;
   }
 
+  public static ButtonVisibility of(Boolean visible) {
+    if (visible == null) {
+      return DEFAULT;
+    }
+    return visible ? SHOW : HIDE;
+  }
+
   public static ButtonVisibility fromId(String id) {
     return Arrays.stream(ButtonVisibility.values())
         .filter(value -> value.getId().equals(id))
