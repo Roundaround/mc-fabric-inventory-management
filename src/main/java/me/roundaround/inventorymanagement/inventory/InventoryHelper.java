@@ -234,22 +234,4 @@ public class InventoryHelper {
     return !a.isEmpty() && ItemStack.areItemsAndComponentsEqual(a, b) && a.isStackable() &&
         a.getCount() < a.getMaxCount();
   }
-
-  public record SlotRange(int min, int max) {
-    public int size() {
-      return this.max - this.min;
-    }
-
-    public static SlotRange fullRange(Inventory inventory) {
-      return new SlotRange(0, inventory.size());
-    }
-
-    public static SlotRange playerMainRange() {
-      return new SlotRange(PlayerInventory.getHotbarSize(), PlayerInventory.MAIN_SIZE);
-    }
-
-    public static SlotRange horseMainRange(Inventory inventory) {
-      return new SlotRange(2, inventory.size());
-    }
-  }
 }

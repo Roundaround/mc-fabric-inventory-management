@@ -308,7 +308,7 @@ public class InventoryButtonsManager {
         .orElse(null);
 
     if (positioningFunction == null) {
-      return PositioningFunction.getDefault();
+      return PositioningFunction.refSlotYAndBgRight();
     }
 
     // This is safe because the positioning function is registered with the correct types

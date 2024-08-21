@@ -15,11 +15,11 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
   private final S parentScreen;
   private final HandledScreenAccessor accessor;
   private final boolean isPlayerInventory;
-
   private final H screenHandler;
-  private final Slot referenceSlot;
   private final Inventory playerInventory;
   private final Inventory containerInventory;
+
+  private Slot referenceSlot;
 
   public ButtonContext(
       S parentScreen,
@@ -28,7 +28,8 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
       Slot referenceSlot,
       boolean isPlayerInventory,
       Inventory playerInventory,
-      Inventory containerInventory) {
+      Inventory containerInventory
+  ) {
     this.parentScreen = parentScreen;
     this.accessor = accessor;
     this.screenHandler = screenHandler;
@@ -39,7 +40,8 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
   }
 
   public ButtonContext(
-      S parentScreen, boolean isPlayerInventory) {
+      S parentScreen, boolean isPlayerInventory
+  ) {
     this.parentScreen = parentScreen;
     this.accessor = (HandledScreenAccessor) parentScreen;
     this.screenHandler = parentScreen.getScreenHandler();
@@ -60,7 +62,7 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
     return parentScreen != null;
   }
 
-  public HandledScreen<?> getParentScreen() {
+  public S getParentScreen() {
     return parentScreen;
   }
 
@@ -76,7 +78,7 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
     return screenHandler != null;
   }
 
-  public ScreenHandler getScreenHandler() {
+  public H getScreenHandler() {
     return screenHandler;
   }
 
@@ -102,5 +104,13 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
 
   public Inventory getContainerInventory() {
     return containerInventory;
+  }
+
+  public void setReferenceSlot(Slot referenceSlot) {
+    this.referenceSlot = referenceSlot;
+  }
+
+  public Slot getDefaultReferenceSlot() {
+    return PositioningFunction.getReferenceSlot(this.parentScreen, this.isPlayerInventory);
   }
 }

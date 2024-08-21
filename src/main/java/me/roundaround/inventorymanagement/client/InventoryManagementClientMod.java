@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HopperScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -21,6 +22,8 @@ import net.minecraft.screen.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class InventoryManagementClientMod implements ClientModInitializer {
   @Override
@@ -72,6 +75,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     InventoryButtonsRegistry.SCREEN_HANDLERS.sortableAndTransferable(HorseScreenHandler.class);
 
     InventoryButtonsRegistry.SCREEN_HANDLERS.playerSideSortable(PlayerScreenHandler.class);
+    InventoryButtonsRegistry.SCREEN_HANDLERS.playerSideSortable(CreativeInventoryScreen.CreativeScreenHandler.class);
     // Furnace, smoker, blast furnace
     InventoryButtonsRegistry.SCREEN_HANDLERS.playerSideSortable(AbstractFurnaceScreenHandler.class);
     // Anvil, smithing table
@@ -90,8 +94,11 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     // Adjust positioning for hoppers
     InventoryButtonsRegistry.SCREEN_HANDLERS.setPositionFunction(
         HopperScreenHandler.class, (ButtonContext<HopperScreenHandler, HopperScreen> context) -> {
-          PositioningFunction<HopperScreenHandler, HopperScreen> base = PositioningFunction.getDefault();
+          PositioningFunction<HopperScreenHandler, HopperScreen> base = PositioningFunction.refSlotYAndBgRight();
           Position basePosition = base.apply(context);
+          if (basePosition == null) {
+            return null;
+          }
 
           if (context.isPlayerInventory()) {
             return basePosition;
@@ -99,6 +106,26 @@ public class InventoryManagementClientMod implements ClientModInitializer {
 
           return basePosition.movedUp(InventoryButtonsManager.BUTTON_HEIGHT + InventoryButtonsManager.BUTTON_SPACING);
         });
+
+    // Creative screen dynamically needs to update its reference slot and thus position
+    AtomicBoolean wasPreviouslyInventoryTab = new AtomicBoolean(false);
+    InventoryButtonsRegistry.SCREEN_HANDLERS.setPositionFunction(CreativeInventoryScreen.CreativeScreenHandler.class,
+        (ButtonContext<CreativeInventoryScreen.CreativeScreenHandler, CreativeInventoryScreen> context) -> {
+          boolean isInventoryTab = context.getParentScreen().isInventoryTabSelected();
+          if (isInventoryTab != wasPreviouslyInventoryTab.get()) {
+            context.setReferenceSlot(isInventoryTab ? context.getDefaultReferenceSlot() : null);
+          }
+          wasPreviouslyInventoryTab.set(isInventoryTab);
+
+          if (!context.hasReferenceSlot()) {
+            return null;
+          }
+
+          PositioningFunction<CreativeInventoryScreen.CreativeScreenHandler, CreativeInventoryScreen> base =
+              PositioningFunction.refSlotYAndBgRight();
+          return base.apply(context);
+        }
+    );
 
     FabricLoader.getInstance()
         .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)

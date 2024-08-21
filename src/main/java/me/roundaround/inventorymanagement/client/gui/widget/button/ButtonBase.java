@@ -39,7 +39,7 @@ public abstract class ButtonBase<H extends ScreenHandler, S extends HandledScree
       Text tooltip,
       Identifier icon
   ) {
-    super(initialPosition.x() + offset.x(), initialPosition.y() + offset.y(), WIDTH, HEIGHT, ScreenTexts.EMPTY, onPress,
+    super(getX(initialPosition, offset), getY(initialPosition, offset), WIDTH, HEIGHT, ScreenTexts.EMPTY, onPress,
         //        (button) -> {
         //          if (!Screen.hasControlDown()) {
         //            onPress.onPress(button);
@@ -63,14 +63,22 @@ public abstract class ButtonBase<H extends ScreenHandler, S extends HandledScree
   }
 
   public void setOffset(Position position) {
-    offset = position;
+    this.offset = position;
   }
 
   @Override
   public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-    Position position = positioningFunction.apply(this.context);
-    setX(position.x() + offset.x());
-    setY(position.y() + offset.y());
+    Position position = this.positioningFunction.apply(this.context);
+    this.active = position != null;
+
+    if (position == null) {
+      this.hovered = false;
+      this.setFocused(false);
+      return;
+    }
+
+    setX(getX(position, this.offset));
+    setY(getY(position, this.offset));
 
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     RenderSystem.enableBlend();
@@ -82,5 +90,17 @@ public abstract class ButtonBase<H extends ScreenHandler, S extends HandledScree
     float color = this.active ? 1f : (160f / 255f);
     RenderSystem.setShaderColor(color, color, color, 1f);
     context.drawGuiTexture(this.icon, this.getX(), this.getY(), this.width, this.height);
+  }
+
+  private static int getX(Position base, Position offset) {
+    int baseX = base == null ? 0 : base.x();
+    int offsetX = offset == null ? 0 : offset.x();
+    return baseX + offsetX;
+  }
+
+  private static int getY(Position base, Position offset) {
+    int baseY = base == null ? 0 : base.y();
+    int offsetY = offset == null ? 0 : offset.y();
+    return baseY + offsetY;
   }
 }

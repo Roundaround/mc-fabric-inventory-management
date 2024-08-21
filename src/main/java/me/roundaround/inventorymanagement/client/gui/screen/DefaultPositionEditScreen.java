@@ -65,17 +65,17 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     if (InventoryManagementConfig.getInstance().showSort.getValue()) {
       this.containerButtons.add(
           new SortInventoryButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index++, offset),
-              PositioningFunction.getDefault(), containerContext
+              PositioningFunction.refSlotYAndBgRight(), containerContext
           ));
     }
     if (InventoryManagementConfig.getInstance().showStack.getValue()) {
       this.containerButtons.add(new AutoStackButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index++, offset),
-          PositioningFunction.getDefault(), containerContext
+          PositioningFunction.refSlotYAndBgRight(), containerContext
       ));
     }
     if (InventoryManagementConfig.getInstance().showTransfer.getValue()) {
       this.containerButtons.add(new TransferAllButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index, offset),
-          PositioningFunction.getDefault(), containerContext
+          PositioningFunction.refSlotYAndBgRight(), containerContext
       ));
     }
 
@@ -87,17 +87,17 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     if (InventoryManagementConfig.getInstance().showSort.getValue()) {
       this.playerButtons.add(
           new SortInventoryButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index++, offset),
-              PositioningFunction.getDefault(), playerContext
+              PositioningFunction.refSlotYAndBgRight(), playerContext
           ));
     }
     if (InventoryManagementConfig.getInstance().showStack.getValue()) {
       this.playerButtons.add(new AutoStackButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index++, offset),
-          PositioningFunction.getDefault(), playerContext
+          PositioningFunction.refSlotYAndBgRight(), playerContext
       ));
     }
     if (InventoryManagementConfig.getInstance().showTransfer.getValue()) {
       this.playerButtons.add(new TransferAllButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index, offset),
-          PositioningFunction.getDefault(), playerContext
+          PositioningFunction.refSlotYAndBgRight(), playerContext
       ));
     }
 
