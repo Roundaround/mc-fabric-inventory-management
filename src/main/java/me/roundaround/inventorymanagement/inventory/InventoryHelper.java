@@ -178,12 +178,7 @@ public class InventoryHelper {
         }
 
         if (canStacksBeMerged(toStack, fromStack)) {
-          int space = toStack.getMaxCount() - toStack.getCount();
-          int amount = Math.min(space, fromStack.getCount());
-          if (amount > 0) {
-            toStack.increment(amount);
-            fromStack.decrement(amount);
-
+          if (mergeStacks(toStack, fromStack)) {
             to.setStack(toIdx, toStack);
             from.setStack(fromIdx, fromStack.isEmpty() ? ItemStack.EMPTY : fromStack);
           }
@@ -233,5 +228,16 @@ public class InventoryHelper {
   public static boolean canStacksBeMerged(ItemStack a, ItemStack b) {
     return !a.isEmpty() && ItemStack.areItemsAndComponentsEqual(a, b) && a.isStackable() &&
         a.getCount() < a.getMaxCount();
+  }
+
+  public static boolean mergeStacks(ItemStack toStack, ItemStack fromStack) {
+    int space = toStack.getMaxCount() - toStack.getCount();
+    int amount = Math.min(space, fromStack.getCount());
+    if (amount > 0) {
+      toStack.increment(amount);
+      fromStack.decrement(amount);
+      return true;
+    }
+    return false;
   }
 }
