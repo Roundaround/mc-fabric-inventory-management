@@ -5,6 +5,7 @@ import me.roundaround.inventorymanagement.api.InventoryButtonsRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
 import me.roundaround.inventorymanagement.api.PositioningFunction;
 import me.roundaround.inventorymanagement.compat.roundalib.ConfigControlRegister;
+import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;
 import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -14,6 +15,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HopperScreen;
+import net.minecraft.client.gui.screen.ingame.HorseScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.inventory.EnderChestInventory;
@@ -70,7 +72,14 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     InventoryButtonsRegistry.SCREEN_HANDLERS_2.registerBothSides(ShulkerBoxScreenHandler.class);
     InventoryButtonsRegistry.SCREEN_HANDLERS_2.registerBothSides(GenericContainerScreenHandler.class);
     InventoryButtonsRegistry.SCREEN_HANDLERS_2.registerBothSides(Generic3x3ContainerScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS_2.registerBothSides(HorseScreenHandler.class);
+
+    // Not all horses have an inventory
+    InventoryButtonsRegistry.SCREEN_HANDLERS_2.<HorseScreenHandler, HorseScreen>register(HorseScreenHandler.class)
+        .withPlayer()
+        .withContainer((context) -> {
+          HorseScreenHandlerAccessor accessor = ((HorseScreenHandlerAccessor) context.getScreenHandler());
+          return accessor.invokeHasChest(accessor.getEntity());
+        });
 
     // Hopper's container-side is only 1 slot tall, so we need to bump the buttons up a bit to make room
     InventoryButtonsRegistry.SCREEN_HANDLERS_2.<HopperScreenHandler, HopperScreen>registerBothSides(
