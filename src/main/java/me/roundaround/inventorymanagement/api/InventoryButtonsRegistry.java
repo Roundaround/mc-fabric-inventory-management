@@ -20,17 +20,17 @@ public class InventoryButtonsRegistry {
   private InventoryButtonsRegistry() {
   }
 
-  public static final Registry<Class<? extends ScreenHandler>> SCREEN_HANDLERS_2 = new Registry<>();
-  public static final Registry<Class<? extends HandledScreen<?>>> HANDLED_SCREENS_2 = new Registry<>();
-  public static final Registry<Class<? extends Inventory>> INVENTORIES_2 = new Registry<>();
+  public static final Registry<Class<? extends ScreenHandler>> SCREEN_HANDLERS = new Registry<>();
+  public static final Registry<Class<? extends HandledScreen<?>>> HANDLED_SCREENS = new Registry<>();
+  public static final Registry<Class<? extends Inventory>> INVENTORIES = new Registry<>();
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> List<ButtonVisibility> getSortButtonVisibility(
       ButtonContext<H, S> context
   ) {
     return Stream.of(
-        SCREEN_HANDLERS_2.isSortable(context.getScreenHandlerClass(), context),
-        HANDLED_SCREENS_2.isSortable(context.getScreenClass(), context),
-        INVENTORIES_2.isSortable(context.getInventoryClass(), context)
+        SCREEN_HANDLERS.isSortable(context.getScreenHandlerClass(), context),
+        HANDLED_SCREENS.isSortable(context.getScreenClass(), context),
+        INVENTORIES.isSortable(context.getInventoryClass(), context)
     ).map(ButtonVisibility::of).toList();
   }
 
@@ -38,9 +38,9 @@ public class InventoryButtonsRegistry {
       ButtonContext<H, S> context
   ) {
     return Stream.of(
-        SCREEN_HANDLERS_2.supportsTransferring(context.getScreenHandlerClass(), context),
-        HANDLED_SCREENS_2.supportsTransferring(context.getScreenClass(), context),
-        INVENTORIES_2.supportsTransferring(context.getInventoryClass(), context)
+        SCREEN_HANDLERS.supportsTransferring(context.getScreenHandlerClass(), context),
+        HANDLED_SCREENS.supportsTransferring(context.getScreenClass(), context),
+        INVENTORIES.supportsTransferring(context.getInventoryClass(), context)
     ).map(ButtonVisibility::of).toList();
   }
 
@@ -49,9 +49,9 @@ public class InventoryButtonsRegistry {
       ButtonContext<H, S> context
   ) {
     return Stream.of(
-            SCREEN_HANDLERS_2.getPositioningFunction(context.getScreenHandlerClass()),
-            HANDLED_SCREENS_2.getPositioningFunction(context.getScreenClass()),
-            INVENTORIES_2.getPositioningFunction(context.getInventoryClass())
+            SCREEN_HANDLERS.getPositioningFunction(context.getScreenHandlerClass()),
+            HANDLED_SCREENS.getPositioningFunction(context.getScreenClass()),
+            INVENTORIES.getPositioningFunction(context.getInventoryClass())
         )
         .filter(Optional::isPresent)
         .map(Optional::get)
