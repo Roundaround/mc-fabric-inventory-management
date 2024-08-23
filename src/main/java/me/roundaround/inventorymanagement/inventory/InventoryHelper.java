@@ -1,9 +1,8 @@
 package me.roundaround.inventorymanagement.inventory;
 
-import me.roundaround.inventorymanagement.api.ButtonContext;
+import me.roundaround.inventorymanagement.api.SlotRangeRegistry;
 import me.roundaround.inventorymanagement.inventory.sorting.ItemStackComparator;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.HorseScreenHandler;
@@ -19,11 +18,10 @@ public class InventoryHelper {
     Inventory containerInventory = getContainerInventory(player);
     Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
 
-    if (inventory instanceof PlayerInventory) {
-      sortInventory(inventory, SlotRange.playerMainRange());
-    } else {
-      sortInventory(inventory);
-    }
+    SlotRange slotRange = isPlayerInventory ?
+        SlotRangeRegistry.getPlayerSide(player, inventory) :
+        SlotRangeRegistry.getContainerSide(player, inventory);
+    sortInventory(inventory, slotRange);
   }
 
   public static void sortInventory(Inventory inventory) {
@@ -93,10 +91,8 @@ public class InventoryHelper {
 
     Inventory playerInventory = player.getInventory();
 
-    // TODO: Call InventoryButtonsRegistry.getPlayerSlotRange and InventoryButtonsRegistry.getContainerSlotRange
-
-    SlotRange playerSlotRange = SlotRange.playerMainRange();
-    SlotRange containerSlotRange = SlotRange.fullRange(containerInventory);
+    SlotRange playerSlotRange = SlotRangeRegistry.getPlayerSide(player, playerInventory);
+    SlotRange containerSlotRange = SlotRangeRegistry.getContainerSide(player, containerInventory);
 
     if (player.currentScreenHandler instanceof HorseScreenHandler) {
       containerSlotRange = SlotRange.horseMainRange(containerInventory);

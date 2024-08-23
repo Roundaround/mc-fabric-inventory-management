@@ -1,7 +1,7 @@
 package me.roundaround.inventorymanagement.client;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
-import me.roundaround.inventorymanagement.api.InventoryButtonsRegistry;
+import me.roundaround.inventorymanagement.api.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
 import me.roundaround.inventorymanagement.api.PositioningFunction;
 import me.roundaround.inventorymanagement.compat.roundalib.ConfigControlRegister;
@@ -66,15 +66,15 @@ public class InventoryManagementClientMod implements ClientModInitializer {
   }
 
   private void initButtonRegistry() {
-    InventoryButtonsRegistry.INVENTORIES.registerBothSides(EnderChestInventory.class);
-    InventoryButtonsRegistry.INVENTORIES.registerBothSides(LootableContainerBlockEntity.class);
+    ButtonRegistry.INVENTORIES.registerBothSides(EnderChestInventory.class);
+    ButtonRegistry.INVENTORIES.registerBothSides(LootableContainerBlockEntity.class);
 
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerBothSides(ShulkerBoxScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerBothSides(GenericContainerScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerBothSides(Generic3x3ContainerScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerBothSides(ShulkerBoxScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerBothSides(GenericContainerScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerBothSides(Generic3x3ContainerScreenHandler.class);
 
     // Not all horses have an inventory
-    InventoryButtonsRegistry.SCREEN_HANDLERS.<HorseScreenHandler, HorseScreen>register(HorseScreenHandler.class)
+    ButtonRegistry.SCREEN_HANDLERS.<HorseScreenHandler, HorseScreen>register(HorseScreenHandler.class)
         .withPlayer()
         .withContainer((context) -> {
           HorseScreenHandlerAccessor accessor = ((HorseScreenHandlerAccessor) context.getScreenHandler());
@@ -82,7 +82,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         });
 
     // Hopper's container-side is only 1 slot tall, so we need to bump the buttons up a bit to make room
-    InventoryButtonsRegistry.SCREEN_HANDLERS.<HopperScreenHandler, HopperScreen>registerBothSides(
+    ButtonRegistry.SCREEN_HANDLERS.<HopperScreenHandler, HopperScreen>registerBothSides(
         HopperScreenHandler.class, (context) -> {
           PositioningFunction<HopperScreenHandler, HopperScreen> base = PositioningFunction.refSlotYAndBgRight();
           Position basePosition = base.apply(context);
@@ -97,25 +97,25 @@ public class InventoryManagementClientMod implements ClientModInitializer {
           return basePosition.movedUp(InventoryButtonsManager.BUTTON_HEIGHT + InventoryButtonsManager.BUTTON_SPACING);
         });
 
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(PlayerScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(PlayerScreenHandler.class);
     // Furnace, smoker, blast furnace
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(AbstractFurnaceScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(AbstractFurnaceScreenHandler.class);
     // Anvil, smithing table
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(ForgingScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(CraftingScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(CrafterScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(BrewingStandScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(StonecutterScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(GrindstoneScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(CartographyTableScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(LoomScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(EnchantmentScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(BeaconScreenHandler.class);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(MerchantScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(ForgingScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(CraftingScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(CrafterScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(BrewingStandScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(StonecutterScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(GrindstoneScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(CartographyTableScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(LoomScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(EnchantmentScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(BeaconScreenHandler.class);
+    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(MerchantScreenHandler.class);
 
     // Creative screen dynamically needs to update its reference slot and thus position
     AtomicBoolean wasPreviouslyInventoryTab = new AtomicBoolean(false);
-    InventoryButtonsRegistry.SCREEN_HANDLERS.<CreativeInventoryScreen.CreativeScreenHandler,
+    ButtonRegistry.SCREEN_HANDLERS.<CreativeInventoryScreen.CreativeScreenHandler,
         CreativeInventoryScreen>registerPlayerSideOnly(
         CreativeInventoryScreen.CreativeScreenHandler.class, (context) -> {
           boolean isInventoryTab = context.getParentScreen().isInventoryTabSelected();

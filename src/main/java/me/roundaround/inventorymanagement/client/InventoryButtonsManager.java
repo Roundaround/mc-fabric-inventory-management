@@ -1,7 +1,7 @@
 package me.roundaround.inventorymanagement.client;
 
 import me.roundaround.inventorymanagement.api.ButtonContext;
-import me.roundaround.inventorymanagement.api.InventoryButtonsRegistry;
+import me.roundaround.inventorymanagement.api.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.PositioningFunction;
 import me.roundaround.inventorymanagement.client.gui.widget.button.AutoStackButton;
 import me.roundaround.inventorymanagement.client.gui.widget.button.ButtonBase;
@@ -86,7 +86,7 @@ public class InventoryButtonsManager {
         )).ifPresent(visibilitySettings::add);
 
     // Defaults based on registry, tied to screen, handler, or inventory
-    visibilitySettings.addAll(InventoryButtonsRegistry.getSortButtonVisibility(context));
+    visibilitySettings.addAll(ButtonRegistry.getSortButtonVisibility(context));
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -139,7 +139,7 @@ public class InventoryButtonsManager {
         )).ifPresent(visibilitySettings::add);
 
     // Defaults based on registry, tied to screen, handler, or inventory
-    visibilitySettings.addAll(InventoryButtonsRegistry.getTransferAndStackButtonVisibility(context));
+    visibilitySettings.addAll(ButtonRegistry.getTransferAndStackButtonVisibility(context));
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -192,7 +192,7 @@ public class InventoryButtonsManager {
         )).ifPresent(visibilitySettings::add);
 
     // Defaults based on registry, tied to screen, handler, or inventory
-    visibilitySettings.addAll(InventoryButtonsRegistry.getTransferAndStackButtonVisibility(context));
+    visibilitySettings.addAll(ButtonRegistry.getTransferAndStackButtonVisibility(context));
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -255,7 +255,7 @@ public class InventoryButtonsManager {
   private <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> getPositioningFunction(
       ButtonContext<H, S> context
   ) {
-    return InventoryButtonsRegistry.getPositioningFunction(context).orElseGet(PositioningFunction::refSlotYAndBgRight);
+    return ButtonRegistry.getPositioningFunction(context).orElseGet(PositioningFunction::refSlotYAndBgRight);
   }
 
   public Position getButtonOffset(int index, Position offset) {

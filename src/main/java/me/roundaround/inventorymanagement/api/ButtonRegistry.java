@@ -16,8 +16,8 @@ import java.util.stream.Stream;
 
 @Environment(EnvType.CLIENT)
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public class InventoryButtonsRegistry {
-  private InventoryButtonsRegistry() {
+public class ButtonRegistry {
+  private ButtonRegistry() {
   }
 
   public static final Registry<Class<? extends ScreenHandler>> SCREEN_HANDLERS = new Registry<>();
@@ -59,11 +59,10 @@ public class InventoryButtonsRegistry {
         .map((positioningFunction) -> (PositioningFunction<H, S>) positioningFunction);
   }
 
-  // TODO: Add getPlayerSlotRange and getContainerSlotRange
-
   public static class Registry<C extends Class<?>> {
     private final HashMap<C, Registration<?, ?>> store = new HashMap<>();
 
+    @SuppressWarnings("DuplicatedCode")
     public C getAssignableClass(Class<?> clazz) {
       HashSet<C> assignableClasses = new HashSet<>();
       for (C registeredClass : this.store.keySet()) {
@@ -170,32 +169,12 @@ public class InventoryButtonsRegistry {
     ) {
       return Optional.ofNullable(this.<H, S>get(clazz)).map(Registration::getPositioningFunction);
     }
-
-    // TODO: Convert this back to Optional
-    public <H extends ScreenHandler> SlotRangeFunction<H> getPlayerSlotRangeFunction(
-        Class<?> clazz
-    ) {
-      return Optional.ofNullable(this.<H, HandledScreen<H>>get(clazz))
-          .map(Registration::getPlayerSlotRangeFunction)
-          .orElseGet(SlotRangeFunction::playerMainRange);
-    }
-
-    // TODO: Convert this back to Optional
-    public <H extends ScreenHandler> SlotRangeFunction<H> getContainerSlotRangeFunction(
-        Class<?> clazz
-    ) {
-      return Optional.ofNullable(this.<H, HandledScreen<H>>get(clazz))
-          .map(Registration::getContainerSlotRangeFunction)
-          .orElseGet(SlotRangeFunction::fullInventory);
-    }
   }
 
   public static class Registration<H extends ScreenHandler, S extends HandledScreen<H>> {
     private Function<ButtonContext<H, S>, Boolean> hasPlayerInventory = (context) -> false;
     private Function<ButtonContext<H, S>, Boolean> hasContainerInventory = (context) -> false;
     private PositioningFunction<H, S> positioningFunction = null;
-    private SlotRangeFunction<H> playerSlotRangeFunction = null;
-    private SlotRangeFunction<H> containerSlotRangeFunction = null;
 
     public boolean getHasPlayerInventory(ButtonContext<H, S> context) {
       return this.hasPlayerInventory.apply(context);
@@ -207,14 +186,6 @@ public class InventoryButtonsRegistry {
 
     public PositioningFunction<H, S> getPositioningFunction() {
       return this.positioningFunction;
-    }
-
-    public SlotRangeFunction<H> getPlayerSlotRangeFunction() {
-      return this.playerSlotRangeFunction;
-    }
-
-    public SlotRangeFunction<H> getContainerSlotRangeFunction() {
-      return this.containerSlotRangeFunction;
     }
   }
 
@@ -262,24 +233,6 @@ public class InventoryButtonsRegistry {
 
     public RegistrationEditor<H, S> withPosition(PositioningFunction<H, S> positioningFunction) {
       this.registration.positioningFunction = positioningFunction;
-      return this;
-    }
-
-    public RegistrationEditor<H, S> withPlayerSlotRange(SlotRangeFunction<H> playerSlotRangeFunction) {
-      this.registration.playerSlotRangeFunction = playerSlotRangeFunction;
-      return this;
-    }
-
-    public RegistrationEditor<H, S> withContainerSlotRange(SlotRangeFunction<H> containerSlotRangeFunction) {
-      this.registration.containerSlotRangeFunction = containerSlotRangeFunction;
-      return this;
-    }
-
-    public RegistrationEditor<H, S> withSlotRanges(
-        SlotRangeFunction<H> playerSlotRangeFunction, SlotRangeFunction<H> containerSlotRangeFunction
-    ) {
-      this.registration.playerSlotRangeFunction = playerSlotRangeFunction;
-      this.registration.containerSlotRangeFunction = containerSlotRangeFunction;
       return this;
     }
   }
