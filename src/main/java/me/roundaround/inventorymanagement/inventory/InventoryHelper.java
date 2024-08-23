@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.inventory;
 
+import me.roundaround.inventorymanagement.api.ButtonContext;
 import me.roundaround.inventorymanagement.inventory.sorting.ItemStackComparator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -10,6 +11,7 @@ import net.minecraft.screen.ScreenHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.function.BiFunction;
 
 public class InventoryHelper {
@@ -91,6 +93,8 @@ public class InventoryHelper {
 
     Inventory playerInventory = player.getInventory();
 
+    // TODO: Call InventoryButtonsRegistry.getPlayerSlotRange and InventoryButtonsRegistry.getContainerSlotRange
+
     SlotRange playerSlotRange = SlotRange.playerMainRange();
     SlotRange containerSlotRange = SlotRange.fullRange(containerInventory);
 
@@ -169,11 +173,11 @@ public class InventoryHelper {
           continue;
         }
 
-        if (!canTakeItemFromSlot(fromScreenHandler, fromIdx, player)) {
+        if (!canTakeItemFromSlot(fromScreenHandler, from, fromIdx, player)) {
           continue;
         }
 
-        if (!canPlaceItemInSlot(toScreenHandler, toIdx, fromStack)) {
+        if (!canPlaceItemInSlot(toScreenHandler, to, toIdx, fromStack)) {
           continue;
         }
 
@@ -190,23 +194,39 @@ public class InventoryHelper {
     }
   }
 
-  private static boolean canTakeItemFromSlot(ScreenHandler screenHandler, int idx, PlayerEntity player) {
+  private static boolean canTakeItemFromSlot(
+      ScreenHandler screenHandler, Inventory inventory, int inventoryIndex, PlayerEntity player
+  ) {
     if (screenHandler == null) {
       return true;
     }
+
+    OptionalInt slotIndex = screenHandler.getSlotIndex(inventory, inventoryIndex);
+    if (slotIndex.isEmpty()) {
+      return false;
+    }
+
     try {
-      return screenHandler.getSlot(idx).canTakeItems(player);
+      return screenHandler.getSlot(slotIndex.getAsInt()).canTakeItems(player);
     } catch (IndexOutOfBoundsException e) {
       return false;
     }
   }
 
-  private static boolean canPlaceItemInSlot(ScreenHandler screenHandler, int idx, ItemStack itemStack) {
+  private static boolean canPlaceItemInSlot(
+      ScreenHandler screenHandler, Inventory inventory, int inventoryIndex, ItemStack itemStack
+  ) {
     if (screenHandler == null) {
       return true;
     }
+
+    OptionalInt slotIndex = screenHandler.getSlotIndex(inventory, inventoryIndex);
+    if (slotIndex.isEmpty()) {
+      return false;
+    }
+
     try {
-      return screenHandler.getSlot(idx).canInsert(itemStack);
+      return screenHandler.getSlot(slotIndex.getAsInt()).canInsert(itemStack);
     } catch (IndexOutOfBoundsException e) {
       return false;
     }

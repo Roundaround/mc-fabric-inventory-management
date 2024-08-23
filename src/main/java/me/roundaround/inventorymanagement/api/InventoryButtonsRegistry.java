@@ -59,6 +59,8 @@ public class InventoryButtonsRegistry {
         .map((positioningFunction) -> (PositioningFunction<H, S>) positioningFunction);
   }
 
+  // TODO: Add getPlayerSlotRange and getContainerSlotRange
+
   public static class Registry<C extends Class<?>> {
     private final HashMap<C, Registration<?, ?>> store = new HashMap<>();
 
@@ -131,12 +133,6 @@ public class InventoryButtonsRegistry {
       return (Registration<H, S>) this.store.get(this.getAssignableClass(clazz));
     }
 
-    public <H extends ScreenHandler, S extends HandledScreen<H>> Optional<PositioningFunction<H, S>> getPositioningFunction(
-        Class<?> clazz
-    ) {
-      return Optional.ofNullable(this.<H, S>get(clazz)).map(Registration::getPositioningFunction);
-    }
-
     public <H extends ScreenHandler, S extends HandledScreen<H>> Optional<Boolean> isSortable(
         Class<?> clazz, ButtonContext<H, S> context
     ) {
@@ -150,16 +146,8 @@ public class InventoryButtonsRegistry {
       }
 
       boolean isPlayerSide = context.isPlayerInventory();
-
-      Function<ButtonContext<H, S>, Boolean> producer = isPlayerSide ?
-          registration.dynamicallyHasPlayerInventory :
-          registration.dynamicallyHasContainerInventory;
-      if (producer != null) {
-        return Optional.of(producer.apply(context));
-      }
-
-      return Optional.of(
-          isPlayerSide && registration.hasPlayerInventory || !isPlayerSide && registration.hasContainerInventory);
+      return Optional.of(isPlayerSide && registration.getHasPlayerInventory(context) ||
+          !isPlayerSide && registration.getHasContainerInventory(context));
     }
 
     public <H extends ScreenHandler, S extends HandledScreen<H>> Optional<Boolean> supportsTransferring(
@@ -174,42 +162,59 @@ public class InventoryButtonsRegistry {
         return Optional.empty();
       }
 
-      boolean hasPlayerInventory = registration.dynamicallyHasPlayerInventory != null ?
-          registration.dynamicallyHasPlayerInventory.apply(context) :
-          registration.hasPlayerInventory;
-      boolean hasContainerInventory = registration.dynamicallyHasContainerInventory != null ?
-          registration.dynamicallyHasContainerInventory.apply(context) :
-          registration.hasContainerInventory;
+      return Optional.of(registration.getHasPlayerInventory(context) && registration.getHasContainerInventory(context));
+    }
 
-      return Optional.of(hasContainerInventory && hasPlayerInventory);
+    public <H extends ScreenHandler, S extends HandledScreen<H>> Optional<PositioningFunction<H, S>> getPositioningFunction(
+        Class<?> clazz
+    ) {
+      return Optional.ofNullable(this.<H, S>get(clazz)).map(Registration::getPositioningFunction);
+    }
+
+    // TODO: Convert this back to Optional
+    public <H extends ScreenHandler> SlotRangeFunction<H> getPlayerSlotRangeFunction(
+        Class<?> clazz
+    ) {
+      return Optional.ofNullable(this.<H, HandledScreen<H>>get(clazz))
+          .map(Registration::getPlayerSlotRangeFunction)
+          .orElseGet(SlotRangeFunction::playerMainRange);
+    }
+
+    // TODO: Convert this back to Optional
+    public <H extends ScreenHandler> SlotRangeFunction<H> getContainerSlotRangeFunction(
+        Class<?> clazz
+    ) {
+      return Optional.ofNullable(this.<H, HandledScreen<H>>get(clazz))
+          .map(Registration::getContainerSlotRangeFunction)
+          .orElseGet(SlotRangeFunction::fullInventory);
     }
   }
 
   public static class Registration<H extends ScreenHandler, S extends HandledScreen<H>> {
-    private boolean hasPlayerInventory = false;
-    private boolean hasContainerInventory = false;
-    private Function<ButtonContext<H, S>, Boolean> dynamicallyHasPlayerInventory = null;
-    private Function<ButtonContext<H, S>, Boolean> dynamicallyHasContainerInventory = null;
+    private Function<ButtonContext<H, S>, Boolean> hasPlayerInventory = (context) -> false;
+    private Function<ButtonContext<H, S>, Boolean> hasContainerInventory = (context) -> false;
     private PositioningFunction<H, S> positioningFunction = null;
+    private SlotRangeFunction<H> playerSlotRangeFunction = null;
+    private SlotRangeFunction<H> containerSlotRangeFunction = null;
 
-    public boolean isHasPlayerInventory() {
-      return hasPlayerInventory;
+    public boolean getHasPlayerInventory(ButtonContext<H, S> context) {
+      return this.hasPlayerInventory.apply(context);
     }
 
-    public boolean isHasContainerInventory() {
-      return hasContainerInventory;
-    }
-
-    public Function<ButtonContext<H, S>, Boolean> getDynamicallyHasPlayerInventory() {
-      return dynamicallyHasPlayerInventory;
-    }
-
-    public Function<ButtonContext<H, S>, Boolean> getDynamicallyHasContainerInventory() {
-      return dynamicallyHasContainerInventory;
+    public boolean getHasContainerInventory(ButtonContext<H, S> context) {
+      return this.hasContainerInventory.apply(context);
     }
 
     public PositioningFunction<H, S> getPositioningFunction() {
-      return positioningFunction;
+      return this.positioningFunction;
+    }
+
+    public SlotRangeFunction<H> getPlayerSlotRangeFunction() {
+      return this.playerSlotRangeFunction;
+    }
+
+    public SlotRangeFunction<H> getContainerSlotRangeFunction() {
+      return this.containerSlotRangeFunction;
     }
   }
 
@@ -221,8 +226,8 @@ public class InventoryButtonsRegistry {
     }
 
     public RegistrationEditor<H, S> withInventories(boolean hasPlayerInventory, boolean hasContainerInventory) {
-      this.registration.hasPlayerInventory = hasPlayerInventory;
-      this.registration.hasContainerInventory = hasContainerInventory;
+      this.registration.hasPlayerInventory = (context) -> hasPlayerInventory;
+      this.registration.hasContainerInventory = (context) -> hasContainerInventory;
       return this;
     }
 
@@ -231,32 +236,50 @@ public class InventoryButtonsRegistry {
     }
 
     public RegistrationEditor<H, S> withPlayer() {
-      return this.withInventories(true, this.registration.hasContainerInventory);
+      return this.withInventories((context) -> true, this.registration.hasContainerInventory);
     }
 
     public RegistrationEditor<H, S> withContainer() {
-      return this.withInventories(this.registration.hasPlayerInventory, true);
+      return this.withInventories(this.registration.hasPlayerInventory, (context) -> true);
     }
 
     public RegistrationEditor<H, S> withInventories(
-        Function<ButtonContext<H, S>, Boolean> dynamicallyHasPlayerInventory,
-        Function<ButtonContext<H, S>, Boolean> dynamicallyHasContainerInventory
+        Function<ButtonContext<H, S>, Boolean> hasPlayerInventory,
+        Function<ButtonContext<H, S>, Boolean> hasContainerInventory
     ) {
-      this.registration.dynamicallyHasPlayerInventory = dynamicallyHasPlayerInventory;
-      this.registration.dynamicallyHasContainerInventory = dynamicallyHasContainerInventory;
+      this.registration.hasPlayerInventory = hasPlayerInventory;
+      this.registration.hasContainerInventory = hasContainerInventory;
       return this;
     }
 
     public RegistrationEditor<H, S> withPlayer(Function<ButtonContext<H, S>, Boolean> dynamicallyHasPlayerInventory) {
-      return this.withInventories(dynamicallyHasPlayerInventory, this.registration.dynamicallyHasContainerInventory);
+      return this.withInventories(dynamicallyHasPlayerInventory, this.registration.hasContainerInventory);
     }
 
     public RegistrationEditor<H, S> withContainer(Function<ButtonContext<H, S>, Boolean> dynamicallyHasContainerInventory) {
-      return this.withInventories(this.registration.dynamicallyHasPlayerInventory, dynamicallyHasContainerInventory);
+      return this.withInventories(this.registration.hasPlayerInventory, dynamicallyHasContainerInventory);
     }
 
     public RegistrationEditor<H, S> withPosition(PositioningFunction<H, S> positioningFunction) {
       this.registration.positioningFunction = positioningFunction;
+      return this;
+    }
+
+    public RegistrationEditor<H, S> withPlayerSlotRange(SlotRangeFunction<H> playerSlotRangeFunction) {
+      this.registration.playerSlotRangeFunction = playerSlotRangeFunction;
+      return this;
+    }
+
+    public RegistrationEditor<H, S> withContainerSlotRange(SlotRangeFunction<H> containerSlotRangeFunction) {
+      this.registration.containerSlotRangeFunction = containerSlotRangeFunction;
+      return this;
+    }
+
+    public RegistrationEditor<H, S> withSlotRanges(
+        SlotRangeFunction<H> playerSlotRangeFunction, SlotRangeFunction<H> containerSlotRangeFunction
+    ) {
+      this.registration.playerSlotRangeFunction = playerSlotRangeFunction;
+      this.registration.containerSlotRangeFunction = containerSlotRangeFunction;
       return this;
     }
   }

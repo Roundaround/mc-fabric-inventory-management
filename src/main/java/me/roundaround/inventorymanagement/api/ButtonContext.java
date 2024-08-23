@@ -111,6 +111,13 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
         !this.isPlayerInventory && this.hasContainerInventory();
   }
 
+  public Inventory getInventory() {
+    if (!this.hasInventory()) {
+      return null;
+    }
+    return this.isPlayerInventory ? this.getPlayerInventory() : this.getContainerInventory();
+  }
+
   public void setReferenceSlot(Slot referenceSlot) {
     this.referenceSlot = referenceSlot;
   }
