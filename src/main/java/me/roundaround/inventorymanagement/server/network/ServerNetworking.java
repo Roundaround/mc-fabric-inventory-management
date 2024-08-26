@@ -11,6 +11,7 @@ public final class ServerNetworking {
   public static void registerReceivers() {
     ServerPlayNetworking.registerGlobalReceiver(Networking.StackC2S.ID, ServerNetworking::handleStack);
     ServerPlayNetworking.registerGlobalReceiver(Networking.SortC2S.ID, ServerNetworking::handleSort);
+    ServerPlayNetworking.registerGlobalReceiver(Networking.SortAllC2S.ID, ServerNetworking::handleSortAll);
     ServerPlayNetworking.registerGlobalReceiver(Networking.TransferC2S.ID, ServerNetworking::handleTransfer);
   }
 
@@ -20,6 +21,10 @@ public final class ServerNetworking {
 
   private static void handleSort(Networking.SortC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> InventoryHelper.sortInventory(context.player(), payload.isPlayerInventory()));
+  }
+
+  private static void handleSortAll(Networking.SortAllC2S payload, ServerPlayNetworking.Context context) {
+    context.player().server.execute(() -> InventoryHelper.sortAll(context.player()));
   }
 
   private static void handleTransfer(Networking.TransferC2S payload, ServerPlayNetworking.Context context) {

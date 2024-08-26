@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.network;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.roundalib.network.CustomCodecs;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -14,11 +15,13 @@ public final class Networking {
 
   public static final Identifier STACK_C2S = new Identifier(InventoryManagementMod.MOD_ID, "stack_c2s");
   public static final Identifier SORT_C2S = new Identifier(InventoryManagementMod.MOD_ID, "sort_c2s");
+  public static final Identifier SORT_ALL_C2S = new Identifier(InventoryManagementMod.MOD_ID, "sort_all_c2s");
   public static final Identifier TRANSFER_C2S = new Identifier(InventoryManagementMod.MOD_ID, "transfer_c2s");
 
   public static void registerC2SPayloads() {
     PayloadTypeRegistry.playC2S().register(StackC2S.ID, StackC2S.CODEC);
     PayloadTypeRegistry.playC2S().register(SortC2S.ID, SortC2S.CODEC);
+    PayloadTypeRegistry.playC2S().register(SortAllC2S.ID, SortAllC2S.CODEC);
     PayloadTypeRegistry.playC2S().register(TransferC2S.ID, TransferC2S.CODEC);
   }
 
@@ -37,6 +40,16 @@ public final class Networking {
     public static final CustomPayload.Id<SortC2S> ID = new CustomPayload.Id<>(SORT_C2S);
     public static final PacketCodec<RegistryByteBuf, SortC2S> CODEC = PacketCodec.tuple(
         PacketCodecs.BOOL, SortC2S::isPlayerInventory, SortC2S::new);
+
+    @Override
+    public Id<? extends CustomPayload> getId() {
+      return ID;
+    }
+  }
+
+  public record SortAllC2S() implements CustomPayload {
+    public static final CustomPayload.Id<SortAllC2S> ID = new CustomPayload.Id<>(SORT_ALL_C2S);
+    public static final PacketCodec<RegistryByteBuf, SortAllC2S> CODEC = CustomCodecs.empty(SortAllC2S::new);
 
     @Override
     public Id<? extends CustomPayload> getId() {

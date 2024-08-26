@@ -9,6 +9,7 @@ import me.roundaround.inventorymanagement.client.gui.widget.button.SortInventory
 import me.roundaround.inventorymanagement.client.gui.widget.button.TransferAllButton;
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
+import me.roundaround.inventorymanagement.event.BeforeCloseHandledScreen;
 import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,6 +18,7 @@ import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.screen.ScreenHandler;
 
 import java.util.LinkedHashSet;
@@ -38,6 +40,31 @@ public class InventoryButtonsManager {
 
   public void init() {
     ScreenEvents.AFTER_INIT.register(this::onScreenAfterInit);
+    BeforeCloseHandledScreen.EVENT.register(this::beforeCloseHandledScreen);
+  }
+
+  public boolean hasPlayerSideSort() {
+    return this.playerButtons.stream().anyMatch((button) -> button instanceof SortInventoryButton<?, ?>);
+  }
+
+  public boolean hasContainerSideSort() {
+    return this.containerButtons.stream().anyMatch((button) -> button instanceof SortInventoryButton<?, ?>);
+  }
+
+  public boolean hasPlayerSideStack() {
+    return this.playerButtons.stream().anyMatch((button) -> button instanceof AutoStackButton<?, ?>);
+  }
+
+  public boolean hasContainerSideStack() {
+    return this.containerButtons.stream().anyMatch((button) -> button instanceof AutoStackButton<?, ?>);
+  }
+
+  public boolean hasPlayerSideTransfer() {
+    return this.playerButtons.stream().anyMatch((button) -> button instanceof TransferAllButton<?, ?>);
+  }
+
+  public boolean hasContainerSideTransfer() {
+    return this.containerButtons.stream().anyMatch((button) -> button instanceof TransferAllButton<?, ?>);
   }
 
   private void onScreenAfterInit(
@@ -60,6 +87,11 @@ public class InventoryButtonsManager {
     generateSortButton(playerContext);
     generateAutoStackButton(playerContext);
     generateTransferAllButton(playerContext);
+  }
+
+  private void beforeCloseHandledScreen(ClientPlayerEntity player, ScreenHandler screenHandler) {
+    this.containerButtons.clear();
+    this.playerButtons.clear();
   }
 
   private boolean shouldTryGeneratingSortButton(ButtonContext<?, ?> context) {

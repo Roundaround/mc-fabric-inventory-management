@@ -24,6 +24,11 @@ public class InventoryHelper {
     sortInventory(inventory, slotRange);
   }
 
+  public static void sortAll(PlayerEntity player) {
+    sortInventory(player, true);
+    sortInventory(player, false);
+  }
+
   public static void sortInventory(Inventory inventory) {
     sortInventory(inventory, 0, inventory.size());
   }

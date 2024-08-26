@@ -7,8 +7,8 @@
     "HorseScreenHandlerAccessor"
   ],
   "client": [
-    "HandledScreenAccessor",
-    "ScreenMixin"
+    "ClientPlayerEntityMixin",
+    "HandledScreenAccessor"
   ],
   "server": [],
   "injectors": {

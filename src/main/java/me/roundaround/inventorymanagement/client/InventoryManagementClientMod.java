@@ -4,23 +4,20 @@ import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.api.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
 import me.roundaround.inventorymanagement.api.PositioningFunction;
+import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import me.roundaround.inventorymanagement.compat.roundalib.ConfigControlRegister;
 import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;
 import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HopperScreen;
 import net.minecraft.client.gui.screen.ingame.HorseScreen;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.screen.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -29,6 +26,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
   public void onInitializeClient() {
     InventoryButtonsManager.INSTANCE.init();
     ConfigControlRegister.init();
+    KeyBindings.init();
 
     FabricLoader.getInstance()
         .getModContainer(InventoryManagementMod.MOD_ID)
@@ -37,30 +35,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
             Text.literal("Inventory Management Dark UI"), ResourcePackActivationType.NORMAL
         ));
 
-    initKeyBindings();
     initButtonRegistry();
-  }
-
-  private void initKeyBindings() {
-    KeyBinding configureKeybind = KeyBindingHelper.registerKeyBinding(
-        new KeyBinding("inventorymanagement.keybind.configure", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_K,
-            "inventorymanagement.keybind.category"
-        ));
-
-    //    HandleScreenInputCallback.EVENT.register((screen, keyCode, scanCode, modifiers) -> {
-    //      if (!(screen instanceof HandledScreen)) {
-    //        return false;
-    //      }
-    //
-    //      if (configureKeybind.matchesKey(keyCode, scanCode)) {
-    //        GuiUtil.setScreen(new PerScreenConfigScreen(screen,
-    //            InventoryManagementMod.CONFIG.perScreenConfigs
-    //        ));
-    //        return true;
-    //      }
-    //
-    //      return false;
-    //    });
   }
 
   private void initButtonRegistry() {

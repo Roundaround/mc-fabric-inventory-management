@@ -23,6 +23,10 @@ public final class ClientNetworking {
     ClientPlayNetworking.send(new Networking.SortC2S(true));
   }
 
+  public static void sendSortAllPacket() {
+    ClientPlayNetworking.send(new Networking.SortAllC2S());
+  }
+
   public static void sendTransferFromContainerPacket() {
     ClientPlayNetworking.send(new Networking.TransferC2S(false));
   }
