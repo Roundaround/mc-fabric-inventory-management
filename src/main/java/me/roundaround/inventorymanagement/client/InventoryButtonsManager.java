@@ -17,8 +17,6 @@ import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.HorseScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 
 import java.util.LinkedHashSet;
@@ -69,10 +67,6 @@ public class InventoryButtonsManager {
       return false;
     }
 
-    if (getNumberOfBulkInventorySlots(context) < 3) {
-      return false;
-    }
-
     if (!InventoryManagementConfig.getInstance().showSort.getValue()) {
       return false;
     }
@@ -114,10 +108,6 @@ public class InventoryButtonsManager {
 
   private boolean shouldTryGeneratingStackButton(ButtonContext<?, ?> context) {
     if (!InventoryManagementConfig.getInstance().modEnabled.getValue()) {
-      return false;
-    }
-
-    if (getNumberOfBulkInventorySlots(context) < 3) {
       return false;
     }
 
@@ -170,10 +160,6 @@ public class InventoryButtonsManager {
       return false;
     }
 
-    if (getNumberOfBulkInventorySlots(context) < 3) {
-      return false;
-    }
-
     if (!context.hasPlayerInventory() || !context.hasContainerInventory() ||
         context.getPlayerInventory() == context.getContainerInventory()) {
       return false;
@@ -223,22 +209,6 @@ public class InventoryButtonsManager {
   ) {
     Screens.getButtons(screen).add(button);
     (isPlayerInventory ? this.playerButtons : this.containerButtons).add(button);
-  }
-
-  private int getNumberOfBulkInventorySlots(ButtonContext<?, ?> context) {
-    return context.getScreenHandler().slots.stream()
-        .filter(slot -> context.isPlayerInventory() == (slot.inventory instanceof PlayerInventory))
-        .filter(slot -> !(context.getScreenHandler() instanceof HorseScreenHandler) || slot.getIndex() >= 2)
-        .mapToInt(slot -> 1)
-        .sum();
-  }
-
-  private int getNumberOfNonPlayerBulkInventorySlots(ButtonContext<?, ?> context) {
-    return context.getScreenHandler().slots.stream()
-        .filter(slot -> !(slot.inventory instanceof PlayerInventory))
-        .filter(slot -> !(context.getScreenHandler() instanceof HorseScreenHandler) || slot.getIndex() >= 2)
-        .mapToInt(slot -> 1)
-        .sum();
   }
 
   private Position getButtonOffset(ButtonContext<?, ?> context) {
