@@ -1,6 +1,7 @@
 {
   "pack": {
-    "pack_format": 15,
-    "description": "Dark UI compat for Inventory Management mod"
+    "pack_format": 18,
+    "supported_formats": [15, 40],
+    "description": "Dark UI compatibility"
   }
 }
