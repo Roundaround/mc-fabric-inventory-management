@@ -86,7 +86,7 @@ public class InventoryButtonsManager {
         )).ifPresent(visibilitySettings::add);
 
     // Defaults based on registry, tied to screen, handler, or inventory
-    visibilitySettings.addAll(ButtonRegistry.getSortButtonVisibility(context));
+    visibilitySettings.add(ButtonRegistry.getInstance().getSortButtonVisibility(context));
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -139,7 +139,7 @@ public class InventoryButtonsManager {
         )).ifPresent(visibilitySettings::add);
 
     // Defaults based on registry, tied to screen, handler, or inventory
-    visibilitySettings.addAll(ButtonRegistry.getTransferAndStackButtonVisibility(context));
+    visibilitySettings.add(ButtonRegistry.getInstance().getTransferAndStackButtonVisibility(context));
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -192,7 +192,7 @@ public class InventoryButtonsManager {
         )).ifPresent(visibilitySettings::add);
 
     // Defaults based on registry, tied to screen, handler, or inventory
-    visibilitySettings.addAll(ButtonRegistry.getTransferAndStackButtonVisibility(context));
+    visibilitySettings.add(ButtonRegistry.getInstance().getTransferAndStackButtonVisibility(context));
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -222,7 +222,7 @@ public class InventoryButtonsManager {
       HandledScreen<?> screen, ButtonBase<?, ?> button, boolean isPlayerInventory
   ) {
     Screens.getButtons(screen).add(button);
-    (isPlayerInventory ? playerButtons : containerButtons).add(button);
+    (isPlayerInventory ? this.playerButtons : this.containerButtons).add(button);
   }
 
   private int getNumberOfBulkInventorySlots(ButtonContext<?, ?> context) {
@@ -249,13 +249,15 @@ public class InventoryButtonsManager {
       offset = InventoryManagementConfig.getInstance().defaultPosition.getValue();
     }
 
-    return getButtonOffset((context.isPlayerInventory() ? playerButtons : containerButtons).size(), offset);
+    return getButtonOffset((context.isPlayerInventory() ? this.playerButtons : this.containerButtons).size(), offset);
   }
 
   private <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> getPositioningFunction(
       ButtonContext<H, S> context
   ) {
-    return ButtonRegistry.getPositioningFunction(context).orElseGet(PositioningFunction::refSlotYAndBgRight);
+    return ButtonRegistry.getInstance()
+        .getPositioningFunction(context)
+        .orElseGet(PositioningFunction::refSlotYAndBgRight);
   }
 
   public Position getButtonOffset(int index, Position offset) {
@@ -263,13 +265,5 @@ public class InventoryButtonsManager {
     int y = offset.y() + BUTTON_SHIFT_Y * (ButtonBase.HEIGHT + BUTTON_SPACING) * index;
 
     return new Position(x, y);
-  }
-
-  public LinkedList<ButtonBase<?, ?>> getPlayerButtons() {
-    return new LinkedList<>(playerButtons);
-  }
-
-  public LinkedList<ButtonBase<?, ?>> getContainerButtons() {
-    return new LinkedList<>(containerButtons);
   }
 }

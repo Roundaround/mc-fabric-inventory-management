@@ -4,171 +4,147 @@ import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenHandler;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 @Environment(EnvType.CLIENT)
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class ButtonRegistry {
+  private static ButtonRegistry instance = null;
+
+  private final HashMap<Class<? extends ScreenHandler>, Registration<?, ?>> store = new HashMap<>();
+
   private ButtonRegistry() {
   }
 
-  public static final Registry<Class<? extends ScreenHandler>> SCREEN_HANDLERS = new Registry<>();
-  public static final Registry<Class<? extends HandledScreen<?>>> HANDLED_SCREENS = new Registry<>();
-  public static final Registry<Class<? extends Inventory>> INVENTORIES = new Registry<>();
-
-  public static <H extends ScreenHandler, S extends HandledScreen<H>> List<ButtonVisibility> getSortButtonVisibility(
-      ButtonContext<H, S> context
-  ) {
-    return Stream.of(
-        SCREEN_HANDLERS.isSortable(context.getScreenHandlerClass(), context),
-        HANDLED_SCREENS.isSortable(context.getScreenClass(), context),
-        INVENTORIES.isSortable(context.getInventoryClass(), context)
-    ).map(ButtonVisibility::of).toList();
+  public static ButtonRegistry getInstance() {
+    if (instance == null) {
+      instance = new ButtonRegistry();
+    }
+    return instance;
   }
 
-  public static <H extends ScreenHandler, S extends HandledScreen<H>> List<ButtonVisibility> getTransferAndStackButtonVisibility(
+  public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> register(
+      Class<? extends ScreenHandler> clazz
+  ) {
+    Registration<H, S> registration = new Registration<>();
+    store.put(clazz, registration);
+    return new RegistrationEditor<>(registration);
+  }
+
+  public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerBothSides(
+      Class<? extends ScreenHandler> clazz
+  ) {
+    return this.<H, S>register(clazz).withPlayerAndContainer();
+  }
+
+  public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerBothSides(
+      Class<? extends ScreenHandler> clazz, PositioningFunction<H, S> positioningFunction
+  ) {
+    return this.<H, S>registerBothSides(clazz).withPosition(positioningFunction);
+  }
+
+  public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerPlayerSideOnly(
+      Class<? extends ScreenHandler> clazz
+  ) {
+    return this.<H, S>register(clazz).withPlayer();
+  }
+
+  public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerPlayerSideOnly(
+      Class<? extends ScreenHandler> clazz, PositioningFunction<H, S> positioningFunction
+  ) {
+    return this.<H, S>registerPlayerSideOnly(clazz).withPosition(positioningFunction);
+  }
+
+  public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerContainerSideOnly(
+      Class<? extends ScreenHandler> clazz
+  ) {
+    return this.<H, S>register(clazz).withContainer();
+  }
+
+  public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerContainerSideOnly(
+      Class<? extends ScreenHandler> clazz, PositioningFunction<H, S> positioningFunction
+  ) {
+    return this.<H, S>registerContainerSideOnly(clazz).withPosition(positioningFunction);
+  }
+
+  @SuppressWarnings("DuplicatedCode")
+  public <H extends ScreenHandler, S extends HandledScreen<H>> ButtonVisibility getSortButtonVisibility(
       ButtonContext<H, S> context
   ) {
-    return Stream.of(
-        SCREEN_HANDLERS.supportsTransferring(context.getScreenHandlerClass(), context),
-        HANDLED_SCREENS.supportsTransferring(context.getScreenClass(), context),
-        INVENTORIES.supportsTransferring(context.getInventoryClass(), context)
-    ).map(ButtonVisibility::of).toList();
+    Class<? extends ScreenHandler> clazz = context.getScreenHandlerClass();
+    if (clazz == null) {
+      return ButtonVisibility.HIDE;
+    }
+
+    Registration<H, S> registration = this.get(clazz);
+    if (registration == null) {
+      return ButtonVisibility.DEFAULT;
+    }
+
+    boolean isPlayerSide = context.isPlayerInventory();
+    return ButtonVisibility.of(isPlayerSide && registration.getHasPlayerInventory(context) ||
+        !isPlayerSide && registration.getHasContainerInventory(context));
+  }
+
+  @SuppressWarnings("DuplicatedCode")
+  public <H extends ScreenHandler, S extends HandledScreen<H>> ButtonVisibility getTransferAndStackButtonVisibility(
+      ButtonContext<H, S> context
+  ) {
+    Class<? extends ScreenHandler> clazz = context.getScreenHandlerClass();
+    if (clazz == null) {
+      return ButtonVisibility.HIDE;
+    }
+
+    Registration<H, S> registration = this.get(clazz);
+    if (registration == null) {
+      return ButtonVisibility.DEFAULT;
+    }
+
+    boolean isPlayerSide = context.isPlayerInventory();
+    return ButtonVisibility.of(
+        registration.getHasPlayerInventory(context) && registration.getHasContainerInventory(context));
+  }
+
+  public <H extends ScreenHandler, S extends HandledScreen<H>> Optional<PositioningFunction<H, S>> getPositioningFunction(
+      ButtonContext<H, S> context
+  ) {
+    Class<? extends ScreenHandler> clazz = context.getScreenHandlerClass();
+    if (clazz == null) {
+      return Optional.empty();
+    }
+
+    return Optional.ofNullable(this.<H, S>get(clazz)).map(Registration::getPositioningFunction);
   }
 
   @SuppressWarnings("unchecked")
-  public static <H extends ScreenHandler, S extends HandledScreen<H>> Optional<PositioningFunction<H, S>> getPositioningFunction(
-      ButtonContext<H, S> context
-  ) {
-    return Stream.of(
-            SCREEN_HANDLERS.getPositioningFunction(context.getScreenHandlerClass()),
-            HANDLED_SCREENS.getPositioningFunction(context.getScreenClass()),
-            INVENTORIES.getPositioningFunction(context.getInventoryClass())
-        )
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .findFirst()
-        .map((positioningFunction) -> (PositioningFunction<H, S>) positioningFunction);
+  private <H extends ScreenHandler, S extends HandledScreen<H>> Registration<H, S> get(Class<? extends ScreenHandler> clazz) {
+    // Unchecked cast is safe because as long as the registration exists, the types should match.
+    return (Registration<H, S>) this.store.get(this.getAssignableClass(clazz));
   }
 
-  public static class Registry<C extends Class<?>> {
-    private final HashMap<C, Registration<?, ?>> store = new HashMap<>();
-
-    @SuppressWarnings("DuplicatedCode")
-    public C getAssignableClass(Class<?> clazz) {
-      HashSet<C> assignableClasses = new HashSet<>();
-      for (C registeredClass : this.store.keySet()) {
-        if (registeredClass.isAssignableFrom(clazz)) {
-          assignableClasses.add(registeredClass);
-        }
+  @SuppressWarnings({"DuplicatedCode", "unchecked"})
+  private <C extends Class<? extends ScreenHandler>> C getAssignableClass(C clazz) {
+    HashSet<C> assignableClasses = new HashSet<>();
+    for (Class<? extends ScreenHandler> registeredClass : this.store.keySet()) {
+      if (registeredClass.isAssignableFrom(clazz)) {
+        assignableClasses.add((C) registeredClass);
       }
+    }
 
-      // Find the most specific assignable class
-      C mostSpecificAssignableClass = null;
-      for (C assignableClass : assignableClasses) {
-        if (mostSpecificAssignableClass == null || assignableClass.isAssignableFrom(mostSpecificAssignableClass)) {
-          mostSpecificAssignableClass = assignableClass;
-        }
+    // Find the most specific assignable class
+    C mostSpecificAssignableClass = null;
+    for (C assignableClass : assignableClasses) {
+      if (mostSpecificAssignableClass == null || assignableClass.isAssignableFrom(mostSpecificAssignableClass)) {
+        mostSpecificAssignableClass = assignableClass;
       }
-
-      return mostSpecificAssignableClass;
     }
 
-    public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> register(
-        C clazz
-    ) {
-      Registration<H, S> registration = new Registration<>();
-      this.store.put(clazz, registration);
-      return new RegistrationEditor<>(registration);
-    }
-
-    public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerBothSides(
-        C clazz
-    ) {
-      return this.<H, S>register(clazz).withPlayerAndContainer();
-    }
-
-    public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerBothSides(
-        C clazz, PositioningFunction<H, S> positioningFunction
-    ) {
-      return this.<H, S>registerBothSides(clazz).withPosition(positioningFunction);
-    }
-
-    public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerPlayerSideOnly(
-        C clazz
-    ) {
-      return this.<H, S>register(clazz).withPlayer();
-    }
-
-    public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerPlayerSideOnly(
-        C clazz, PositioningFunction<H, S> positioningFunction
-    ) {
-      return this.<H, S>registerPlayerSideOnly(clazz).withPosition(positioningFunction);
-    }
-
-    public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerContainerSideOnly(
-        C clazz
-    ) {
-      return this.<H, S>register(clazz).withContainer();
-    }
-
-    public <H extends ScreenHandler, S extends HandledScreen<H>> RegistrationEditor<H, S> registerContainerSideOnly(
-        C clazz, PositioningFunction<H, S> positioningFunction
-    ) {
-      return this.<H, S>registerContainerSideOnly(clazz).withPosition(positioningFunction);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <H extends ScreenHandler, S extends HandledScreen<H>> Registration<H, S> get(Class<?> clazz) {
-      // Unchecked cast is safe because as long as the registration exists, the types should match.
-      return (Registration<H, S>) this.store.get(this.getAssignableClass(clazz));
-    }
-
-    public <H extends ScreenHandler, S extends HandledScreen<H>> Optional<Boolean> isSortable(
-        Class<?> clazz, ButtonContext<H, S> context
-    ) {
-      if (clazz == null) {
-        return Optional.empty();
-      }
-
-      Registration<H, S> registration = this.get(clazz);
-      if (registration == null) {
-        return Optional.empty();
-      }
-
-      boolean isPlayerSide = context.isPlayerInventory();
-      return Optional.of(isPlayerSide && registration.getHasPlayerInventory(context) ||
-          !isPlayerSide && registration.getHasContainerInventory(context));
-    }
-
-    public <H extends ScreenHandler, S extends HandledScreen<H>> Optional<Boolean> supportsTransferring(
-        Class<?> clazz, ButtonContext<H, S> context
-    ) {
-      if (clazz == null) {
-        return Optional.empty();
-      }
-
-      Registration<H, S> registration = this.get(clazz);
-      if (registration == null) {
-        return Optional.empty();
-      }
-
-      return Optional.of(registration.getHasPlayerInventory(context) && registration.getHasContainerInventory(context));
-    }
-
-    public <H extends ScreenHandler, S extends HandledScreen<H>> Optional<PositioningFunction<H, S>> getPositioningFunction(
-        Class<?> clazz
-    ) {
-      return Optional.ofNullable(this.<H, S>get(clazz)).map(Registration::getPositioningFunction);
-    }
+    return mostSpecificAssignableClass;
   }
 
   public static class Registration<H extends ScreenHandler, S extends HandledScreen<H>> {

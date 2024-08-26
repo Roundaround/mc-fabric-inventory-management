@@ -12,13 +12,11 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HopperScreen;
 import net.minecraft.client.gui.screen.ingame.HorseScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.screen.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -66,15 +64,14 @@ public class InventoryManagementClientMod implements ClientModInitializer {
   }
 
   private void initButtonRegistry() {
-    ButtonRegistry.INVENTORIES.registerBothSides(EnderChestInventory.class);
-    ButtonRegistry.INVENTORIES.registerBothSides(LootableContainerBlockEntity.class);
+    ButtonRegistry registry = ButtonRegistry.getInstance();
 
-    ButtonRegistry.SCREEN_HANDLERS.registerBothSides(ShulkerBoxScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerBothSides(GenericContainerScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerBothSides(Generic3x3ContainerScreenHandler.class);
+    registry.registerBothSides(ShulkerBoxScreenHandler.class);
+    registry.registerBothSides(GenericContainerScreenHandler.class);
+    registry.registerBothSides(Generic3x3ContainerScreenHandler.class);
 
     // Not all horses have an inventory
-    ButtonRegistry.SCREEN_HANDLERS.<HorseScreenHandler, HorseScreen>register(HorseScreenHandler.class)
+    registry.<HorseScreenHandler, HorseScreen>register(HorseScreenHandler.class)
         .withPlayer()
         .withContainer((context) -> {
           HorseScreenHandlerAccessor accessor = ((HorseScreenHandlerAccessor) context.getScreenHandler());
@@ -82,41 +79,39 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         });
 
     // Hopper's container-side is only 1 slot tall, so we need to bump the buttons up a bit to make room
-    ButtonRegistry.SCREEN_HANDLERS.<HopperScreenHandler, HopperScreen>registerBothSides(
-        HopperScreenHandler.class, (context) -> {
-          PositioningFunction<HopperScreenHandler, HopperScreen> base = PositioningFunction.refSlotYAndBgRight();
-          Position basePosition = base.apply(context);
-          if (basePosition == null) {
-            return null;
-          }
+    registry.<HopperScreenHandler, HopperScreen>registerBothSides(HopperScreenHandler.class, (context) -> {
+      PositioningFunction<HopperScreenHandler, HopperScreen> base = PositioningFunction.refSlotYAndBgRight();
+      Position basePosition = base.apply(context);
+      if (basePosition == null) {
+        return null;
+      }
 
-          if (context.isPlayerInventory()) {
-            return basePosition;
-          }
+      if (context.isPlayerInventory()) {
+        return basePosition;
+      }
 
-          return basePosition.movedUp(InventoryButtonsManager.BUTTON_HEIGHT + InventoryButtonsManager.BUTTON_SPACING);
-        });
+      return basePosition.movedUp(InventoryButtonsManager.BUTTON_HEIGHT + InventoryButtonsManager.BUTTON_SPACING);
+    });
 
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(PlayerScreenHandler.class);
+    registry.registerPlayerSideOnly(PlayerScreenHandler.class);
     // Furnace, smoker, blast furnace
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(AbstractFurnaceScreenHandler.class);
+    registry.registerPlayerSideOnly(AbstractFurnaceScreenHandler.class);
     // Anvil, smithing table
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(ForgingScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(CraftingScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(CrafterScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(BrewingStandScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(StonecutterScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(GrindstoneScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(CartographyTableScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(LoomScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(EnchantmentScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(BeaconScreenHandler.class);
-    ButtonRegistry.SCREEN_HANDLERS.registerPlayerSideOnly(MerchantScreenHandler.class);
+    registry.registerPlayerSideOnly(ForgingScreenHandler.class);
+    registry.registerPlayerSideOnly(CraftingScreenHandler.class);
+    registry.registerPlayerSideOnly(CrafterScreenHandler.class);
+    registry.registerPlayerSideOnly(BrewingStandScreenHandler.class);
+    registry.registerPlayerSideOnly(StonecutterScreenHandler.class);
+    registry.registerPlayerSideOnly(GrindstoneScreenHandler.class);
+    registry.registerPlayerSideOnly(CartographyTableScreenHandler.class);
+    registry.registerPlayerSideOnly(LoomScreenHandler.class);
+    registry.registerPlayerSideOnly(EnchantmentScreenHandler.class);
+    registry.registerPlayerSideOnly(BeaconScreenHandler.class);
+    registry.registerPlayerSideOnly(MerchantScreenHandler.class);
 
     // Creative screen dynamically needs to update its reference slot and thus position
     AtomicBoolean wasPreviouslyInventoryTab = new AtomicBoolean(false);
-    ButtonRegistry.SCREEN_HANDLERS.<CreativeInventoryScreen.CreativeScreenHandler,
-        CreativeInventoryScreen>registerPlayerSideOnly(
+    registry.<CreativeInventoryScreen.CreativeScreenHandler, CreativeInventoryScreen>registerPlayerSideOnly(
         CreativeInventoryScreen.CreativeScreenHandler.class, (context) -> {
           boolean isInventoryTab = context.getParentScreen().isInventoryTabSelected();
           if (isInventoryTab != wasPreviouslyInventoryTab.get()) {
