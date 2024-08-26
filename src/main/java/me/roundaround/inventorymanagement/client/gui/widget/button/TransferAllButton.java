@@ -29,8 +29,8 @@ public class TransferAllButton<H extends ScreenHandler, S extends HandledScreen<
 
   private static Text getTooltip(boolean fromPlayerInventory) {
     String baseKey = fromPlayerInventory ?
-        "inventorymanagement.button.transfer_place" :
-        "inventorymanagement.button.transfer_take";
+        "inventorymanagement.button.transferInto" :
+        "inventorymanagement.button.transferFrom";
     KeyBinding keyBinding = fromPlayerInventory ?
         KeyBindings.TRANSFER_INTO_CONTAINER :
         KeyBindings.TRANSFER_FROM_CONTAINER;

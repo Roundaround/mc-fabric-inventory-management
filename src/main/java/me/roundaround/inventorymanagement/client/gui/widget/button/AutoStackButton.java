@@ -29,8 +29,8 @@ public class AutoStackButton<H extends ScreenHandler, S extends HandledScreen<H>
 
   private static Text getTooltip(boolean isPlayerInventory) {
     String baseKey = isPlayerInventory ?
-        "inventorymanagement.button.autostack_into" :
-        "inventorymanagement.button.autostack_from";
+        "inventorymanagement.button.stackInto" :
+        "inventorymanagement.button.stackFrom";
     KeyBinding keyBinding = isPlayerInventory ? KeyBindings.STACK_INTO_CONTAINER : KeyBindings.STACK_FROM_CONTAINER;
 
     return Text.translatable(baseKey)

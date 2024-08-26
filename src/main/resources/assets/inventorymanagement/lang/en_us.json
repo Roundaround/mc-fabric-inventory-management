@@ -1,11 +1,11 @@
 {
   "inventorymanagement.config.title": "Inventory Management Config",
-  "inventorymanagement.button.sort_player": "Sort inventory",
-  "inventorymanagement.button.sort_container": "Sort container",
-  "inventorymanagement.button.autostack_into": "Stack into container",
-  "inventorymanagement.button.autostack_from": "Stack from container",
-  "inventorymanagement.button.transfer_place": "Place all",
-  "inventorymanagement.button.transfer_take": "Take all",
+  "inventorymanagement.button.sortPlayer": "Sort inventory",
+  "inventorymanagement.button.sortContainer": "Sort container",
+  "inventorymanagement.button.stackInto": "Stack into container",
+  "inventorymanagement.button.stackFrom": "Stack from container",
+  "inventorymanagement.button.transferInto": "Place all",
+  "inventorymanagement.button.transferFrom": "Take all",
   "inventorymanagement.keybind.category": "Inventory Management",
   "inventorymanagement.keybind.configure": "Configure",
   "inventorymanagement.keybind.sortContainer": "Sort container",
@@ -16,8 +16,8 @@
   "inventorymanagement.keybind.transferFromContainer": "Transfer all from container",
   "inventorymanagement.keybind.transferIntoContainer": "Transfer all into container",
   "inventorymanagement.keybind.display": "Shortcut: %s",
-  "inventorymanagement.position_edit.title": "Edit button position",
-  "inventorymanagement.default_position_edit.title": "Edit default button position",
+  "inventorymanagement.positionEdit.title": "Edit button position",
+  "inventorymanagement.defaultPositionEdit.title": "Edit default button position",
   "inventorymanagement.modEnabled.label": "Mod enabled",
   "inventorymanagement.showSort.label": "Show sort buttons",
   "inventorymanagement.showTransfer.label": "Show transfer buttons",
@@ -27,5 +27,5 @@
   "inventorymanagement.buttonVisibility.default": "Default/inherit",
   "inventorymanagement.buttonVisibility.show": "Always",
   "inventorymanagement.buttonVisibility.hide": "Never",
-  "inventorymanagement.perscreen.value.none": "Default/inherit"
+  "inventorymanagement.perScreen.value.none": "Default/inherit"
 }

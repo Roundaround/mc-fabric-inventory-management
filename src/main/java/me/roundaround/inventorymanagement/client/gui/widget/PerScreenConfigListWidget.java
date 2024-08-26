@@ -332,7 +332,7 @@
 //
 //    private static Text getValueText(Position value) {
 //      if (value == null) {
-//        return Text.translatable("inventorymanagement.perscreen.value.none");
+//        return Text.translatable("inventorymanagement.perScreen.value.none");
 //      }
 //      return Text.of(value.toString());
 //    }

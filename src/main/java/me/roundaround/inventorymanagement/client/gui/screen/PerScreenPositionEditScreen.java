@@ -24,7 +24,7 @@
 //
 //  public PerScreenPositionEditScreen(
 //      Screen previousScreen, Screen workingScreen, boolean isPlayerInventory) {
-//    super(Text.translatable("inventorymanagement.position_edit.title"),
+//    super(Text.translatable("inventorymanagement.positionEdit.title"),
 //        workingScreen,
 //        generateDummyConfigOption(workingScreen, isPlayerInventory));
 //

@@ -27,8 +27,8 @@ public class SortInventoryButton<H extends ScreenHandler, S extends HandledScree
 
   private static Text getTooltip(boolean isPlayerInventory) {
     String baseKey = isPlayerInventory ?
-        "inventorymanagement.button.sort_player" :
-        "inventorymanagement.button.sort_container";
+        "inventorymanagement.button.sortPlayer" :
+        "inventorymanagement.button.sortContainer";
     KeyBinding keyBinding = isPlayerInventory ? KeyBindings.SORT_PLAYER : KeyBindings.SORT_CONTAINER;
     if (keyBinding.isUnbound()) {
       keyBinding = KeyBindings.SORT_ALL;

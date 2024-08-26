@@ -35,7 +35,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
   private final LinkedList<ButtonBase<?, ?>> playerButtons = new LinkedList<>();
 
   private DefaultPositionEditScreen(ConfigScreen parent, PositionConfigOption configOption) {
-    super(Text.translatable("inventorymanagement.default_position_edit.title"), parent, configOption);
+    super(Text.translatable("inventorymanagement.defaultPositionEdit.title"), parent, configOption);
   }
 
   public static SubScreenControl.SubScreenFactory<Position, PositionConfigOption> getSubScreenFactory() {
