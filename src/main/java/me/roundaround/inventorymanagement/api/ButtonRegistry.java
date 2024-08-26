@@ -32,7 +32,7 @@ public class ButtonRegistry {
       Class<? extends ScreenHandler> clazz
   ) {
     Registration<H, S> registration = new Registration<>();
-    store.put(clazz, registration);
+    this.store.put(clazz, registration);
     return new RegistrationEditor<>(registration);
   }
 
