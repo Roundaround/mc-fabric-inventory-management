@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class InventoryManagementClientMod implements ClientModInitializer {
   @Override
   public void onInitializeClient() {
-    InventoryButtonsManager.INSTANCE.init();
+    ButtonManager.init();
     ConfigControlRegister.init();
     KeyBindings.init();
 
@@ -65,7 +65,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         return basePosition;
       }
 
-      return basePosition.movedUp(InventoryButtonsManager.BUTTON_HEIGHT + InventoryButtonsManager.BUTTON_SPACING);
+      return basePosition.movedUp(ButtonManager.BUTTON_HEIGHT + ButtonManager.BUTTON_SPACING);
     });
 
     registry.registerPlayerSideOnly(PlayerScreenHandler.class);

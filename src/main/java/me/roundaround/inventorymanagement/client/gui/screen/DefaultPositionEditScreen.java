@@ -2,7 +2,7 @@ package me.roundaround.inventorymanagement.client.gui.screen;
 
 import me.roundaround.inventorymanagement.api.ButtonContext;
 import me.roundaround.inventorymanagement.api.PositioningFunction;
-import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
+import me.roundaround.inventorymanagement.client.ButtonManager;
 import me.roundaround.inventorymanagement.client.gui.widget.button.AutoStackButton;
 import me.roundaround.inventorymanagement.client.gui.widget.button.ButtonBase;
 import me.roundaround.inventorymanagement.client.gui.widget.button.SortInventoryButton;
@@ -63,18 +63,17 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     );
 
     if (InventoryManagementConfig.getInstance().showSort.getValue()) {
-      this.containerButtons.add(
-          new SortInventoryButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index++, offset),
-              PositioningFunction.refSlotYAndBgRight(), containerContext
-          ));
+      this.containerButtons.add(new SortInventoryButton<>(ButtonManager.getInstance().getButtonOffset(index++, offset),
+          PositioningFunction.refSlotYAndBgRight(), containerContext
+      ));
     }
     if (InventoryManagementConfig.getInstance().showStack.getValue()) {
-      this.containerButtons.add(new AutoStackButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index++, offset),
+      this.containerButtons.add(new AutoStackButton<>(ButtonManager.getInstance().getButtonOffset(index++, offset),
           PositioningFunction.refSlotYAndBgRight(), containerContext
       ));
     }
     if (InventoryManagementConfig.getInstance().showTransfer.getValue()) {
-      this.containerButtons.add(new TransferAllButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index, offset),
+      this.containerButtons.add(new TransferAllButton<>(ButtonManager.getInstance().getButtonOffset(index, offset),
           PositioningFunction.refSlotYAndBgRight(), containerContext
       ));
     }
@@ -85,18 +84,17 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     );
 
     if (InventoryManagementConfig.getInstance().showSort.getValue()) {
-      this.playerButtons.add(
-          new SortInventoryButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index++, offset),
-              PositioningFunction.refSlotYAndBgRight(), playerContext
-          ));
+      this.playerButtons.add(new SortInventoryButton<>(ButtonManager.getInstance().getButtonOffset(index++, offset),
+          PositioningFunction.refSlotYAndBgRight(), playerContext
+      ));
     }
     if (InventoryManagementConfig.getInstance().showStack.getValue()) {
-      this.playerButtons.add(new AutoStackButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index++, offset),
+      this.playerButtons.add(new AutoStackButton<>(ButtonManager.getInstance().getButtonOffset(index++, offset),
           PositioningFunction.refSlotYAndBgRight(), playerContext
       ));
     }
     if (InventoryManagementConfig.getInstance().showTransfer.getValue()) {
-      this.playerButtons.add(new TransferAllButton<>(InventoryButtonsManager.INSTANCE.getButtonOffset(index, offset),
+      this.playerButtons.add(new TransferAllButton<>(ButtonManager.getInstance().getButtonOffset(index, offset),
           PositioningFunction.refSlotYAndBgRight(), playerContext
       ));
     }
@@ -106,10 +104,10 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
 
     this.subscriptions.add(this.getOption().pendingValue.subscribe((pendingValue) -> {
       for (int i = 0; i < this.containerButtons.size(); i++) {
-        this.containerButtons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonOffset(i, pendingValue));
+        this.containerButtons.get(i).setOffset(ButtonManager.getInstance().getButtonOffset(i, pendingValue));
       }
       for (int i = 0; i < this.playerButtons.size(); i++) {
-        this.playerButtons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonOffset(i, pendingValue));
+        this.playerButtons.get(i).setOffset(ButtonManager.getInstance().getButtonOffset(i, pendingValue));
       }
     }));
 
@@ -121,10 +119,10 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     super.setValue(value);
 
     for (int i = 0; i < this.containerButtons.size(); i++) {
-      this.containerButtons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonOffset(i, getValue()));
+      this.containerButtons.get(i).setOffset(ButtonManager.getInstance().getButtonOffset(i, getValue()));
     }
     for (int i = 0; i < this.playerButtons.size(); i++) {
-      this.playerButtons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonOffset(i, getValue()));
+      this.playerButtons.get(i).setOffset(ButtonManager.getInstance().getButtonOffset(i, getValue()));
     }
   }
 

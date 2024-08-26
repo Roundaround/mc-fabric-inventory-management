@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.client.option;
 
-import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
+import me.roundaround.inventorymanagement.client.ButtonManager;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
 import me.roundaround.roundalib.client.event.ScreenInputEvent;
 import me.roundaround.roundalib.client.gui.GuiUtil;
@@ -83,56 +83,54 @@ public class KeyBindings {
         return true;
       }
 
-      if (InventoryButtonsManager.INSTANCE.hasContainerSideSort() && SORT_CONTAINER.matchesKey(keyCode, scanCode)) {
+      if (ButtonManager.getInstance().hasContainerSideSort() && SORT_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
         ClientNetworking.sendSortContainerPacket();
         return true;
       }
 
-      if (InventoryButtonsManager.INSTANCE.hasPlayerSideSort() && SORT_PLAYER.matchesKey(keyCode, scanCode)) {
+      if (ButtonManager.getInstance().hasPlayerSideSort() && SORT_PLAYER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
         ClientNetworking.sendSortInventoryPacket();
         return true;
       }
 
       if (SORT_ALL.matchesKey(keyCode, scanCode)) {
-        if (InventoryButtonsManager.INSTANCE.hasContainerSideSort() &&
-            InventoryButtonsManager.INSTANCE.hasPlayerSideSort()) {
+        if (ButtonManager.getInstance().hasContainerSideSort() && ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
           ClientNetworking.sendSortAllPacket();
           return true;
-        } else if (InventoryButtonsManager.INSTANCE.hasContainerSideSort()) {
+        } else if (ButtonManager.getInstance().hasContainerSideSort()) {
           GuiUtil.playClickSound();
           ClientNetworking.sendSortContainerPacket();
           return true;
-        } else if (InventoryButtonsManager.INSTANCE.hasPlayerSideSort()) {
+        } else if (ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
           ClientNetworking.sendSortInventoryPacket();
           return true;
         }
       }
 
-      if (InventoryButtonsManager.INSTANCE.hasContainerSideStack() &&
-          STACK_FROM_CONTAINER.matchesKey(keyCode, scanCode)) {
+      if (ButtonManager.getInstance().hasContainerSideStack() && STACK_FROM_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
         ClientNetworking.sendStackFromContainerPacket();
         return true;
       }
 
-      if (InventoryButtonsManager.INSTANCE.hasPlayerSideStack() && STACK_INTO_CONTAINER.matchesKey(keyCode, scanCode)) {
+      if (ButtonManager.getInstance().hasPlayerSideStack() && STACK_INTO_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
         ClientNetworking.sendStackIntoContainerPacket();
         return true;
       }
 
-      if (InventoryButtonsManager.INSTANCE.hasContainerSideTransfer() &&
+      if (ButtonManager.getInstance().hasContainerSideTransfer() &&
           TRANSFER_FROM_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
         ClientNetworking.sendTransferFromContainerPacket();
         return true;
       }
 
-      if (InventoryButtonsManager.INSTANCE.hasPlayerSideTransfer() &&
+      if (ButtonManager.getInstance().hasPlayerSideTransfer() &&
           TRANSFER_INTO_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
         ClientNetworking.sendTransferIntoContainerPacket();

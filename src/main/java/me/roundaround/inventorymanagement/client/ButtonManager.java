@@ -26,8 +26,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
-public class InventoryButtonsManager {
-  public static final InventoryButtonsManager INSTANCE = new InventoryButtonsManager();
+public class ButtonManager {
   public static final int BUTTON_WIDTH = ButtonBase.WIDTH;
   public static final int BUTTON_HEIGHT = ButtonBase.HEIGHT;
   public static final int BUTTON_SPACING = 1;
@@ -35,12 +34,25 @@ public class InventoryButtonsManager {
   private static final int BUTTON_SHIFT_X = 0;
   private static final int BUTTON_SHIFT_Y = 1;
 
+  private static ButtonManager instance = null;
+
   private final LinkedHashSet<ButtonBase<?, ?>> playerButtons = new LinkedHashSet<>();
   private final LinkedHashSet<ButtonBase<?, ?>> containerButtons = new LinkedHashSet<>();
 
-  public void init() {
-    ScreenEvents.AFTER_INIT.register(this::onScreenAfterInit);
-    BeforeCloseHandledScreen.EVENT.register(this::beforeCloseHandledScreen);
+  private ButtonManager() {
+  }
+
+  public static ButtonManager getInstance() {
+    if (instance == null) {
+      instance = new ButtonManager();
+      ScreenEvents.AFTER_INIT.register(instance::onScreenAfterInit);
+      BeforeCloseHandledScreen.EVENT.register(instance::beforeCloseHandledScreen);
+    }
+    return instance;
+  }
+
+  public static void init() {
+    getInstance();
   }
 
   public boolean hasPlayerSideSort() {

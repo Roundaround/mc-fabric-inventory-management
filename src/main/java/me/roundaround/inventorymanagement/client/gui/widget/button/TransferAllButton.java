@@ -10,7 +10,6 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -36,7 +35,8 @@ public class TransferAllButton<H extends ScreenHandler, S extends HandledScreen<
         KeyBindings.TRANSFER_INTO_CONTAINER :
         KeyBindings.TRANSFER_FROM_CONTAINER;
 
-    return Text.translatable(baseKey).append(ScreenTexts.LINE_BREAK)
+    return Text.translatable(baseKey)
+        .append(ScreenTexts.LINE_BREAK)
         .append(Text.translatable("inventorymanagement.keybind.display", keyBinding.getBoundKeyLocalizedText())
             .formatted(Formatting.ITALIC));
   }
