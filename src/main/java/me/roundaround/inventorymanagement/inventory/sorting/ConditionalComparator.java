@@ -7,7 +7,7 @@ public class ConditionalComparator<T> implements Comparator<T> {
   private final Predicate<? super T> condition;
   private final Comparator<T> baseComparator;
 
-  private ConditionalComparator(Predicate<? super T> condition, Comparator<T> baseComparator) {
+  protected ConditionalComparator(Predicate<? super T> condition, Comparator<T> baseComparator) {
     this.condition = condition;
     this.baseComparator = baseComparator;
   }

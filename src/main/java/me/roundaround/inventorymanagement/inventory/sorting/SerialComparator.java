@@ -7,7 +7,7 @@ import java.util.List;
 public class SerialComparator<T> implements Comparator<T> {
   private final List<Comparator<T>> subComparators;
 
-  private SerialComparator(List<Comparator<T>> subComparators) {
+  protected SerialComparator(List<Comparator<T>> subComparators) {
     this.subComparators = subComparators;
   }
 
