@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.api;
 
+import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import net.minecraft.client.MinecraftClient;

@@ -3,7 +3,7 @@ package me.roundaround.inventorymanagement.client.gui.widget.button;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.api.ButtonContext;
-import me.roundaround.inventorymanagement.api.PositioningFunction;
+import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;

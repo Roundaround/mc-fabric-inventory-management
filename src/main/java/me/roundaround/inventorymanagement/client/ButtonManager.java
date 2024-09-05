@@ -2,7 +2,7 @@ package me.roundaround.inventorymanagement.client;
 
 import me.roundaround.inventorymanagement.api.ButtonContext;
 import me.roundaround.inventorymanagement.api.ButtonRegistry;
-import me.roundaround.inventorymanagement.api.PositioningFunction;
+import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.client.gui.widget.button.AutoStackButton;
 import me.roundaround.inventorymanagement.client.gui.widget.button.ButtonBase;
 import me.roundaround.inventorymanagement.client.gui.widget.button.SortInventoryButton;

@@ -1,5 +1,6 @@
-package me.roundaround.inventorymanagement.api;
+package me.roundaround.inventorymanagement.api.positioning;
 
+import me.roundaround.inventorymanagement.api.ButtonContext;
 import me.roundaround.inventorymanagement.inventory.SlotRange;
 import me.roundaround.roundalib.client.gui.util.Coords;
 import me.roundaround.roundalib.config.value.Position;

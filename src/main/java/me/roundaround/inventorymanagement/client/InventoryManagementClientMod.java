@@ -3,7 +3,7 @@ package me.roundaround.inventorymanagement.client;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.api.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
-import me.roundaround.inventorymanagement.api.PositioningFunction;
+import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import me.roundaround.inventorymanagement.compat.roundalib.ConfigControlRegister;
 import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;

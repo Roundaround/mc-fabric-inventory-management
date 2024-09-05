@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.api;
 
+import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
