@@ -2,13 +2,12 @@ package me.roundaround.inventorymanagement.api.positioning;
 
 import me.roundaround.inventorymanagement.api.ButtonContext;
 import me.roundaround.roundalib.client.gui.util.Coords;
-import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.ScreenHandler;
 
 @FunctionalInterface
 public interface PositioningFunction<H extends ScreenHandler, S extends HandledScreen<H>> {
-  Position apply(ButtonContext<H, S> context);
+  Coords apply(ButtonContext<H, S> context);
 
   static <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> fromPositionRefs(
       PositionReference<H, S> referenceX, PositionReference<H, S> referenceY
@@ -19,7 +18,7 @@ public interface PositioningFunction<H extends ScreenHandler, S extends HandledS
   static <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> fromPositionRefs(
       PositionReference<H, S> referenceX, PositionReference<H, S> referenceY, Coords offset
   ) {
-    return (context) -> new Position(referenceX.get(context) + offset.x(), referenceY.get(context) + offset.y());
+    return (context) -> new Coords(referenceX.get(context) + offset.x(), referenceY.get(context) + offset.y());
   }
 
   static <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> refSlotYAndBgRight() {

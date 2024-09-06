@@ -26,4 +26,12 @@ public class ScreenPositionReference<H extends ScreenHandler, S extends HandledS
   public static <H extends ScreenHandler, S extends HandledScreen<H>> ScreenPositionReference<H, S> bottom() {
     return new ScreenPositionReference<>((context) -> context.getScreen().height);
   }
+
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> ScreenPositionReference<H, S> centerX() {
+    return new ScreenPositionReference<>((context) -> context.getScreen().width / 2);
+  }
+
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> ScreenPositionReference<H, S> centerY() {
+    return new ScreenPositionReference<>((context) -> context.getScreen().height / 2);
+  }
 }

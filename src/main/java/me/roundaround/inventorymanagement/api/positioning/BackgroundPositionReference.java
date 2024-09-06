@@ -29,4 +29,14 @@ public class BackgroundPositionReference<H extends ScreenHandler, S extends Hand
     return new BackgroundPositionReference<>(
         (context) -> context.getScreenAccessor().getY() + context.getScreenAccessor().getBackgroundHeight());
   }
+
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> BackgroundPositionReference<H, S> centerX() {
+    return new BackgroundPositionReference<>(
+        (context) -> context.getScreenAccessor().getX() + context.getScreenAccessor().getBackgroundWidth() / 2);
+  }
+
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> BackgroundPositionReference<H, S> centerY() {
+    return new BackgroundPositionReference<>(
+        (context) -> context.getScreenAccessor().getY() + context.getScreenAccessor().getBackgroundHeight() / 2);
+  }
 }
