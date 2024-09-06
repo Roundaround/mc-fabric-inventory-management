@@ -88,7 +88,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     AtomicBoolean wasPreviouslyInventoryTab = new AtomicBoolean(false);
     registry.<CreativeInventoryScreen.CreativeScreenHandler, CreativeInventoryScreen>registerPlayerSideOnly(
         CreativeInventoryScreen.CreativeScreenHandler.class, (context) -> {
-          boolean isInventoryTab = context.getParentScreen().isInventoryTabSelected();
+          boolean isInventoryTab = context.getScreen().isInventoryTabSelected();
           if (isInventoryTab != wasPreviouslyInventoryTab.get()) {
             context.setReferenceSlot(isInventoryTab ? context.getDefaultReferenceSlot() : null);
           }

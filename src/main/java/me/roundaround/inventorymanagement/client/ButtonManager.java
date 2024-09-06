@@ -118,10 +118,9 @@ public class ButtonManager {
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
-    Optional.ofNullable(
-        InventoryManagementConfig.getInstance().perScreenConfigs.getSortVisibility(context.getParentScreen(),
-            context.isPlayerInventory()
-        )).ifPresent(visibilitySettings::add);
+    Optional.ofNullable(InventoryManagementConfig.getInstance().perScreenConfigs.getSortVisibility(context.getScreen(),
+        context.isPlayerInventory()
+    )).ifPresent(visibilitySettings::add);
 
     // Defaults based on registry, tied to screen, handler, or inventory
     visibilitySettings.add(ButtonRegistry.getInstance().getSortButtonVisibility(context));
@@ -147,7 +146,7 @@ public class ButtonManager {
     Position offset = getButtonOffset(context);
     PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
     SortInventoryButton<H, S> button = new SortInventoryButton<>(offset, positioningFunction, context);
-    addButton(context.getParentScreen(), button, context.isPlayerInventory());
+    addButton(context.getScreen(), button, context.isPlayerInventory());
   }
 
   private boolean shouldTryGeneratingStackButton(ButtonContext<?, ?> context) {
@@ -167,10 +166,9 @@ public class ButtonManager {
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
-    Optional.ofNullable(
-        InventoryManagementConfig.getInstance().perScreenConfigs.getStackVisibility(context.getParentScreen(),
-            context.isPlayerInventory()
-        )).ifPresent(visibilitySettings::add);
+    Optional.ofNullable(InventoryManagementConfig.getInstance().perScreenConfigs.getStackVisibility(context.getScreen(),
+        context.isPlayerInventory()
+    )).ifPresent(visibilitySettings::add);
 
     // Defaults based on registry, tied to screen, handler, or inventory
     visibilitySettings.add(ButtonRegistry.getInstance().getTransferAndStackButtonVisibility(context));
@@ -196,7 +194,7 @@ public class ButtonManager {
     Position offset = getButtonOffset(context);
     PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
     AutoStackButton<H, S> button = new AutoStackButton<>(offset, positioningFunction, context);
-    addButton(context.getParentScreen(), button, context.isPlayerInventory());
+    addButton(context.getScreen(), button, context.isPlayerInventory());
   }
 
   private boolean shouldTryGeneratingTransferButton(ButtonContext<?, ?> context) {
@@ -217,7 +215,7 @@ public class ButtonManager {
 
     // Per screen config
     Optional.ofNullable(
-        InventoryManagementConfig.getInstance().perScreenConfigs.getTransferVisibility(context.getParentScreen(),
+        InventoryManagementConfig.getInstance().perScreenConfigs.getTransferVisibility(context.getScreen(),
             context.isPlayerInventory()
         )).ifPresent(visibilitySettings::add);
 
@@ -245,7 +243,7 @@ public class ButtonManager {
     Position offset = getButtonOffset(context);
     PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
     TransferAllButton<H, S> button = new TransferAllButton<>(offset, positioningFunction, context);
-    addButton(context.getParentScreen(), button, context.isPlayerInventory());
+    addButton(context.getScreen(), button, context.isPlayerInventory());
   }
 
   private void addButton(
@@ -256,7 +254,7 @@ public class ButtonManager {
   }
 
   private Position getButtonOffset(ButtonContext<?, ?> context) {
-    Position offset = InventoryManagementConfig.getInstance().perScreenConfigs.getPosition(context.getParentScreen(),
+    Position offset = InventoryManagementConfig.getInstance().perScreenConfigs.getPosition(context.getScreen(),
         context.isPlayerInventory()
     );
     if (offset == null) {

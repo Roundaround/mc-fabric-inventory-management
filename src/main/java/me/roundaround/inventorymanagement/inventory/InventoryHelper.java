@@ -2,13 +2,17 @@ package me.roundaround.inventorymanagement.inventory;
 
 import me.roundaround.inventorymanagement.api.SlotRangeRegistry;
 import me.roundaround.inventorymanagement.inventory.sorting.ItemStackComparator;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.HorseScreenHandler;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.function.BiFunction;
@@ -61,10 +65,7 @@ public class InventoryHelper {
       }
     }
 
-    stacks = stacks.stream()
-        .filter(itemStack -> !itemStack.isEmpty())
-        .sorted(ItemStackComparator.get())
-        .toList();
+    stacks = stacks.stream().filter(itemStack -> !itemStack.isEmpty()).sorted(ItemStackComparator.get()).toList();
 
     for (int slotIndex = slotRange.min(); slotIndex < slotRange.max(); slotIndex++) {
       int stacksIndex = slotIndex - slotRange.min();
@@ -260,5 +261,16 @@ public class InventoryHelper {
       return true;
     }
     return false;
+  }
+
+  public static Slot getReferenceSlot(HandledScreen<?> screen, boolean isPlayerInventory) {
+    return screen.getScreenHandler().slots.stream().filter((slot) -> {
+      if (isPlayerInventory != (slot.inventory instanceof PlayerInventory)) {
+        return false;
+      }
+
+      // Only consider "bulk inventory" slots if player inventory
+      return !isPlayerInventory || SlotRange.playerMainRange().contains(slot.getIndex());
+    }).max(Comparator.comparingInt(slot -> slot.x - slot.y)).orElse(null);
   }
 }

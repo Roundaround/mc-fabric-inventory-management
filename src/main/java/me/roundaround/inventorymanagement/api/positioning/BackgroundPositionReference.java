@@ -1,35 +1,32 @@
 package me.roundaround.inventorymanagement.api.positioning;
 
-import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
+import me.roundaround.inventorymanagement.api.ButtonContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.screen.ScreenHandler;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
-public class BackgroundPositionReference<S extends HandledScreen<?>> implements PositionReference<S> {
-  private final BiFunction<S, HandledScreenAccessor, Integer> function;
-
-  private BackgroundPositionReference(BiFunction<S, HandledScreenAccessor, Integer> function) {
-    this.function = function;
+public class BackgroundPositionReference<H extends ScreenHandler, S extends HandledScreen<H>> extends
+    BasePositionReference<H, S> {
+  private BackgroundPositionReference(Function<ButtonContext<H, S>, Integer> function) {
+    super(function);
   }
 
-  @Override
-  public int get(S screen, HandledScreenAccessor accessor) {
-    return this.function.apply(screen, accessor);
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> BackgroundPositionReference<H, S> left() {
+    return new BackgroundPositionReference<>((context) -> context.getScreenAccessor().getX());
   }
 
-  public static <S extends HandledScreen<?>> BackgroundPositionReference<S> left() {
-    return new BackgroundPositionReference<>((screen, accessor) -> accessor.getX());
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> BackgroundPositionReference<H, S> right() {
+    return new BackgroundPositionReference<>(
+        (context) -> context.getScreenAccessor().getX() + context.getScreenAccessor().getBackgroundWidth());
   }
 
-  public static <S extends HandledScreen<?>> BackgroundPositionReference<S> right() {
-    return new BackgroundPositionReference<>((screen, accessor) -> accessor.getX() + accessor.getBackgroundWidth());
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> BackgroundPositionReference<H, S> top() {
+    return new BackgroundPositionReference<>((context) -> context.getScreenAccessor().getY());
   }
 
-  public static <S extends HandledScreen<?>> BackgroundPositionReference<S> top() {
-    return new BackgroundPositionReference<>((screen, accessor) -> accessor.getY());
-  }
-
-  public static <S extends HandledScreen<?>> BackgroundPositionReference<S> bottom() {
-    return new BackgroundPositionReference<>((screen, accessor) -> accessor.getY() + accessor.getBackgroundHeight());
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> BackgroundPositionReference<H, S> bottom() {
+    return new BackgroundPositionReference<>(
+        (context) -> context.getScreenAccessor().getY() + context.getScreenAccessor().getBackgroundHeight());
   }
 }

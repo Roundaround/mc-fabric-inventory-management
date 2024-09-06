@@ -1,101 +1,100 @@
 package me.roundaround.inventorymanagement.api.positioning;
 
-import me.roundaround.inventorymanagement.inventory.SlotRange;
-import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
+import me.roundaround.inventorymanagement.api.ButtonContext;
+import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
-import java.util.Comparator;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@SuppressWarnings("unused")
-public class SlotPositionReference<S extends HandledScreen<?>> implements PositionReference<S> {
+public class SlotPositionReference<H extends ScreenHandler, S extends HandledScreen<H>> implements PositionReference<H, S> {
   public static final int SLOT_SIZE = 16;
 
-  private final BiFunction<S, HandledScreenAccessor, Slot> slotFunction;
-  private final Function<Slot, Integer> producer;
+  private final Function<ButtonContext<H, S>, Slot> slotProducer;
+  private final Function<Slot, Integer> valueProducer;
 
   private SlotPositionReference(
-      BiFunction<S, HandledScreenAccessor, Slot> slotFunction, Function<Slot, Integer> producer
+      Function<ButtonContext<H, S>, Slot> slotProducer, Function<Slot, Integer> valueProducer
   ) {
-    this.slotFunction = slotFunction;
-    this.producer = producer;
+    this.slotProducer = slotProducer;
+    this.valueProducer = valueProducer;
   }
 
   @Override
-  public int get(S screen, HandledScreenAccessor accessor) {
-    return this.producer.apply(this.slotFunction.apply(screen, accessor));
+  public int get(ButtonContext<H, S> context) {
+    return this.valueProducer.apply(this.slotProducer.apply(context));
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> left(
-      BiFunction<S, HandledScreenAccessor, Slot> slotFunction
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> left(
+      Function<ButtonContext<H, S>, Slot> slotProducer
   ) {
-    return new SlotPositionReference<>(slotFunction, SlotPositionReference::getSlotLeft);
+    return new SlotPositionReference<>(slotProducer, SlotPositionReference::getSlotLeft);
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> left(boolean isPlayerInventory) {
-    return left(byAuto(isPlayerInventory));
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> left() {
+    return left(byAuto());
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> left(int slotIndex) {
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> left(int slotIndex) {
     return left(byIndex(slotIndex));
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> left(Slot slot) {
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> left(Slot slot) {
     return left(byReference(slot));
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> right(
-      BiFunction<S, HandledScreenAccessor, Slot> slotFunction
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> right(
+      Function<ButtonContext<H, S>, Slot> slotProducer
   ) {
-    return new SlotPositionReference<>(slotFunction, SlotPositionReference::getSlotRight);
+    return new SlotPositionReference<>(slotProducer, SlotPositionReference::getSlotRight);
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> right(boolean isPlayerInventory) {
-    return right(byAuto(isPlayerInventory));
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> right() {
+    return right(byAuto());
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> right(int slotIndex) {
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> right(int slotIndex) {
     return right(byIndex(slotIndex));
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> right(Slot slot) {
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> right(Slot slot) {
     return right(byReference(slot));
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> top(BiFunction<S, HandledScreenAccessor, Slot> slotFunction) {
-    return new SlotPositionReference<>(slotFunction, SlotPositionReference::getSlotTop);
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> top(
+      Function<ButtonContext<H, S>, Slot> slotProducer
+  ) {
+    return new SlotPositionReference<>(slotProducer, SlotPositionReference::getSlotTop);
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> top(boolean isPlayerInventory) {
-    return top(byAuto(isPlayerInventory));
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> top() {
+    return top(byAuto());
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> top(int slotIndex) {
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> top(int slotIndex) {
     return top(byIndex(slotIndex));
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> top(Slot slot) {
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> top(Slot slot) {
     return top(byReference(slot));
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> bottom(
-      BiFunction<S, HandledScreenAccessor, Slot> slotFunction
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> bottom(
+      Function<ButtonContext<H, S>, Slot> slotProducer
   ) {
-    return new SlotPositionReference<>(slotFunction, SlotPositionReference::getSlotBottom);
+    return new SlotPositionReference<>(slotProducer, SlotPositionReference::getSlotBottom);
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> bottom(boolean isPlayerInventory) {
-    return bottom(byAuto(isPlayerInventory));
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> bottom() {
+    return bottom(byAuto());
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> bottom(int slotIndex) {
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> bottom(int slotIndex) {
     return bottom(byIndex(slotIndex));
   }
 
-  public static <S extends HandledScreen<?>> SlotPositionReference<S> bottom(Slot slot) {
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> bottom(Slot slot) {
     return bottom(byReference(slot));
   }
 
@@ -115,28 +114,25 @@ public class SlotPositionReference<S extends HandledScreen<?>> implements Positi
     return getSlotTop(slot) + SLOT_SIZE;
   }
 
-  private static <S extends HandledScreen<?>> BiFunction<S, HandledScreenAccessor, Slot> byAuto(boolean isPlayerInventory) {
-    return (screen, accessor) -> screen.getScreenHandler().slots.stream().filter((slot) -> {
-      if (isPlayerInventory != (slot.inventory instanceof PlayerInventory)) {
-        return false;
-      }
-
-      // Only consider "bulk inventory" slots if player inventory
-      return !isPlayerInventory || SlotRange.playerMainRange().contains(slot.getIndex());
-    }).max(Comparator.comparingInt(slot -> slot.x - slot.y)).orElse(null);
+  private static <H extends ScreenHandler, S extends HandledScreen<H>> Function<ButtonContext<H, S>, Slot> byAuto() {
+    return (context) -> InventoryHelper.getReferenceSlot(context.getScreen(), context.isPlayerInventory());
   }
 
-  private static <S extends HandledScreen<?>> BiFunction<S, HandledScreenAccessor, Slot> byIndex(int slotIndex) {
-    return (screen, accessor) -> {
+  private static <H extends ScreenHandler, S extends HandledScreen<H>> Function<ButtonContext<H, S>, Slot> byIndex(
+      int slotIndex
+  ) {
+    return (context) -> {
       try {
-        return screen.getScreenHandler().getSlot(slotIndex);
+        return context.getScreenHandler().getSlot(slotIndex);
       } catch (IndexOutOfBoundsException ignored) {
         return null;
       }
     };
   }
 
-  private static <S extends HandledScreen<?>> BiFunction<S, HandledScreenAccessor, Slot> byReference(Slot slot) {
-    return (screen, accessor) -> slot;
+  private static <H extends ScreenHandler, S extends HandledScreen<H>> Function<ButtonContext<H, S>, Slot> byReference(
+      Slot slot
+  ) {
+    return (context) -> slot;
   }
 }

@@ -1,6 +1,5 @@
 package me.roundaround.inventorymanagement.api;
 
-import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import net.minecraft.client.MinecraftClient;
@@ -46,7 +45,7 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
     this.parentScreen = parentScreen;
     this.accessor = (HandledScreenAccessor) parentScreen;
     this.screenHandler = parentScreen.getScreenHandler();
-    this.referenceSlot = PositioningFunction.getReferenceSlot(parentScreen, isPlayerInventory);
+    this.referenceSlot = InventoryHelper.getReferenceSlot(parentScreen, isPlayerInventory);
     this.isPlayerInventory = isPlayerInventory;
 
     ClientPlayerEntity player = MINECRAFT.player;
@@ -63,11 +62,11 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
     return parentScreen != null;
   }
 
-  public S getParentScreen() {
+  public S getScreen() {
     return parentScreen;
   }
 
-  public HandledScreenAccessor getAccessor() {
+  public HandledScreenAccessor getScreenAccessor() {
     return accessor;
   }
 
@@ -124,7 +123,7 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
   }
 
   public Slot getDefaultReferenceSlot() {
-    return PositioningFunction.getReferenceSlot(this.parentScreen, this.isPlayerInventory);
+    return InventoryHelper.getReferenceSlot(this.parentScreen, this.isPlayerInventory);
   }
 
   @SuppressWarnings("unchecked")

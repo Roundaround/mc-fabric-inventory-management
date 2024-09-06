@@ -1,35 +1,29 @@
 package me.roundaround.inventorymanagement.api.positioning;
 
-import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
+import me.roundaround.inventorymanagement.api.ButtonContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.screen.ScreenHandler;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
-public class ScreenPositionReference<S extends HandledScreen<?>> implements PositionReference<S> {
-  private final BiFunction<S, HandledScreenAccessor, Integer> function;
-
-  private ScreenPositionReference(BiFunction<S, HandledScreenAccessor, Integer> function) {
-    this.function = function;
+public class ScreenPositionReference<H extends ScreenHandler, S extends HandledScreen<H>> extends BasePositionReference<H, S> {
+  private ScreenPositionReference(Function<ButtonContext<H, S>, Integer> function) {
+    super(function);
   }
 
-  @Override
-  public int get(S screen, HandledScreenAccessor accessor) {
-    return this.function.apply(screen, accessor);
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> ScreenPositionReference<H, S> left() {
+    return new ScreenPositionReference<>((context) -> 0);
   }
 
-  public static <S extends HandledScreen<?>> ScreenPositionReference<S> left() {
-    return new ScreenPositionReference<>((screen, accessor) -> 0);
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> ScreenPositionReference<H, S> right() {
+    return new ScreenPositionReference<>((context) -> context.getScreen().width);
   }
 
-  public static <S extends HandledScreen<?>> ScreenPositionReference<S> right() {
-    return new ScreenPositionReference<>((screen, accessor) -> screen.width);
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> ScreenPositionReference<H, S> top() {
+    return new ScreenPositionReference<>((context) -> 0);
   }
 
-  public static <S extends HandledScreen<?>> ScreenPositionReference<S> top() {
-    return new ScreenPositionReference<>((screen, accessor) -> 0);
-  }
-
-  public static <S extends HandledScreen<?>> ScreenPositionReference<S> bottom() {
-    return new ScreenPositionReference<>((screen, accessor) -> screen.height);
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> ScreenPositionReference<H, S> bottom() {
+    return new ScreenPositionReference<>((context) -> context.getScreen().height);
   }
 }

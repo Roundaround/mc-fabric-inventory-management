@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.api;
 
+import me.roundaround.inventorymanagement.api.positioning.PositionReference;
 import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import net.fabricmc.api.EnvType;
@@ -210,6 +211,13 @@ public class ButtonRegistry {
 
     public RegistrationEditor<H, S> withPosition(PositioningFunction<H, S> positioningFunction) {
       this.registration.positioningFunction = positioningFunction;
+      return this;
+    }
+
+    public RegistrationEditor<H, S> withPosition(
+        PositionReference<H, S> referenceX, PositionReference<H, S> referenceY
+    ) {
+      this.registration.positioningFunction = PositioningFunction.fromPositionRefs(referenceX, referenceY);
       return this;
     }
   }
