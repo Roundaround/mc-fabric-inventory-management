@@ -1,5 +1,7 @@
 package me.roundaround.inventorymanagement.mixin;
 
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
@@ -15,4 +17,22 @@ public interface HandledScreenAccessor {
 
   @Accessor
   int getBackgroundWidth();
+
+  @Accessor
+  int getBackgroundHeight();
+
+  @Accessor
+  int getTitleX();
+
+  @Accessor
+  int getTitleY();
+
+  @Accessor
+  int getPlayerInventoryTitleX();
+
+  @Accessor
+  int getPlayerInventoryTitleY();
+
+  @Accessor
+  Text getPlayerInventoryTitle();
 }
