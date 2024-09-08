@@ -10,6 +10,7 @@ import me.roundaround.inventorymanagement.client.gui.widget.button.TransferAllBu
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.inventorymanagement.event.BeforeCloseHandledScreen;
+import me.roundaround.roundalib.client.gui.util.Coords;
 import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -143,7 +144,7 @@ public class ButtonManager {
       return;
     }
 
-    Position offset = getButtonOffset(context);
+    Coords offset = posToCoords(getButtonOffset(context));
     PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
     SortInventoryButton<H, S> button = new SortInventoryButton<>(offset, positioningFunction, context);
     addButton(context.getScreen(), button, context.isPlayerInventory());
@@ -191,7 +192,7 @@ public class ButtonManager {
       return;
     }
 
-    Position offset = getButtonOffset(context);
+    Coords offset = posToCoords(getButtonOffset(context));
     PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
     AutoStackButton<H, S> button = new AutoStackButton<>(offset, positioningFunction, context);
     addButton(context.getScreen(), button, context.isPlayerInventory());
@@ -240,7 +241,7 @@ public class ButtonManager {
       return;
     }
 
-    Position offset = getButtonOffset(context);
+    Coords offset = posToCoords(getButtonOffset(context));
     PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
     TransferAllButton<H, S> button = new TransferAllButton<>(offset, positioningFunction, context);
     addButton(context.getScreen(), button, context.isPlayerInventory());
@@ -277,5 +278,9 @@ public class ButtonManager {
     int y = offset.y() + BUTTON_SHIFT_Y * (ButtonBase.HEIGHT + BUTTON_SPACING) * index;
 
     return new Position(x, y);
+  }
+
+  private static Coords posToCoords(Position position) {
+    return new Coords(position.x(), position.y());
   }
 }

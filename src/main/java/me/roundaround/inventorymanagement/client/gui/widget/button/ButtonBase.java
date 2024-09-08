@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.api.ButtonContext;
 import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.roundalib.client.gui.util.Coords;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -24,15 +24,15 @@ public abstract class ButtonBase<H extends ScreenHandler, S extends HandledScree
       new Identifier(InventoryManagementMod.MOD_ID, "widget/button_highlighted")
   );
 
-  protected Position offset;
+  protected Coords offset;
   protected PositioningFunction<H, S> positioningFunction;
   protected ButtonContext<H, S> context;
 
   private final Identifier icon;
 
   protected ButtonBase(
-      Position initialPosition,
-      Position offset,
+      Coords initialPosition,
+      Coords offset,
       PositioningFunction<H, S> positioningFunction,
       ButtonContext<H, S> context,
       PressAction onPress,
@@ -62,23 +62,23 @@ public abstract class ButtonBase<H extends ScreenHandler, S extends HandledScree
     setTooltip(Tooltip.of(tooltip));
   }
 
-  public void setOffset(Position position) {
-    this.offset = position;
+  public void setOffset(Coords offset) {
+    this.offset = offset;
   }
 
   @Override
   public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-    Position position = this.positioningFunction.apply(this.context);
-    this.active = position != null;
+    Coords coords = this.positioningFunction.apply(this.context);
+    this.active = coords != null;
 
-    if (position == null) {
+    if (coords == null) {
       this.hovered = false;
       this.setFocused(false);
       return;
     }
 
-    setX(getX(position, this.offset));
-    setY(getY(position, this.offset));
+    setX(getX(coords, this.offset));
+    setY(getY(coords, this.offset));
 
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     RenderSystem.enableBlend();
@@ -92,13 +92,13 @@ public abstract class ButtonBase<H extends ScreenHandler, S extends HandledScree
     context.drawGuiTexture(this.icon, this.getX(), this.getY(), this.width, this.height);
   }
 
-  private static int getX(Position base, Position offset) {
+  private static int getX(Coords base, Coords offset) {
     int baseX = base == null ? 0 : base.x();
     int offsetX = offset == null ? 0 : offset.x();
     return baseX + offsetX;
   }
 
-  private static int getY(Position base, Position offset) {
+  private static int getY(Coords base, Coords offset) {
     int baseY = base == null ? 0 : base.y();
     int offsetY = offset == null ? 0 : offset.y();
     return baseY + offsetY;

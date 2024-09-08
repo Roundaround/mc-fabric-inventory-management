@@ -5,7 +5,7 @@ import me.roundaround.inventorymanagement.api.ButtonContext;
 import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.roundalib.client.gui.util.Coords;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.screen.ScreenHandler;
@@ -19,7 +19,7 @@ public class AutoStackButton<H extends ScreenHandler, S extends HandledScreen<H>
   private static final Identifier ICON_FROM = new Identifier(InventoryManagementMod.MOD_ID, "icon/stack_from");
 
   public AutoStackButton(
-      Position offset, PositioningFunction<H, S> positioningFunction, ButtonContext<H, S> context
+      Coords offset, PositioningFunction<H, S> positioningFunction, ButtonContext<H, S> context
   ) {
     super(positioningFunction.apply(context), offset, positioningFunction, context,
         getAction(context.isPlayerInventory()), getTooltip(context.isPlayerInventory()),

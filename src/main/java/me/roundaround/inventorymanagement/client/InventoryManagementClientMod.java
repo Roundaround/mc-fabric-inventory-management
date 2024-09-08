@@ -5,9 +5,8 @@ import me.roundaround.inventorymanagement.api.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
 import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
-import me.roundaround.inventorymanagement.compat.roundalib.ConfigControlRegister;
 import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.roundalib.client.gui.util.Coords;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
@@ -25,7 +24,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
   @Override
   public void onInitializeClient() {
     ButtonManager.init();
-    ConfigControlRegister.init();
+    //    ConfigControlRegister.init();
     KeyBindings.init();
 
     FabricLoader.getInstance()
@@ -56,16 +55,16 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     // Hopper's container-side is only 1 slot tall, so we need to bump the buttons up a bit to make room
     registry.<HopperScreenHandler, HopperScreen>registerBothSides(HopperScreenHandler.class, (context) -> {
       PositioningFunction<HopperScreenHandler, HopperScreen> base = PositioningFunction.refSlotYAndBgRight();
-      Position basePosition = base.apply(context);
-      if (basePosition == null) {
+      Coords baseCoords = base.apply(context);
+      if (baseCoords == null) {
         return null;
       }
 
       if (context.isPlayerInventory()) {
-        return basePosition;
+        return baseCoords;
       }
 
-      return basePosition.movedUp(ButtonManager.BUTTON_HEIGHT + ButtonManager.BUTTON_SPACING);
+      return baseCoords.movedUp(ButtonManager.BUTTON_HEIGHT + ButtonManager.BUTTON_SPACING);
     });
 
     registry.registerPlayerSideOnly(PlayerScreenHandler.class);

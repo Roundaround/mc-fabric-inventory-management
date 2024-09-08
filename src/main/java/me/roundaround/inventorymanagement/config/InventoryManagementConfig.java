@@ -61,12 +61,12 @@ public class InventoryManagementConfig extends ModConfigImpl implements GameScop
         .setComment("Whether or not to show autostack buttons in the UI.")
         .build());
 
-    defaultPosition = this.register(PositionConfigOption.builder(ConfigPath.of("defaultPosition"))
+    defaultPosition = this.buildRegistration(PositionConfigOption.builder(ConfigPath.of("defaultPosition"))
         .setDefaultValue(new Position(-4, -1))
         .onUpdate(
             (option) -> option.setDisabled(!showSort.getValue() && !showTransfer.getValue() && !showStack.getValue()))
         .setComment("Customize a default for button position.")
-        .build());
+        .build()).noGuiControl().commit();
 
     perScreenConfigs = this.buildRegistration(PerScreenConfigOption.builder(ConfigPath.of("perScreenConfigs"))
         .setDefaultValue(new PerScreenConfig())
