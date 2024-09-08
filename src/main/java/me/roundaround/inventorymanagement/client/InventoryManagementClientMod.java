@@ -54,17 +54,10 @@ public class InventoryManagementClientMod implements ClientModInitializer {
 
     // Hopper's container-side is only 1 slot tall, so we need to bump the buttons up a bit to make room
     registry.<HopperScreenHandler, HopperScreen>registerBothSides(HopperScreenHandler.class, (context) -> {
-      PositioningFunction<HopperScreenHandler, HopperScreen> base = PositioningFunction.refSlotYAndBgRight();
-      Coords baseCoords = base.apply(context);
-      if (baseCoords == null) {
-        return null;
-      }
-
-      if (context.isPlayerInventory()) {
-        return baseCoords;
-      }
-
-      return baseCoords.movedUp(ButtonManager.BUTTON_HEIGHT + ButtonManager.BUTTON_SPACING);
+      Coords offset = context.isPlayerInventory() ?
+          Coords.zero() :
+          new Coords(0, -ButtonManager.BUTTON_HEIGHT - ButtonManager.BUTTON_SPACING);
+      return PositioningFunction.<HopperScreenHandler, HopperScreen>refSlotYAndBgRight(offset).apply(context);
     });
 
     registry.registerPlayerSideOnly(PlayerScreenHandler.class);
