@@ -1,0 +1,20 @@
+{
+  "inventorymanagement.config.title": "Настройки управления инвентарём",
+  "inventorymanagement.button.sort_player": "Сортировка инвентаря",
+  "inventorymanagement.button.sort_container": "Сортировка контейнера",
+  "inventorymanagement.button.autostack_into": "Сложить в контейнер",
+  "inventorymanagement.button.autostack_from": "Извлечь из контейнера",
+  "inventorymanagement.button.transfer_place": "Разместить всё",
+  "inventorymanagement.button.transfer_take": "Взять всё",
+  "inventorymanagement.keybind.category": "Управление инвентарём",
+  "inventorymanagement.keybind.position_edit.player": "Редактировать кнопки игрока",
+  "inventorymanagement.keybind.position_edit.container": "Редактировать кнопки контейнера",
+  "inventorymanagement.position_edit.title": "Изменить положение кнопки",
+  "inventorymanagement.default_position_edit.title": "Изменить положение кнопки по умолчанию",
+  "inventorymanagement.mod_enabled.label": "Мод включен",
+  "inventorymanagement.show_sort.label": "Показывать кнопки сортировки",
+  "inventorymanagement.show_transfer.label": "Показывать кнопки переноса",
+  "inventorymanagement.show_stack.label": "Показывать кнопки автоматической загрузки",
+  "inventorymanagement.gui_theme.label": "Тема графического интерфейса",
+  "inventorymanagement.default_position.label": "Положение кнопки по умолчанию"
+}
