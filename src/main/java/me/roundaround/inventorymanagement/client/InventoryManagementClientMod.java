@@ -5,7 +5,6 @@ import me.roundaround.inventorymanagement.api.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
 import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.api.positioning.SlotPositionReference;
-import me.roundaround.inventorymanagement.api.positioning.TitlePositionReference;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;
@@ -42,15 +41,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
   private void initButtonRegistry() {
     ButtonRegistry registry = ButtonRegistry.getInstance();
 
-    registry.registerBothSides(ShulkerBoxScreenHandler.class, (context) -> {
-      if (context.isPlayerInventory()) {
-        return PositioningFunction.refSlotYAndBgRight().apply(context);
-      }
-      return PositioningFunction.fromPositionRefs(
-          TitlePositionReference.left(), TitlePositionReference.bottom(), new Coords(0, 4)).apply(context);
-    });
-
-    //    registry.registerBothSides(ShulkerBoxScreenHandler.class);
+    registry.registerBothSides(ShulkerBoxScreenHandler.class);
     registry.registerBothSides(GenericContainerScreenHandler.class);
     registry.registerBothSides(Generic3x3ContainerScreenHandler.class);
 
