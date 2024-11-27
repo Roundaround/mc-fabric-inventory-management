@@ -9,43 +9,56 @@ import net.minecraft.text.Text;
 import java.util.function.Function;
 
 public class TitlePositionReference<H extends ScreenHandler, S extends HandledScreen<H>> extends BasePositionReference<H, S> {
-  private TitlePositionReference(Function<ButtonContext<H, S>, Integer> function) {
-    super(function);
+  private TitlePositionReference(
+      Function<ButtonContext<H, S>, Integer> function, BackgroundPositionReference<H, S> bgBaseRef
+  ) {
+    super((context) -> bgBaseRef.get(context) + function.apply(context));
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> left() {
-    return new TitlePositionReference<>((context) -> context.getScreenAccessor().getTitleX());
+    return new TitlePositionReference<>(
+        (context) -> context.getScreenAccessor().getTitleX(), BackgroundPositionReference.left());
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> right() {
     return new TitlePositionReference<>(
-        (context) -> context.getScreenAccessor().getTitleX() + getWidth(context.getScreen().getTitle()));
+        (context) -> context.getScreenAccessor().getTitleX() + getWidth(context.getScreen().getTitle()),
+        BackgroundPositionReference.left()
+    );
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> top() {
-    return new TitlePositionReference<>((context) -> context.getScreenAccessor().getTitleY());
+    return new TitlePositionReference<>(
+        (context) -> context.getScreenAccessor().getTitleY(), BackgroundPositionReference.top());
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> bottom() {
-    return new TitlePositionReference<>((context) -> context.getScreenAccessor().getTitleY() + getHeight());
+    return new TitlePositionReference<>(
+        (context) -> context.getScreenAccessor().getTitleY() + getHeight(), BackgroundPositionReference.top());
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> playerLeft() {
-    return new TitlePositionReference<>((context) -> context.getScreenAccessor().getPlayerInventoryTitleX());
+    return new TitlePositionReference<>(
+        (context) -> context.getScreenAccessor().getPlayerInventoryTitleX(), BackgroundPositionReference.left());
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> playerRight() {
     return new TitlePositionReference<>((context) -> context.getScreenAccessor().getPlayerInventoryTitleX() +
-        getWidth(context.getScreenAccessor().getPlayerInventoryTitle()));
+                                                     getWidth(context.getScreenAccessor().getPlayerInventoryTitle()),
+        BackgroundPositionReference.left()
+    );
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> playerTop() {
-    return new TitlePositionReference<>((context) -> context.getScreenAccessor().getPlayerInventoryTitleY());
+    return new TitlePositionReference<>(
+        (context) -> context.getScreenAccessor().getPlayerInventoryTitleY(), BackgroundPositionReference.top());
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> playerBottom() {
     return new TitlePositionReference<>(
-        (context) -> context.getScreenAccessor().getPlayerInventoryTitleY() + getHeight());
+        (context) -> context.getScreenAccessor().getPlayerInventoryTitleY() + getHeight(),
+        BackgroundPositionReference.top()
+    );
   }
 
   private static int getWidth(Text text) {
