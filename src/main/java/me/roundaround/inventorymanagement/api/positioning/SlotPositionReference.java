@@ -13,23 +13,28 @@ public class SlotPositionReference<H extends ScreenHandler, S extends HandledScr
 
   private final Function<ButtonContext<H, S>, Slot> slotProducer;
   private final Function<Slot, Integer> valueProducer;
+  private final BackgroundPositionReference<H, S> bgBaseRef;
 
   private SlotPositionReference(
-      Function<ButtonContext<H, S>, Slot> slotProducer, Function<Slot, Integer> valueProducer
+      Function<ButtonContext<H, S>, Slot> slotProducer,
+      Function<Slot, Integer> valueProducer,
+      BackgroundPositionReference<H, S> bgBaseRef
   ) {
     this.slotProducer = slotProducer;
     this.valueProducer = valueProducer;
+    this.bgBaseRef = bgBaseRef;
   }
 
   @Override
   public int get(ButtonContext<H, S> context) {
-    return this.valueProducer.apply(this.slotProducer.apply(context));
+    return this.valueProducer.apply(this.slotProducer.apply(context)) + this.bgBaseRef.get(context);
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> left(
       Function<ButtonContext<H, S>, Slot> slotProducer
   ) {
-    return new SlotPositionReference<>(slotProducer, SlotPositionReference::getSlotLeft);
+    return new SlotPositionReference<>(
+        slotProducer, SlotPositionReference::getSlotLeft, BackgroundPositionReference.left());
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> left() {
@@ -47,7 +52,8 @@ public class SlotPositionReference<H extends ScreenHandler, S extends HandledScr
   public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> right(
       Function<ButtonContext<H, S>, Slot> slotProducer
   ) {
-    return new SlotPositionReference<>(slotProducer, SlotPositionReference::getSlotRight);
+    return new SlotPositionReference<>(
+        slotProducer, SlotPositionReference::getSlotRight, BackgroundPositionReference.left());
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> right() {
@@ -65,7 +71,8 @@ public class SlotPositionReference<H extends ScreenHandler, S extends HandledScr
   public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> top(
       Function<ButtonContext<H, S>, Slot> slotProducer
   ) {
-    return new SlotPositionReference<>(slotProducer, SlotPositionReference::getSlotTop);
+    return new SlotPositionReference<>(
+        slotProducer, SlotPositionReference::getSlotTop, BackgroundPositionReference.top());
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> top() {
@@ -83,7 +90,8 @@ public class SlotPositionReference<H extends ScreenHandler, S extends HandledScr
   public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> bottom(
       Function<ButtonContext<H, S>, Slot> slotProducer
   ) {
-    return new SlotPositionReference<>(slotProducer, SlotPositionReference::getSlotBottom);
+    return new SlotPositionReference<>(
+        slotProducer, SlotPositionReference::getSlotBottom, BackgroundPositionReference.top());
   }
 
   public static <H extends ScreenHandler, S extends HandledScreen<H>> SlotPositionReference<H, S> bottom() {
