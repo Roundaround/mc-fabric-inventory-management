@@ -31,11 +31,9 @@ import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class ButtonManager {
-  public static final int BUTTON_WIDTH = ButtonBase.WIDTH;
   public static final int BUTTON_HEIGHT = ButtonBase.HEIGHT;
   public static final int BUTTON_SPACING = 1;
 
-  private static final int BUTTON_SHIFT_X = 0;
   private static final int BUTTON_SHIFT_Y = 1;
   private static final String SORT_KEY = "sort";
   private static final String STACK_KEY = "stack";
