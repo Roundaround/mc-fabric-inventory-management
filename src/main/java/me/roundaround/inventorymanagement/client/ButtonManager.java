@@ -25,6 +25,9 @@ import net.minecraft.screen.ScreenHandler;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class ButtonManager {
@@ -34,6 +37,9 @@ public class ButtonManager {
 
   private static final int BUTTON_SHIFT_X = 0;
   private static final int BUTTON_SHIFT_Y = 1;
+  private static final String SORT_KEY = "sort";
+  private static final String STACK_KEY = "stack";
+  private static final String TRANSFER_KEY = "transfer";
 
   private static ButtonManager instance = null;
 
@@ -90,16 +96,26 @@ public class ButtonManager {
     // Container side
     this.containerButtons.clear();
     ButtonContext<?, ?> containerContext = new ButtonContext<>(handledScreen, false);
-    generateSortButton(containerContext);
-    generateAutoStackButton(containerContext);
-    generateTransferAllButton(containerContext);
+
+    this.checkAndMarkSortVisibility(containerContext);
+    this.checkAndMarkStackVisibility(containerContext);
+    this.checkAndMarkTransferVisibility(containerContext);
+
+    this.generateSortButton(containerContext);
+    this.generateStackButton(containerContext);
+    this.generateTransferButton(containerContext);
 
     // Player side
     this.playerButtons.clear();
     ButtonContext<?, ?> playerContext = new ButtonContext<>(handledScreen, true);
-    generateSortButton(playerContext);
-    generateAutoStackButton(playerContext);
-    generateTransferAllButton(playerContext);
+
+    this.checkAndMarkSortVisibility(playerContext);
+    this.checkAndMarkStackVisibility(playerContext);
+    this.checkAndMarkTransferVisibility(playerContext);
+
+    this.generateSortButton(playerContext);
+    this.generateStackButton(playerContext);
+    this.generateTransferButton(playerContext);
   }
 
   private void beforeCloseHandledScreen(ClientPlayerEntity player, ScreenHandler screenHandler) {
@@ -107,24 +123,61 @@ public class ButtonManager {
     this.playerButtons.clear();
   }
 
-  private boolean shouldTryGeneratingSortButton(ButtonContext<?, ?> context) {
+  private void checkAndMarkSortVisibility(ButtonContext<?, ?> context) {
+    this.checkAndMarkVisibility(context, SORT_KEY, InventoryManagementConfig.getInstance().showSort::getValue,
+        InventoryManagementConfig.getInstance().perScreenConfigs::getSortVisibility,
+        ButtonRegistry.getInstance()::getSortButtonVisibility
+    );
+  }
+
+  private void checkAndMarkStackVisibility(ButtonContext<?, ?> context) {
+    this.checkAndMarkVisibility(context, STACK_KEY, InventoryManagementConfig.getInstance().showStack::getValue,
+        InventoryManagementConfig.getInstance().perScreenConfigs::getStackVisibility,
+        ButtonRegistry.getInstance()::getTransferAndStackButtonVisibility
+    );
+  }
+
+  private void checkAndMarkTransferVisibility(ButtonContext<?, ?> context) {
+    this.checkAndMarkVisibility(context, TRANSFER_KEY, InventoryManagementConfig.getInstance().showTransfer::getValue,
+        InventoryManagementConfig.getInstance().perScreenConfigs::getTransferVisibility,
+        ButtonRegistry.getInstance()::getTransferAndStackButtonVisibility
+    );
+  }
+
+  private void checkAndMarkVisibility(
+      ButtonContext<?, ?> context,
+      String buttonKey,
+      Supplier<Boolean> globalShowSupplier,
+      BiFunction<Screen, Boolean, ButtonVisibility> perScreenVisibilityFunction,
+      Function<ButtonContext<?, ?>, ButtonVisibility> registryVisibilityFunction
+  ) {
+    if (this.shouldShow(context, globalShowSupplier, perScreenVisibilityFunction, registryVisibilityFunction)) {
+      context.markButtonToShow(buttonKey);
+    }
+  }
+
+  private boolean shouldShow(
+      ButtonContext<?, ?> context,
+      Supplier<Boolean> globalShowSupplier,
+      BiFunction<Screen, Boolean, ButtonVisibility> perScreenVisibilityFunction,
+      Function<ButtonContext<?, ?>, ButtonVisibility> registryVisibilityFunction
+  ) {
     if (!InventoryManagementConfig.getInstance().modEnabled.getValue()) {
       return false;
     }
 
-    if (!InventoryManagementConfig.getInstance().showSort.getValue()) {
+    if (!globalShowSupplier.get()) {
       return false;
     }
 
     LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
 
     // Per screen config
-    Optional.ofNullable(InventoryManagementConfig.getInstance().perScreenConfigs.getSortVisibility(context.getScreen(),
-        context.isPlayerInventory()
-    )).ifPresent(visibilitySettings::add);
+    Optional.ofNullable(perScreenVisibilityFunction.apply(context.getScreen(), context.isPlayerInventory()))
+        .ifPresent(visibilitySettings::add);
 
     // Defaults based on registry, tied to screen, handler, or inventory
-    visibilitySettings.add(ButtonRegistry.getInstance().getSortButtonVisibility(context));
+    visibilitySettings.add(registryVisibilityFunction.apply(context));
 
     for (ButtonVisibility visibility : visibilitySettings) {
       if (ButtonVisibility.SHOW.equals(visibility)) {
@@ -140,118 +193,33 @@ public class ButtonManager {
   private <H extends ScreenHandler, S extends HandledScreen<H>> void generateSortButton(
       ButtonContext<H, S> context
   ) {
-    if (!this.shouldTryGeneratingSortButton(context)) {
-      return;
-    }
-
-    Coords offset = posToCoords(getButtonOffset(context));
-    PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
-    SortInventoryButton<H, S> button = new SortInventoryButton<>(offset, positioningFunction, context);
-    addButton(context.getScreen(), button, context.isPlayerInventory());
+    this.generateButton(context, SORT_KEY, SortInventoryButton<H, S>::new);
   }
 
-  private boolean shouldTryGeneratingStackButton(ButtonContext<?, ?> context) {
-    if (!InventoryManagementConfig.getInstance().modEnabled.getValue()) {
-      return false;
-    }
-
-    if (!context.hasPlayerInventory() || !context.hasContainerInventory() ||
-        context.getPlayerInventory() == context.getContainerInventory()) {
-      return false;
-    }
-
-    if (!InventoryManagementConfig.getInstance().showStack.getValue()) {
-      return false;
-    }
-
-    LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
-
-    // Per screen config
-    Optional.ofNullable(InventoryManagementConfig.getInstance().perScreenConfigs.getStackVisibility(context.getScreen(),
-        context.isPlayerInventory()
-    )).ifPresent(visibilitySettings::add);
-
-    // Defaults based on registry, tied to screen, handler, or inventory
-    visibilitySettings.add(ButtonRegistry.getInstance().getTransferAndStackButtonVisibility(context));
-
-    for (ButtonVisibility visibility : visibilitySettings) {
-      if (ButtonVisibility.SHOW.equals(visibility)) {
-        return true;
-      } else if (ButtonVisibility.HIDE.equals(visibility)) {
-        return false;
-      }
-    }
-
-    return false;
-  }
-
-  private <H extends ScreenHandler, S extends HandledScreen<H>> void generateAutoStackButton(
+  private <H extends ScreenHandler, S extends HandledScreen<H>> void generateStackButton(
       ButtonContext<H, S> context
   ) {
-    if (!this.shouldTryGeneratingStackButton(context)) {
-      return;
-    }
-
-    Coords offset = posToCoords(getButtonOffset(context));
-    PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
-    AutoStackButton<H, S> button = new AutoStackButton<>(offset, positioningFunction, context);
-    addButton(context.getScreen(), button, context.isPlayerInventory());
+    this.generateButton(context, STACK_KEY, AutoStackButton<H, S>::new);
   }
 
-  private boolean shouldTryGeneratingTransferButton(ButtonContext<?, ?> context) {
-    if (!InventoryManagementConfig.getInstance().modEnabled.getValue()) {
-      return false;
-    }
-
-    if (!context.hasPlayerInventory() || !context.hasContainerInventory() ||
-        context.getPlayerInventory() == context.getContainerInventory()) {
-      return false;
-    }
-
-    if (!InventoryManagementConfig.getInstance().showTransfer.getValue()) {
-      return false;
-    }
-
-    LinkedList<ButtonVisibility> visibilitySettings = new LinkedList<>();
-
-    // Per screen config
-    Optional.ofNullable(
-        InventoryManagementConfig.getInstance().perScreenConfigs.getTransferVisibility(context.getScreen(),
-            context.isPlayerInventory()
-        )).ifPresent(visibilitySettings::add);
-
-    // Defaults based on registry, tied to screen, handler, or inventory
-    visibilitySettings.add(ButtonRegistry.getInstance().getTransferAndStackButtonVisibility(context));
-
-    for (ButtonVisibility visibility : visibilitySettings) {
-      if (ButtonVisibility.SHOW.equals(visibility)) {
-        return true;
-      } else if (ButtonVisibility.HIDE.equals(visibility)) {
-        return false;
-      }
-    }
-
-    return false;
-  }
-
-  private <H extends ScreenHandler, S extends HandledScreen<H>> void generateTransferAllButton(
+  private <H extends ScreenHandler, S extends HandledScreen<H>> void generateTransferButton(
       ButtonContext<H, S> context
   ) {
-    if (!this.shouldTryGeneratingTransferButton(context)) {
+    this.generateButton(context, TRANSFER_KEY, TransferAllButton<H, S>::new);
+  }
+
+  private <H extends ScreenHandler, S extends HandledScreen<H>, T extends ButtonBase<H, S>> void generateButton(
+      ButtonContext<H, S> context, String buttonKey, ButtonConstructor<H, S, T> constructor
+  ) {
+    if (!context.shouldShowButton(buttonKey)) {
       return;
     }
 
-    Coords offset = posToCoords(getButtonOffset(context));
-    PositioningFunction<H, S> positioningFunction = getPositioningFunction(context);
-    TransferAllButton<H, S> button = new TransferAllButton<>(offset, positioningFunction, context);
-    addButton(context.getScreen(), button, context.isPlayerInventory());
-  }
-
-  private void addButton(
-      HandledScreen<?> screen, ButtonBase<?, ?> button, boolean isPlayerInventory
-  ) {
-    Screens.getButtons(screen).add(button);
-    (isPlayerInventory ? this.playerButtons : this.containerButtons).add(button);
+    Coords offset = posToCoords(this.getButtonOffset(context));
+    PositioningFunction<H, S> positioningFunction = this.getPositioningFunction(context);
+    T button = constructor.create(offset, positioningFunction, context);
+    Screens.getButtons(context.getScreen()).add(button);
+    (context.isPlayerInventory() ? this.playerButtons : this.containerButtons).add(button);
   }
 
   private Position getButtonOffset(ButtonContext<?, ?> context) {
@@ -262,7 +230,8 @@ public class ButtonManager {
       offset = InventoryManagementConfig.getInstance().defaultPosition.getValue();
     }
 
-    return getButtonOffset((context.isPlayerInventory() ? this.playerButtons : this.containerButtons).size(), offset);
+    return this.getButtonOffset(
+        (context.isPlayerInventory() ? this.playerButtons : this.containerButtons).size(), offset);
   }
 
   private <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> getPositioningFunction(
@@ -274,13 +243,15 @@ public class ButtonManager {
   }
 
   public Position getButtonOffset(int index, Position offset) {
-    int x = offset.x() + BUTTON_SHIFT_X * (ButtonBase.WIDTH + BUTTON_SPACING) * index;
-    int y = offset.y() + BUTTON_SHIFT_Y * (ButtonBase.HEIGHT + BUTTON_SPACING) * index;
-
-    return new Position(x, y);
+    return new Position(offset.x(), offset.y() + BUTTON_SHIFT_Y * (ButtonBase.HEIGHT + BUTTON_SPACING) * index);
   }
 
   private static Coords posToCoords(Position position) {
     return new Coords(position.x(), position.y());
+  }
+
+  @FunctionalInterface
+  private interface ButtonConstructor<H extends ScreenHandler, S extends HandledScreen<H>, T extends ButtonBase<H, S>> {
+    T create(Coords offset, PositioningFunction<H, S> positioningFunction, ButtonContext<H, S> context);
   }
 }

@@ -9,6 +9,9 @@ import net.minecraft.screen.ScreenHandler;
 public interface PositioningFunction<H extends ScreenHandler, S extends HandledScreen<H>> {
   Coords apply(ButtonContext<H, S> context);
 
+  int DEFAULT_BG_RIGHT_OFFSET = -4;
+  int DEFAULT_SLOT_TOP_OFFSET = -1;
+
   static <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> fromPositionRefs(
       PositionReference<H, S> referenceX, PositionReference<H, S> referenceY
   ) {
@@ -22,7 +25,7 @@ public interface PositioningFunction<H extends ScreenHandler, S extends HandledS
   }
 
   static <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> refSlotYAndBgRight() {
-    return refSlotYAndBgRight(Coords.zero());
+    return refSlotYAndBgRight(Coords.of(DEFAULT_BG_RIGHT_OFFSET, DEFAULT_SLOT_TOP_OFFSET));
   }
 
   static <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> refSlotYAndBgRight(Coords offset) {

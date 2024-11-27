@@ -62,7 +62,7 @@ public class InventoryManagementConfig extends ModConfigImpl implements GameScop
         .build());
 
     defaultPosition = this.buildRegistration(PositionConfigOption.builder(ConfigPath.of("defaultPosition"))
-        .setDefaultValue(new Position(-4, -1))
+        .setDefaultValue(new Position(0, 0))
         .onUpdate(
             (option) -> option.setDisabled(!showSort.getValue() && !showTransfer.getValue() && !showStack.getValue()))
         .setComment("Customize a default for button position.")

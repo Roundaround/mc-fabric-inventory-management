@@ -9,6 +9,8 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
+import java.util.HashSet;
+
 public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> {
   private static final MinecraftClient MINECRAFT = MinecraftClient.getInstance();
 
@@ -18,6 +20,7 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
   private final H screenHandler;
   private final Inventory playerInventory;
   private final Inventory containerInventory;
+  private final HashSet<String> buttonsToShow = new HashSet<>();
 
   private Slot referenceSlot;
 
@@ -59,56 +62,56 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
   }
 
   public boolean hasParentScreen() {
-    return parentScreen != null;
+    return this.parentScreen != null;
   }
 
   public S getScreen() {
-    return parentScreen;
+    return this.parentScreen;
   }
 
   public HandledScreenAccessor getScreenAccessor() {
-    return accessor;
+    return this.accessor;
   }
 
   public boolean isPlayerInventory() {
-    return isPlayerInventory;
+    return this.isPlayerInventory;
   }
 
   public boolean hasScreenHandler() {
-    return screenHandler != null;
+    return this.screenHandler != null;
   }
 
   public H getScreenHandler() {
-    return screenHandler;
+    return this.screenHandler;
   }
 
   public boolean hasReferenceSlot() {
-    return referenceSlot != null;
+    return this.referenceSlot != null;
   }
 
   public Slot getReferenceSlot() {
-    return referenceSlot;
+    return this.referenceSlot;
   }
 
   public boolean hasPlayerInventory() {
-    return playerInventory != null;
+    return this.playerInventory != null;
   }
 
   public Inventory getPlayerInventory() {
-    return playerInventory;
+    return this.playerInventory;
   }
 
   public boolean hasContainerInventory() {
-    return containerInventory != null;
+    return this.containerInventory != null;
   }
 
   public Inventory getContainerInventory() {
-    return containerInventory;
+    return this.containerInventory;
   }
 
   public boolean hasInventory() {
     return this.isPlayerInventory && this.hasPlayerInventory() ||
-        !this.isPlayerInventory && this.hasContainerInventory();
+           !this.isPlayerInventory && this.hasContainerInventory();
   }
 
   public Inventory getInventory() {
@@ -132,5 +135,25 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
       return null;
     }
     return (Class<H>) this.getScreenHandler().getClass();
+  }
+
+  public void markButtonToShow(String button) {
+    this.buttonsToShow.add(button);
+  }
+
+  public boolean shouldShowButton(String button) {
+    return this.buttonsToShow.contains(button);
+  }
+
+  public int getButtonShownCount() {
+    return this.buttonsToShow.size();
+  }
+
+  public int getButtonsTotalHeight(int height, int spacing) {
+    int count = this.getButtonShownCount();
+    if (count == 0) {
+      return 0;
+    }
+    return count * (height + spacing) - spacing;
   }
 }
