@@ -213,14 +213,14 @@ public class ButtonManager {
       return;
     }
 
-    Coords offset = posToCoords(this.getButtonOffset(context));
+    Coords offset = posToCoords(this.getButtonOffset(context, buttonKey));
     PositioningFunction<H, S> positioningFunction = this.getPositioningFunction(context);
     T button = constructor.create(offset, positioningFunction, context);
     Screens.getButtons(context.getScreen()).add(button);
     (context.isPlayerInventory() ? this.playerButtons : this.containerButtons).add(button);
   }
 
-  private Position getButtonOffset(ButtonContext<?, ?> context) {
+  private Position getButtonOffset(ButtonContext<?, ?> context, String buttonKey) {
     Position offset = InventoryManagementConfig.getInstance().perScreenConfigs.getPosition(context.getScreen(),
         context.isPlayerInventory()
     );
@@ -228,8 +228,9 @@ public class ButtonManager {
       offset = InventoryManagementConfig.getInstance().defaultPosition.getValue();
     }
 
-    int index = (context.isPlayerInventory() ? this.playerButtons : this.containerButtons).size();
-    return new Position(offset.x(), offset.y() + BUTTON_SHIFT_Y * (ButtonBase.HEIGHT + BUTTON_SPACING) * index);
+    return new Position(offset.x(),
+        offset.y() + BUTTON_SHIFT_Y * (ButtonBase.HEIGHT + BUTTON_SPACING) * context.getButtonIndex(buttonKey)
+    );
   }
 
   private <H extends ScreenHandler, S extends HandledScreen<H>> PositioningFunction<H, S> getPositioningFunction(

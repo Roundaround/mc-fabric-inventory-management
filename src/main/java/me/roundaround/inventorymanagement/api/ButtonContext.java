@@ -9,7 +9,8 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 
 public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> {
   private static final MinecraftClient MINECRAFT = MinecraftClient.getInstance();
@@ -20,7 +21,7 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
   private final H screenHandler;
   private final Inventory playerInventory;
   private final Inventory containerInventory;
-  private final HashSet<String> buttonsToShow = new HashSet<>();
+  private final LinkedHashSet<String> buttonsToShow = new LinkedHashSet<>();
 
   private Slot referenceSlot;
 
@@ -155,5 +156,22 @@ public class ButtonContext<H extends ScreenHandler, S extends HandledScreen<H>> 
       return 0;
     }
     return count * (height + spacing) - spacing;
+  }
+
+  public int getButtonIndex(String button) {
+    if (!this.buttonsToShow.contains(button)) {
+      return -1;
+    }
+
+    int index = 0;
+    for (String resource : this.buttonsToShow) {
+      if (Objects.equals(resource, button)) {
+        return index;
+      }
+      index++;
+    }
+
+    // Technically should never get here but whatever
+    return -1;
   }
 }
