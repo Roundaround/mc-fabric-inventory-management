@@ -3,8 +3,10 @@ package me.roundaround.inventorymanagement.client;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.api.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
+import me.roundaround.inventorymanagement.api.positioning.BackgroundPositionReference;
 import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.api.positioning.SlotPositionReference;
+import me.roundaround.inventorymanagement.api.positioning.TitlePositionReference;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;
@@ -14,6 +16,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.screen.*;
 import net.minecraft.text.Text;
@@ -102,6 +105,27 @@ public class InventoryManagementClientMod implements ClientModInitializer {
               PositioningFunction.refSlotYAndBgRight();
           return base.apply(context);
         });
+
+    // TODO: Move to separate compat mod
+    registry.registerBothSides(compasses.expandedstorage.impl.inventory.handler.AbstractHandler.class, (context) -> {
+      int slotRightToBgRight = 8;
+      int titleBottomToSlotTop = 3;
+
+      if (context.isPlayerInventory()) {
+        return PositioningFunction.fromPositionRefs(SlotPositionReference.right(), SlotPositionReference.top(),
+                new Coords(slotRightToBgRight - 4, -1)
+            )
+            .apply(context);
+      }
+
+      int scrollbarOffset =
+          ((Screen) context.getScreen()) instanceof compasses.expandedstorage.impl.client.gui.ScrollScreen ?
+          18 :
+          0;
+      return PositioningFunction.fromPositionRefs(BackgroundPositionReference.right(), TitlePositionReference.bottom(),
+          new Coords(scrollbarOffset - 4, titleBottomToSlotTop - 1)
+      ).apply(context);
+    });
 
     FabricLoader.getInstance()
         .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
