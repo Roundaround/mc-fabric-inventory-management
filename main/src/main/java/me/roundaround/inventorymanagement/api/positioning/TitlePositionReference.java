@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.api.positioning;
 
 import me.roundaround.inventorymanagement.api.ButtonContext;
+import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.ScreenHandler;
@@ -59,6 +60,37 @@ public class TitlePositionReference<H extends ScreenHandler, S extends HandledSc
         (context) -> context.getScreenAccessor().getPlayerInventoryTitleY() + getHeight(),
         BackgroundPositionReference.top()
     );
+  }
+
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> autoLeft() {
+    return new TitlePositionReference<>((context) -> {
+      HandledScreenAccessor accessor = context.getScreenAccessor();
+      return context.isPlayerInventory() ? accessor.getPlayerInventoryTitleX() : accessor.getTitleX();
+    }, BackgroundPositionReference.left());
+  }
+
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> autoRight() {
+    return new TitlePositionReference<>((context) -> {
+      HandledScreenAccessor accessor = context.getScreenAccessor();
+      int basePos = context.isPlayerInventory() ? accessor.getPlayerInventoryTitleX() : accessor.getTitleX();
+      Text title = context.isPlayerInventory() ? accessor.getPlayerInventoryTitle() : context.getScreen().getTitle();
+      return basePos + getWidth(title);
+    }, BackgroundPositionReference.left());
+  }
+
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> autoTop() {
+    return new TitlePositionReference<>((context) -> {
+      HandledScreenAccessor accessor = context.getScreenAccessor();
+      return context.isPlayerInventory() ? accessor.getPlayerInventoryTitleY() : accessor.getTitleY();
+    }, BackgroundPositionReference.top());
+  }
+
+  public static <H extends ScreenHandler, S extends HandledScreen<H>> TitlePositionReference<H, S> autoBottom() {
+    return new TitlePositionReference<>((context) -> {
+      HandledScreenAccessor accessor = context.getScreenAccessor();
+      int basePos = context.isPlayerInventory() ? accessor.getPlayerInventoryTitleY() : accessor.getTitleY();
+      return basePos + getHeight();
+    }, BackgroundPositionReference.top());
   }
 
   private static int getWidth(Text text) {
