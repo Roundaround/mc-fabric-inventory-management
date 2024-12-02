@@ -8,16 +8,26 @@ import net.minecraft.registry.Registries;
 
 import java.util.*;
 
-public class CreativeInventoryOrderItemStackComparator implements Comparator<ItemStack> {
+public class CreativeInventoryOrderItemStackComparator extends AbstractComparator<ItemStack> {
   private static CreativeInventoryOrderItemStackComparator instance;
 
   private final List<ItemGroup> itemGroups = ItemGroups.getGroups();
   private final HashMap<ItemGroup, LinkedHashSet<Item>> itemsByGroup = new HashMap<>(this.itemGroups.size());
   private final HashMap<Item, Integer> groupIndexByItem = new HashMap<>();
   private final HashMap<Item, ItemGroup> groupByItem = new HashMap<>();
-  private final SerialComparator<ItemStack> base;
 
   private CreativeInventoryOrderItemStackComparator() {
+  }
+
+  public static CreativeInventoryOrderItemStackComparator getInstance() {
+    if (instance == null) {
+      instance = new CreativeInventoryOrderItemStackComparator();
+    }
+    return instance;
+  }
+
+  @Override
+  protected Comparator<ItemStack> init() {
     this.itemGroups.forEach((group) -> {
       LinkedHashSet<Item> items = new LinkedHashSet<>();
       group.getDisplayStacks().forEach((stack) -> {
@@ -40,22 +50,10 @@ public class CreativeInventoryOrderItemStackComparator implements Comparator<Ite
       this.groupByItem.put(item, null);
     });
 
-    this.base = SerialComparator.comparing(
+    return SerialComparator.comparing(
         Comparator.comparing(this::getGroupIndexOrNull, Comparator.nullsLast(Integer::compareTo)),
         Comparator.comparing(this::getIndexInGroupOrNull, Comparator.nullsLast(Integer::compareTo))
     );
-  }
-
-  public static CreativeInventoryOrderItemStackComparator getInstance() {
-    if (instance == null) {
-      instance = new CreativeInventoryOrderItemStackComparator();
-    }
-    return instance;
-  }
-
-  @Override
-  public int compare(ItemStack o1, ItemStack o2) {
-    return this.base.compare(o1, o2);
   }
 
   private Integer getGroupIndexOrNull(ItemStack stack) {

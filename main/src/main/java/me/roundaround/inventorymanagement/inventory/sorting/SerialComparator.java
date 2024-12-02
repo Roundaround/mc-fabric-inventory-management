@@ -3,13 +3,17 @@ package me.roundaround.inventorymanagement.inventory.sorting;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
 
 public class SerialComparator<T> implements Comparator<T> {
   private final List<Comparator<T>> subComparators;
 
   protected SerialComparator(Collection<Comparator<T>> subComparators) {
     this.subComparators = List.copyOf(subComparators);
+  }
+
+  @SafeVarargs
+  protected SerialComparator(Comparator<T>... subComparators) {
+    this.subComparators = List.of(subComparators);
   }
 
   @Override
@@ -21,19 +25,6 @@ public class SerialComparator<T> implements Comparator<T> {
       }
     }
     return 0;
-  }
-
-  @SafeVarargs
-  public static <T, C extends SerialComparator<T>> C comparing(
-      Function<Collection<Comparator<T>>, C> constructor, Comparator<T>... baseComparators
-  ) {
-    return comparing(constructor, List.of(baseComparators));
-  }
-
-  public static <T, C extends SerialComparator<T>> C comparing(
-      Function<Collection<Comparator<T>>, C> constructor, Collection<Comparator<T>> baseComparators
-  ) {
-    return constructor.apply(baseComparators);
   }
 
   @SafeVarargs

@@ -54,9 +54,9 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   }
 
   private static ItemStackComparator itemMetadata() {
-    return new ItemStackComparator(customName(), playerHeadName(), countOrDurability(), containerContents(),
-        enchantments(), paintingInfo(), bannerPattern(), fireworkAndRocket(), instrumentType(), potionEffects(),
-        suspiciousStewEffects()
+    return new ItemStackComparator(customName(), playerHeadName(), containerContents(), enchantments(), paintingInfo(),
+        bannerPattern(), fireworkAndRocket(), instrumentType(), potionEffects(), suspiciousStewEffects(),
+        countOrDurability()
     );
   }
 
@@ -102,7 +102,11 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   }
 
   private static Comparator<ItemStack> enchantments() {
-    // TODO: Order based on enchantments or stored enchantments (enchanted books)
+    return new EnchantmentComparator();
+  }
+
+  private static Comparator<ItemStack> storedEnchantments() {
+    // TODO: Order based on stored enchantments (enchanted books)
     return Comparator.comparingInt((stack) -> 0);
   }
 
