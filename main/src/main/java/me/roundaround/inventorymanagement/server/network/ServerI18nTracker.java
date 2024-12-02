@@ -1,5 +1,8 @@
 package me.roundaround.inventorymanagement.server.network;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -7,11 +10,17 @@ import java.util.UUID;
 public class ServerI18nTracker {
   private static final HashMap<UUID, ServerI18nTracker> instances = new HashMap<>();
 
-  private final UUID player;
   private final HashMap<String, String> store = new HashMap<>();
 
   private ServerI18nTracker(UUID player) {
-    this.player = player;
+  }
+
+  private ServerI18nTracker(Map<String, String> store) {
+    this.store.putAll(store);
+  }
+
+  public static ServerI18nTracker getInstance(PlayerEntity player) {
+    return getInstance(player.getUuid());
   }
 
   public static ServerI18nTracker getInstance(UUID player) {
@@ -26,8 +35,27 @@ public class ServerI18nTracker {
     return this.store.getOrDefault(translationKey, translationKey);
   }
 
-  public void clear() {
-    this.store.clear();
-    instances.remove(this.player);
+  public Snapshot snapshot() {
+    return new Snapshot(this);
+  }
+
+  public static void remove(PlayerEntity player) {
+    instances.remove(player.getUuid());
+  }
+
+  public static class Snapshot {
+    private final Map<String, String> store;
+
+    private Snapshot(ServerI18nTracker source) {
+      this.store = Map.copyOf(source.store);
+    }
+
+    public String get(ItemStack stack) {
+      return this.get(stack.getTranslationKey());
+    }
+
+    public String get(String translationKey) {
+      return this.store.getOrDefault(translationKey, translationKey);
+    }
   }
 }
