@@ -20,11 +20,17 @@ public final class ServerNetworking {
   }
 
   private static void handleSort(Networking.SortC2S payload, ServerPlayNetworking.Context context) {
-    context.player().server.execute(() -> InventoryHelper.sortInventory(context.player(), payload.isPlayerInventory()));
+    context.player().server.execute(() -> {
+      ServerI18nTracker.getInstance(context.player().getUuid()).track(payload.itemNames());
+      InventoryHelper.sortInventory(context.player(), payload.isPlayerInventory());
+    });
   }
 
   private static void handleSortAll(Networking.SortAllC2S payload, ServerPlayNetworking.Context context) {
-    context.player().server.execute(() -> InventoryHelper.sortAll(context.player()));
+    context.player().server.execute(() -> {
+      ServerI18nTracker.getInstance(context.player().getUuid()).track(payload.itemNames());
+      InventoryHelper.sortAll(context.player());
+    });
   }
 
   private static void handleTransfer(Networking.TransferC2S payload, ServerPlayNetworking.Context context) {

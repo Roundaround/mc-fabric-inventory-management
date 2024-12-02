@@ -25,7 +25,7 @@ public class InventoryHelper {
     SlotRange slotRange = isPlayerInventory ?
         SlotRangeRegistry.getPlayerSide(player, inventory) :
         SlotRangeRegistry.getContainerSide(player, inventory);
-    sortInventory(inventory, slotRange);
+    sortInventory(player, inventory, slotRange);
   }
 
   public static void sortAll(PlayerEntity player) {
@@ -33,15 +33,15 @@ public class InventoryHelper {
     sortInventory(player, false);
   }
 
-  public static void sortInventory(Inventory inventory) {
-    sortInventory(inventory, 0, inventory.size());
+  public static void sortInventory(PlayerEntity player, Inventory inventory) {
+    sortInventory(player, inventory, 0, inventory.size());
   }
 
-  public static void sortInventory(Inventory inventory, int start, int end) {
-    sortInventory(inventory, new SlotRange(start, end));
+  public static void sortInventory(PlayerEntity player, Inventory inventory, int start, int end) {
+    sortInventory(player, inventory, new SlotRange(start, end));
   }
 
-  public static void sortInventory(Inventory inventory, SlotRange slotRange) {
+  public static void sortInventory(PlayerEntity player, Inventory inventory, SlotRange slotRange) {
     List<ItemStack> stacks = new ArrayList<>(slotRange.size());
 
     for (int i = slotRange.min(); i < slotRange.max(); i++) {
@@ -65,7 +65,10 @@ public class InventoryHelper {
       }
     }
 
-    stacks = stacks.stream().filter(itemStack -> !itemStack.isEmpty()).sorted(ItemStackComparator.get()).toList();
+    stacks = stacks.stream()
+        .filter(itemStack -> !itemStack.isEmpty())
+        .sorted(ItemStackComparator.getInstance(player.getUuid()))
+        .toList();
 
     for (int slotIndex = slotRange.min(); slotIndex < slotRange.max(); slotIndex++) {
       int stacksIndex = slotIndex - slotRange.min();
@@ -249,7 +252,7 @@ public class InventoryHelper {
 
   public static boolean canStacksBeMerged(ItemStack a, ItemStack b) {
     return !a.isEmpty() && ItemStack.areItemsAndComponentsEqual(a, b) && a.isStackable() &&
-        a.getCount() < a.getMaxCount();
+           a.getCount() < a.getMaxCount();
   }
 
   public static boolean mergeStacks(ItemStack toStack, ItemStack fromStack) {

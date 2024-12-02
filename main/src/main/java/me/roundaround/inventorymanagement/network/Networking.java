@@ -9,6 +9,8 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
+import java.util.Map;
+
 public final class Networking {
   private Networking() {
   }
@@ -31,28 +33,31 @@ public final class Networking {
         PacketCodecs.BOOL, StackC2S::fromPlayerInventory, StackC2S::new);
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Id<StackC2S> getId() {
       return ID;
     }
   }
 
-  public record SortC2S(boolean isPlayerInventory) implements CustomPayload {
+  public record SortC2S(boolean isPlayerInventory, Map<String, String> itemNames) implements CustomPayload {
     public static final CustomPayload.Id<SortC2S> ID = new CustomPayload.Id<>(SORT_C2S);
-    public static final PacketCodec<RegistryByteBuf, SortC2S> CODEC = PacketCodec.tuple(
-        PacketCodecs.BOOL, SortC2S::isPlayerInventory, SortC2S::new);
+    public static final PacketCodec<RegistryByteBuf, SortC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOL,
+        SortC2S::isPlayerInventory, CustomCodecs.forMap(PacketCodecs.STRING, PacketCodecs.STRING), SortC2S::itemNames,
+        SortC2S::new
+    );
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Id<SortC2S> getId() {
       return ID;
     }
   }
 
-  public record SortAllC2S() implements CustomPayload {
+  public record SortAllC2S(Map<String, String> itemNames) implements CustomPayload {
     public static final CustomPayload.Id<SortAllC2S> ID = new CustomPayload.Id<>(SORT_ALL_C2S);
-    public static final PacketCodec<RegistryByteBuf, SortAllC2S> CODEC = CustomCodecs.empty(SortAllC2S::new);
+    public static final PacketCodec<RegistryByteBuf, SortAllC2S> CODEC = PacketCodec.tuple(
+        CustomCodecs.forMap(PacketCodecs.STRING, PacketCodecs.STRING), SortAllC2S::itemNames, SortAllC2S::new);
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Id<SortAllC2S> getId() {
       return ID;
     }
   }
@@ -63,7 +68,7 @@ public final class Networking {
         PacketCodecs.BOOL, TransferC2S::fromPlayerInventory, TransferC2S::new);
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Id<TransferC2S> getId() {
       return ID;
     }
   }
