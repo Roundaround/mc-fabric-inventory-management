@@ -10,16 +10,24 @@ import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;
 import me.roundaround.roundalib.client.gui.GuiUtil;
+import me.roundaround.roundalib.util.PathAccessor;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class InventoryManagementClientMod implements ClientModInitializer {
   @Override
@@ -32,10 +40,14 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         .getModContainer(InventoryManagementMod.MOD_ID)
         .ifPresent((container) -> ResourceManagerHelper.registerBuiltinResourcePack(
             new Identifier(InventoryManagementMod.MOD_ID, "inventorymanagement-dark-ui"), container,
+            // TODO: i18n
             Text.literal("Inventory Management Dark UI"), ResourcePackActivationType.NORMAL
         ));
 
     this.initButtonRegistry();
+
+    // TODO: REMOVE (debug)
+    this.runTests();
   }
 
   private void initButtonRegistry() {
@@ -106,5 +118,21 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     FabricLoader.getInstance()
         .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
         .forEach((entrypoint) -> entrypoint.getEntrypoint().onInventoryManagementInit());
+  }
+
+  private void runTests() {
+    try (
+        BufferedWriter writer = Files.newBufferedWriter(
+            PathAccessor.getInstance().getGameDir().resolve(String.format("items-%s.txt", Util.getEpochTimeMs())))
+    ) {
+      int size = Registries.ITEM.size();
+      int numWidth = String.valueOf(size).length();
+      AtomicInteger index = new AtomicInteger(0);
+      for (Item item : Registries.ITEM) {
+        writer.write(String.format("%0" + numWidth + "d = %s", index.getAndIncrement(), Registries.ITEM.getId(item)));
+        writer.newLine();
+      }
+    } catch (IOException ignored) {
+    }
   }
 }
