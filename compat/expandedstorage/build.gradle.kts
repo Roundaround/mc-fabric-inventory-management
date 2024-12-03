@@ -1,7 +1,7 @@
 import java.net.URI
 
 plugins {
-  id("roundalib") version "0.7.0-SNAPSHOT"
+  id("roundalib") version "0.8.0-SNAPSHOT"
 }
 
 repositories {
