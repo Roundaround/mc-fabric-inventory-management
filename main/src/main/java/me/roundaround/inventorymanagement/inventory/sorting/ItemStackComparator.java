@@ -8,6 +8,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.BundleItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -60,7 +61,8 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
     );
   }
 
-  private static Comparator<ItemStack> containersFirst() {
+  @VisibleForTesting
+  static Comparator<ItemStack> containersFirst() {
     // TODO: Registry/hook for mods to hook in their custom containers
     return Comparator.comparingInt((stack) -> {
       if (stack.getItem() instanceof BlockItem block && block.getBlock() instanceof ShulkerBoxBlock) {

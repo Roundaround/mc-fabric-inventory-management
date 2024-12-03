@@ -2,6 +2,7 @@ package me.roundaround.inventorymanagement.server.network;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Language;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class ServerI18nTracker {
   }
 
   public String get(String translationKey) {
-    return this.store.getOrDefault(translationKey, translationKey);
+    return this.store.getOrDefault(translationKey, Language.getInstance().get(translationKey));
   }
 
   public Snapshot snapshot() {
@@ -55,7 +56,7 @@ public class ServerI18nTracker {
     }
 
     public String get(String translationKey) {
-      return this.store.getOrDefault(translationKey, translationKey);
+      return this.store.getOrDefault(translationKey, Language.getInstance().get(translationKey));
     }
   }
 }
