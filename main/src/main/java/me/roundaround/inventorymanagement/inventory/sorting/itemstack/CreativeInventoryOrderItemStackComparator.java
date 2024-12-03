@@ -1,5 +1,7 @@
-package me.roundaround.inventorymanagement.inventory.sorting;
+package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
+import me.roundaround.inventorymanagement.inventory.sorting.AbstractComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;

@@ -1,14 +1,13 @@
 package me.roundaround.inventorymanagement.inventory.sorting;
 
+import me.roundaround.inventorymanagement.inventory.sorting.itemstack.ContainerFirstComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.itemstack.CreativeInventoryOrderItemStackComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.itemstack.EnchantmentComparator;
 import me.roundaround.inventorymanagement.server.network.ServerI18nTracker;
-import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BundleItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -61,18 +60,8 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
     );
   }
 
-  @VisibleForTesting
-  static Comparator<ItemStack> containersFirst() {
-    // TODO: Registry/hook for mods to hook in their custom containers
-    return Comparator.comparingInt((stack) -> {
-      if (stack.getItem() instanceof BlockItem block && block.getBlock() instanceof ShulkerBoxBlock) {
-        return 0;
-      }
-      if (stack.getItem() instanceof BundleItem) {
-        return 1;
-      }
-      return 2;
-    });
+  private static Comparator<ItemStack> containersFirst() {
+    return new ContainerFirstComparator();
   }
 
   private static Comparator<ItemStack> creativeIndex() {
