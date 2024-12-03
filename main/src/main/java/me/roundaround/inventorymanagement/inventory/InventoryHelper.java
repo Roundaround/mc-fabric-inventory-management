@@ -3,9 +3,6 @@ package me.roundaround.inventorymanagement.inventory;
 import me.roundaround.inventorymanagement.api.SlotRangeRegistry;
 import me.roundaround.inventorymanagement.inventory.sorting.ItemStackComparator;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentType;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -256,32 +253,6 @@ public class InventoryHelper {
   public static boolean canStacksBeMerged(ItemStack a, ItemStack b) {
     return !a.isEmpty() && ItemStack.areItemsAndComponentsEqual(a, b) && a.isStackable() &&
            a.getCount() < a.getMaxCount();
-  }
-
-  public static boolean areItemsAndSomeComponentsEqual(ItemStack a, ItemStack b) {
-    if (!ItemStack.areItemsEqual(a, b)) {
-      return false;
-    }
-    if (a.isEmpty() != b.isEmpty()) {
-      return false;
-    }
-
-    List<DataComponentType<?>> allowedDifferences = List.of(
-        DataComponentTypes.DAMAGE,
-        DataComponentTypes.CUSTOM_NAME,
-        DataComponentTypes.ENCHANTMENTS,
-        DataComponentTypes.TRIM,
-        DataComponentTypes.ENTITY_DATA,
-        DataComponentTypes.BUCKET_ENTITY_DATA,
-        DataComponentTypes.BLOCK_ENTITY_DATA,
-        DataComponentTypes.PROFILE,
-        DataComponentTypes.STORED_ENCHANTMENTS,
-        DataComponentTypes.SUSPICIOUS_STEW_EFFECTS,
-        DataComponentTypes.OMINOUS_BOTTLE_AMPLIFIER,
-        DataComponentTypes.INSTRUMENT,
-    );
-    ComponentMap aComponents = a.getComponents();
-    ComponentMap bComponents = b.getComponents();
   }
 
   public static boolean mergeStacks(ItemStack toStack, ItemStack fromStack) {
