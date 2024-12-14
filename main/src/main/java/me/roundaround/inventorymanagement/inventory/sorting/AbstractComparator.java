@@ -3,7 +3,7 @@ package me.roundaround.inventorymanagement.inventory.sorting;
 import java.util.Comparator;
 
 public abstract class AbstractComparator<T> implements Comparator<T> {
-  private final Comparator<T> base;
+  protected final Comparator<T> base;
 
   protected AbstractComparator() {
     this.base = this.init();

@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class ItemStackComparator extends SerialComparator<ItemStack> {
+  private static ItemStackComparator cachedItemMetadataComparator;
+
   private ItemStackComparator(Collection<Comparator<ItemStack>> subComparators) {
     super(subComparators);
   }
@@ -54,10 +56,13 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   }
 
   private static ItemStackComparator itemMetadata() {
-    return new ItemStackComparator(customName(), playerHeadName(), containerContents(), enchantments(), paintingInfo(),
-        bannerPattern(), fireworkAndRocket(), instrumentType(), potionEffects(), suspiciousStewEffects(),
-        countOrDurability()
-    );
+    if (cachedItemMetadataComparator == null) {
+      cachedItemMetadataComparator = new ItemStackComparator(customName(), playerHeadName(), containerContents(),
+          enchantments(), storedEnchantments(), paintingInfo(), bannerPattern(), fireworkAndRocket(), instrumentType(),
+          potionEffects(), suspiciousStewEffects(), countOrDurability()
+      );
+    }
+    return cachedItemMetadataComparator;
   }
 
   private static Comparator<ItemStack> containersFirst() {
@@ -93,12 +98,11 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   }
 
   private static Comparator<ItemStack> enchantments() {
-    return new EnchantmentComparator();
+    return new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS);
   }
 
   private static Comparator<ItemStack> storedEnchantments() {
-    // TODO: Order based on stored enchantments (enchanted books)
-    return Comparator.comparingInt((stack) -> 0);
+    return new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS);
   }
 
   private static Comparator<ItemStack> paintingInfo() {
