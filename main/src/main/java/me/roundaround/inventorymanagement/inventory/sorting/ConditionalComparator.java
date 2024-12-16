@@ -1,13 +1,15 @@
 package me.roundaround.inventorymanagement.inventory.sorting;
 
+import java.util.Comparator;
 import java.util.function.Predicate;
 
-public abstract class ConditionalComparator<T> extends AbstractComparator<T> {
-  private final Predicate<? super T> predicate;
+public class ConditionalComparator<T> implements Comparator<T> {
+  private final Predicate<T> predicate;
+  private final Comparator<T> base;
 
-  protected ConditionalComparator(Predicate<? super T> predicate) {
-    super();
+  protected ConditionalComparator(Predicate<T> predicate, Comparator<T> base) {
     this.predicate = predicate;
+    this.base = base;
   }
 
   @Override
@@ -15,6 +17,10 @@ public abstract class ConditionalComparator<T> extends AbstractComparator<T> {
     if (!this.predicate.test(o1) || !this.predicate.test(o2)) {
       return 0;
     }
-    return super.compare(o1, o2);
+    return this.base.compare(o1, o2);
+  }
+
+  public static <T> ConditionalComparator<T> of(Predicate<T> predicate, Comparator<T> base) {
+    return new ConditionalComparator<T>(predicate, base);
   }
 }

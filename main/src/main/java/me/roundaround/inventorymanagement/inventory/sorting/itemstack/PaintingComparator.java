@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
+import me.roundaround.inventorymanagement.inventory.sorting.ConditionalComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import me.roundaround.inventorymanagement.mixin.ItemGroupsAccessor;
 import net.minecraft.component.DataComponentTypes;
@@ -12,6 +13,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 public class PaintingComparator implements Comparator<ItemStack> {
   private static Comparator<ItemStack> base;
@@ -30,7 +32,7 @@ public class PaintingComparator implements Comparator<ItemStack> {
   private static RegistryEntry<PaintingVariant> getVariant(ItemStack stack) {
     NbtComponent nbtComponent = stack.get(DataComponentTypes.ENTITY_DATA);
     if (nbtComponent == null || nbtComponent.isEmpty()) {
-      return Registries.PAINTING_VARIANT.entryOf(PaintingVariants.KEBAB);
+      return null;
     }
 
     return nbtComponent.get(PaintingEntity.VARIANT_MAP_CODEC)
@@ -39,8 +41,10 @@ public class PaintingComparator implements Comparator<ItemStack> {
   }
 
   private static Comparator<RegistryEntry<PaintingVariant>> getVariantComparator() {
-    return SerialComparator.comparing(ItemGroupsAccessor.getPaintingVariantComparator(),
-        Comparator.comparing(RegistryEntry::getIdAsString)
+    return ConditionalComparator.of(Objects::nonNull,
+        SerialComparator.comparing(ItemGroupsAccessor.getPaintingVariantComparator(),
+            Comparator.comparing(RegistryEntry::getIdAsString)
+        )
     );
   }
 }

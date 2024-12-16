@@ -31,6 +31,23 @@ public class PaintingComparatorTest extends BaseMinecraftTest {
         expected, actual, ItemStack::areItemsAndComponentsEqual, PaintingComparatorTest::getStackVariantId);
   }
 
+  @Test
+  void ignoresNonPaintings() {
+    ArrayList<ItemStack> expected = Lists.newArrayList(new ItemStack(Items.NETHERITE_SWORD),
+        createStack(Registries.PAINTING_VARIANT.getEntry(PaintingVariants.KEBAB).orElseThrow()),
+        new ItemStack(Items.DIAMOND, 16)
+    );
+
+    ArrayList<ItemStack> actual = Lists.newArrayList(new ItemStack(Items.NETHERITE_SWORD),
+        createStack(Registries.PAINTING_VARIANT.getEntry(PaintingVariants.KEBAB).orElseThrow()),
+        new ItemStack(Items.DIAMOND, 16)
+    );
+    actual.sort(new PaintingComparator());
+
+    assertIterableMatches(
+        expected, actual, ItemStack::areItemsAndComponentsEqual, PaintingComparatorTest::getStackVariantId);
+  }
+
   private static ArrayList<ItemStack> getSortedPaintingList() {
     return Lists.newArrayList(PaintingVariants.ALBAN, PaintingVariants.AZTEC, PaintingVariants.AZTEC2,
             PaintingVariants.BOMB, PaintingVariants.KEBAB, PaintingVariants.PLANT, PaintingVariants.WASTELAND,
