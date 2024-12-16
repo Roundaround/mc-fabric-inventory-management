@@ -16,17 +16,15 @@ import java.util.Comparator;
 import java.util.Objects;
 
 public class PaintingComparator implements Comparator<ItemStack> {
-  private static Comparator<ItemStack> base;
+  private final Comparator<ItemStack> base;
 
   public PaintingComparator() {
-    if (base == null) {
-      base = Comparator.comparing(PaintingComparator::getVariant, getVariantComparator());
-    }
+    this.base = Comparator.comparing(PaintingComparator::getVariant, getVariantComparator());
   }
 
   @Override
   public int compare(ItemStack o1, ItemStack o2) {
-    return base.compare(o1, o2);
+    return this.base.compare(o1, o2);
   }
 
   private static RegistryEntry<PaintingVariant> getVariant(ItemStack stack) {
