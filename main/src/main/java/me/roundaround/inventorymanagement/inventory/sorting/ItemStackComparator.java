@@ -59,7 +59,7 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   private static Comparator<ItemStack> itemMetadata() {
     if (cachedItemMetadataComparator == null) {
       cachedItemMetadataComparator = SerialComparator.comparing(customName(), playerHeadName(), containerContents(),
-          enchantments(), storedEnchantments(), paintingMetadata(), bannerPattern(), fireworkAndRocket(),
+          enchantments(), storedEnchantments(), paintingVariant(), bannerPattern(), fireworkAndRocket(),
           instrumentType(), potionEffects(), suspiciousStewEffects(), countOrDurability()
       );
     }
@@ -106,7 +106,7 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
     return new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS);
   }
 
-  private static Comparator<ItemStack> paintingMetadata() {
+  private static Comparator<ItemStack> paintingVariant() {
     return new PaintingComparator();
   }
 
