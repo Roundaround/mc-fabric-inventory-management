@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ItemStackComparator extends SerialComparator<ItemStack> {
-  private static ItemStackComparator cachedItemMetadataComparator;
+  private static Comparator<ItemStack> cachedItemMetadataComparator;
 
   private ItemStackComparator(Collection<Comparator<ItemStack>> subComparators) {
     super(subComparators);
@@ -55,9 +55,9 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
     return stack.getMaxDamage() - stack.getDamage();
   }
 
-  private static ItemStackComparator itemMetadata() {
+  private static Comparator<ItemStack> itemMetadata() {
     if (cachedItemMetadataComparator == null) {
-      cachedItemMetadataComparator = new ItemStackComparator(customName(), playerHeadName(), containerContents(),
+      cachedItemMetadataComparator = SerialComparator.comparing(customName(), playerHeadName(), containerContents(),
           enchantments(), storedEnchantments(), paintingInfo(), bannerPattern(), fireworkAndRocket(), instrumentType(),
           potionEffects(), suspiciousStewEffects(), countOrDurability()
       );
