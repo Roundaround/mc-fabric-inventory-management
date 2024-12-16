@@ -3,6 +3,7 @@ package me.roundaround.inventorymanagement.inventory.sorting;
 import me.roundaround.inventorymanagement.inventory.sorting.itemstack.ContainerFirstComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.itemstack.CreativeInventoryOrderItemStackComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.itemstack.EnchantmentComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.itemstack.PaintingComparator;
 import me.roundaround.inventorymanagement.server.network.ServerI18nTracker;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
@@ -58,8 +59,8 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   private static Comparator<ItemStack> itemMetadata() {
     if (cachedItemMetadataComparator == null) {
       cachedItemMetadataComparator = SerialComparator.comparing(customName(), playerHeadName(), containerContents(),
-          enchantments(), storedEnchantments(), paintingInfo(), bannerPattern(), fireworkAndRocket(), instrumentType(),
-          potionEffects(), suspiciousStewEffects(), countOrDurability()
+          enchantments(), storedEnchantments(), paintingMetadata(), bannerPattern(), fireworkAndRocket(),
+          instrumentType(), potionEffects(), suspiciousStewEffects(), countOrDurability()
       );
     }
     return cachedItemMetadataComparator;
@@ -105,9 +106,8 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
     return new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS);
   }
 
-  private static Comparator<ItemStack> paintingInfo() {
-    // TODO: Order based on painting artist & name
-    return Comparator.comparingInt((stack) -> 0);
+  private static Comparator<ItemStack> paintingMetadata() {
+    return new PaintingComparator();
   }
 
   private static Comparator<ItemStack> bannerPattern() {
