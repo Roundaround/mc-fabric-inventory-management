@@ -1,9 +1,6 @@
 package me.roundaround.inventorymanagement.inventory.sorting;
 
-import me.roundaround.inventorymanagement.inventory.sorting.itemstack.ContainerFirstComparator;
-import me.roundaround.inventorymanagement.inventory.sorting.itemstack.CreativeInventoryOrderItemStackComparator;
-import me.roundaround.inventorymanagement.inventory.sorting.itemstack.EnchantmentComparator;
-import me.roundaround.inventorymanagement.inventory.sorting.itemstack.PaintingComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.itemstack.*;
 import me.roundaround.inventorymanagement.server.network.ServerI18nTracker;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
@@ -111,8 +108,7 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   }
 
   private static Comparator<ItemStack> bannerPattern() {
-    // TODO: Order based on banner pattern
-    return Comparator.comparingInt((stack) -> 0);
+    return new BannerComparator();
   }
 
   private static Comparator<ItemStack> fireworkAndRocket() {
