@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.assertIterableMatches;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class EnchantmentComparatorTest extends BaseMinecraftTest {
@@ -49,16 +50,17 @@ public class EnchantmentComparatorTest extends BaseMinecraftTest {
       );
       items.sort(new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS));
 
-      assertIterableEquals(List.of(3, 2, 1, 0), select(items, (stack) -> stack.getEnchantments().getSize()));
+      assertIterableMatches(
+          List.of(3, 2, 1, 0), items, Function.identity(), (stack) -> getSize(stack, DataComponentTypes.ENCHANTMENTS));
     }
 
     @Test
     void sortsHighestLevelDesc() {
-      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.NETHERITE_CHESTPLATE, "4",
+      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.NETHERITE_CHESTPLATE, "1",
           Map.of(Enchantments.MENDING, 1, Enchantments.PROTECTION, 4, Enchantments.BLAST_PROTECTION, 1,
               Enchantments.UNBREAKING, 2
           ), DataComponentTypes.ENCHANTMENTS
-      ), createStack(Items.NETHERITE_CHESTPLATE, "5",
+      ), createStack(Items.NETHERITE_CHESTPLATE, "2",
           Map.of(Enchantments.MENDING, 1, Enchantments.PROTECTION, 5, Enchantments.BLAST_PROTECTION, 1,
               Enchantments.UNBREAKING, 1
           ), DataComponentTypes.ENCHANTMENTS
@@ -69,61 +71,61 @@ public class EnchantmentComparatorTest extends BaseMinecraftTest {
       ));
       items.sort(new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS));
 
-      assertIterableEquals(List.of("5", "4", "3"), names(items));
+      assertIterableEquals(List.of("2", "1", "3"), names(items));
     }
 
     @Test
     void sortsLevelSumDesc() {
       ArrayList<ItemStack> items = Lists.newArrayList(
-          createStack(Items.NETHERITE_CHESTPLATE, "7", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 2),
+          createStack(Items.NETHERITE_CHESTPLATE, "1", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 2),
               DataComponentTypes.ENCHANTMENTS
           ),
-          createStack(Items.NETHERITE_CHESTPLATE, "8", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 3),
+          createStack(Items.NETHERITE_CHESTPLATE, "2", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 3),
               DataComponentTypes.ENCHANTMENTS
           ),
-          createStack(Items.NETHERITE_CHESTPLATE, "6", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 1),
+          createStack(Items.NETHERITE_CHESTPLATE, "3", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 1),
               DataComponentTypes.ENCHANTMENTS
           )
       );
       items.sort(new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS));
 
-      assertIterableEquals(List.of("8", "7", "6"), names(items));
+      assertIterableEquals(List.of("2", "1", "3"), names(items));
     }
 
     @Test
     void sortsLevelOfFirstEnchantmentDesc() {
-      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.NETHERITE_CHESTPLATE, "4",
-          Map.of(Enchantments.PROTECTION, 5, Enchantments.BLAST_PROTECTION, 4, Enchantments.UNBREAKING, 2),
+      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.NETHERITE_CHESTPLATE, "1",
+          Map.of(Enchantments.BLAST_PROTECTION, 5, Enchantments.PROTECTION, 4, Enchantments.UNBREAKING, 2),
           DataComponentTypes.ENCHANTMENTS
-      ), createStack(Items.NETHERITE_CHESTPLATE, "5",
-          Map.of(Enchantments.PROTECTION, 5, Enchantments.BLAST_PROTECTION, 5, Enchantments.UNBREAKING, 1),
+      ), createStack(Items.NETHERITE_CHESTPLATE, "2",
+          Map.of(Enchantments.BLAST_PROTECTION, 5, Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 1),
           DataComponentTypes.ENCHANTMENTS
       ), createStack(Items.NETHERITE_CHESTPLATE, "3",
-          Map.of(Enchantments.PROTECTION, 5, Enchantments.BLAST_PROTECTION, 3, Enchantments.UNBREAKING, 3),
+          Map.of(Enchantments.BLAST_PROTECTION, 5, Enchantments.PROTECTION, 3, Enchantments.UNBREAKING, 3),
           DataComponentTypes.ENCHANTMENTS
       ));
       items.sort(new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS));
 
-      // "First" is first alphabetically, so BLAST_PROTECTION here.
-      assertIterableEquals(List.of("5", "4", "3"), names(items));
+      // Enchantments are registered in PROTECTION, BLAST_PROTECTION, UNBREAKING order.
+      assertIterableEquals(List.of("2", "1", "3"), names(items));
     }
 
     @Test
-    void sortsByEnchantNamesDesc() {
-      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.NETHERITE_CHESTPLATE, "BPU",
+    void sortsByAllEnchantmentRegistryIndices() {
+      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.NETHERITE_CHESTPLATE, "1",
           Map.of(Enchantments.PROTECTION, 1, Enchantments.BLAST_PROTECTION, 1, Enchantments.UNBREAKING, 1),
           DataComponentTypes.ENCHANTMENTS
-      ), createStack(Items.NETHERITE_CHESTPLATE, "FMU",
+      ), createStack(Items.NETHERITE_CHESTPLATE, "2",
           Map.of(Enchantments.FIRE_PROTECTION, 1, Enchantments.MENDING, 1, Enchantments.UNBREAKING, 1),
           DataComponentTypes.ENCHANTMENTS
-      ), createStack(Items.NETHERITE_CHESTPLATE, "BMP",
+      ), createStack(Items.NETHERITE_CHESTPLATE, "3",
           Map.of(Enchantments.PROTECTION, 1, Enchantments.BLAST_PROTECTION, 1, Enchantments.MENDING, 1),
           DataComponentTypes.ENCHANTMENTS
       ));
       items.sort(new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS));
 
-      // All enchantment names are concatenated in alphabetical order.
-      assertIterableEquals(List.of("BMP", "BPU", "FMU"), names(items));
+      // Enchantments are registered in PROTECTION, FIRE_PROTECTION, BLAST_PROTECTION, UNBREAKING, MENDING order.
+      assertIterableEquals(List.of("1", "3", "2"), names(items));
     }
   }
 
@@ -142,17 +144,18 @@ public class EnchantmentComparatorTest extends BaseMinecraftTest {
       );
       items.sort(new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS));
 
-      assertIterableEquals(
-          List.of(3, 2, 1, 0), select(items, (stack) -> stack.get(DataComponentTypes.STORED_ENCHANTMENTS).getSize()));
+      assertIterableMatches(List.of(3, 2, 1, 0), items, Function.identity(),
+          (stack) -> getSize(stack, DataComponentTypes.STORED_ENCHANTMENTS)
+      );
     }
 
     @Test
     void sortsHighestLevelDesc() {
-      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.ENCHANTED_BOOK, "4",
+      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.ENCHANTED_BOOK, "1",
           Map.of(Enchantments.MENDING, 1, Enchantments.PROTECTION, 4, Enchantments.BLAST_PROTECTION, 1,
               Enchantments.UNBREAKING, 2
           ), DataComponentTypes.STORED_ENCHANTMENTS
-      ), createStack(Items.ENCHANTED_BOOK, "5",
+      ), createStack(Items.ENCHANTED_BOOK, "2",
           Map.of(Enchantments.MENDING, 1, Enchantments.PROTECTION, 5, Enchantments.BLAST_PROTECTION, 1,
               Enchantments.UNBREAKING, 1
           ), DataComponentTypes.STORED_ENCHANTMENTS
@@ -163,58 +166,58 @@ public class EnchantmentComparatorTest extends BaseMinecraftTest {
       ));
       items.sort(new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS));
 
-      assertIterableEquals(List.of("5", "4", "3"), names(items));
+      assertIterableEquals(List.of("2", "1", "3"), names(items));
     }
 
     @Test
     void sortsLevelSumDesc() {
       ArrayList<ItemStack> items = Lists.newArrayList(
-          createStack(Items.ENCHANTED_BOOK, "7", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 2),
+          createStack(Items.ENCHANTED_BOOK, "1", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 2),
               DataComponentTypes.STORED_ENCHANTMENTS
-          ), createStack(Items.ENCHANTED_BOOK, "8", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 3),
+          ), createStack(Items.ENCHANTED_BOOK, "2", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 3),
               DataComponentTypes.STORED_ENCHANTMENTS
-          ), createStack(Items.ENCHANTED_BOOK, "6", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 1),
+          ), createStack(Items.ENCHANTED_BOOK, "3", Map.of(Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 1),
               DataComponentTypes.STORED_ENCHANTMENTS
           ));
       items.sort(new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS));
 
-      assertIterableEquals(List.of("8", "7", "6"), names(items));
+      assertIterableEquals(List.of("2", "1", "3"), names(items));
     }
 
     @Test
     void sortsLevelOfFirstEnchantmentDesc() {
-      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.ENCHANTED_BOOK, "4",
-          Map.of(Enchantments.PROTECTION, 5, Enchantments.BLAST_PROTECTION, 4, Enchantments.UNBREAKING, 2),
+      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.ENCHANTED_BOOK, "1",
+          Map.of(Enchantments.BLAST_PROTECTION, 5, Enchantments.PROTECTION, 4, Enchantments.UNBREAKING, 2),
           DataComponentTypes.STORED_ENCHANTMENTS
-      ), createStack(Items.ENCHANTED_BOOK, "5",
-          Map.of(Enchantments.PROTECTION, 5, Enchantments.BLAST_PROTECTION, 5, Enchantments.UNBREAKING, 1),
+      ), createStack(Items.ENCHANTED_BOOK, "2",
+          Map.of(Enchantments.BLAST_PROTECTION, 5, Enchantments.PROTECTION, 5, Enchantments.UNBREAKING, 1),
           DataComponentTypes.STORED_ENCHANTMENTS
       ), createStack(Items.ENCHANTED_BOOK, "3",
-          Map.of(Enchantments.PROTECTION, 5, Enchantments.BLAST_PROTECTION, 3, Enchantments.UNBREAKING, 3),
+          Map.of(Enchantments.BLAST_PROTECTION, 5, Enchantments.PROTECTION, 3, Enchantments.UNBREAKING, 3),
           DataComponentTypes.STORED_ENCHANTMENTS
       ));
       items.sort(new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS));
 
-      // "First" is first alphabetically, so BLAST_PROTECTION here.
-      assertIterableEquals(List.of("5", "4", "3"), names(items));
+      // Enchantments are registered in PROTECTION, BLAST_PROTECTION, UNBREAKING order.
+      assertIterableEquals(List.of("2", "1", "3"), names(items));
     }
 
     @Test
-    void sortsByEnchantNamesDesc() {
-      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.ENCHANTED_BOOK, "BPU",
+    void sortsByAllEnchantmentRegistryIndices() {
+      ArrayList<ItemStack> items = Lists.newArrayList(createStack(Items.ENCHANTED_BOOK, "1",
           Map.of(Enchantments.PROTECTION, 1, Enchantments.BLAST_PROTECTION, 1, Enchantments.UNBREAKING, 1),
           DataComponentTypes.STORED_ENCHANTMENTS
-      ), createStack(Items.ENCHANTED_BOOK, "FMU",
+      ), createStack(Items.ENCHANTED_BOOK, "2",
           Map.of(Enchantments.FIRE_PROTECTION, 1, Enchantments.MENDING, 1, Enchantments.UNBREAKING, 1),
           DataComponentTypes.STORED_ENCHANTMENTS
-      ), createStack(Items.ENCHANTED_BOOK, "BMP",
+      ), createStack(Items.ENCHANTED_BOOK, "3",
           Map.of(Enchantments.PROTECTION, 1, Enchantments.BLAST_PROTECTION, 1, Enchantments.MENDING, 1),
           DataComponentTypes.STORED_ENCHANTMENTS
       ));
       items.sort(new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS));
 
-      // All enchantment names are concatenated in alphabetical order.
-      assertIterableEquals(List.of("BMP", "BPU", "FMU"), names(items));
+      // Enchantments are registered in PROTECTION, FIRE_PROTECTION, BLAST_PROTECTION, UNBREAKING, MENDING order.
+      assertIterableEquals(List.of("1", "3", "2"), names(items));
     }
   }
 
@@ -258,5 +261,11 @@ public class EnchantmentComparatorTest extends BaseMinecraftTest {
 
   private static List<String> names(List<ItemStack> source) {
     return select(source, (stack) -> Objects.requireNonNull(stack.get(DataComponentTypes.CUSTOM_NAME)).getString());
+  }
+
+  private static int getSize(
+      ItemStack stack, DataComponentType<ItemEnchantmentsComponent> dataComponentType
+  ) {
+    return stack.getOrDefault(dataComponentType, ItemEnchantmentsComponent.DEFAULT).getSize();
   }
 }

@@ -1,7 +1,7 @@
 package me.roundaround.inventorymanagement.inventory;
 
 import me.roundaround.inventorymanagement.api.SlotRangeRegistry;
-import me.roundaround.inventorymanagement.inventory.sorting.ItemStackComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.itemstack.ItemStackComparator;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

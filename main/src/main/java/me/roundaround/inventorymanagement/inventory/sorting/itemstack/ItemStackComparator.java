@@ -1,6 +1,6 @@
-package me.roundaround.inventorymanagement.inventory.sorting;
+package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
-import me.roundaround.inventorymanagement.inventory.sorting.itemstack.*;
+import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import me.roundaround.inventorymanagement.server.network.ServerI18nTracker;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;

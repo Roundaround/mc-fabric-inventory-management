@@ -3,3 +3,7 @@ plugins {
   id("com.gradleup.shadow") version "9.0.0-beta2"
   id("roundalib") version "0.9.0-SNAPSHOT"
 }
+
+dependencies {
+  testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")
+}

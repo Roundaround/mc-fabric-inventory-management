@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.inventory.sorting;
 
 import com.google.common.collect.Lists;
+import me.roundaround.inventorymanagement.inventory.sorting.itemstack.ItemStackComparator;
 import me.roundaround.inventorymanagement.testing.BaseMinecraftTest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
