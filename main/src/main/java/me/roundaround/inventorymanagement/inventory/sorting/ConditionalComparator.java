@@ -21,6 +21,6 @@ public class ConditionalComparator<T> implements Comparator<T> {
   }
 
   public static <T> ConditionalComparator<T> of(Predicate<T> predicate, Comparator<T> base) {
-    return new ConditionalComparator<T>(predicate, base);
+    return new ConditionalComparator<>(predicate, base);
   }
 }

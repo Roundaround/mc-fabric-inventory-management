@@ -72,8 +72,7 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   }
 
   private static Comparator<ItemStack> itemName(UUID player) {
-    ServerI18nTracker.Snapshot i18nSnapshot = ServerI18nTracker.getInstance(player).snapshot();
-    return Comparator.comparing(i18nSnapshot::get, String::compareToIgnoreCase);
+    return new ItemNameComparator(player);
   }
 
   private static Comparator<ItemStack> customName() {
