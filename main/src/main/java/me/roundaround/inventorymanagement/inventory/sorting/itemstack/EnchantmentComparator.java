@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
+import me.roundaround.inventorymanagement.inventory.sorting.AbstractCachingComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.IntListComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.component.DataComponentType;
@@ -13,25 +14,26 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class EnchantmentComparator implements Comparator<ItemStack> {
+public class EnchantmentComparator extends AbstractCachingComparator<ItemStack,
+    EnchantmentComparator.EnchantmentSummary> {
   private static HashMap<Enchantment, Integer> indices;
 
-  private final Comparator<ItemStack> base;
+  private final DataComponentType<ItemEnchantmentsComponent> type;
 
   public EnchantmentComparator(DataComponentType<ItemEnchantmentsComponent> type) {
-    this.base = Comparator.comparing((stack) -> EnchantmentSummary.of(stack, type),
-        SerialComparator.comparing(Comparator.comparingInt(EnchantmentSummary::count).reversed(),
-            Comparator.comparingInt(EnchantmentSummary::max).reversed(),
-            Comparator.comparingInt(EnchantmentSummary::sum).reversed(),
-            Comparator.comparingInt(EnchantmentSummary::first).reversed(),
-            Comparator.comparing(EnchantmentSummary::indices, new IntListComparator())
-        )
-    );
+    super(SerialComparator.comparing(
+        Comparator.comparingInt(EnchantmentSummary::count).reversed(),
+        Comparator.comparingInt(EnchantmentSummary::max).reversed(),
+        Comparator.comparingInt(EnchantmentSummary::sum).reversed(),
+        Comparator.comparingInt(EnchantmentSummary::first).reversed(),
+        Comparator.comparing(EnchantmentSummary::indices, new IntListComparator())
+    ));
+    this.type = type;
   }
 
   @Override
-  public int compare(ItemStack o1, ItemStack o2) {
-    return this.base.compare(o1, o2);
+  protected EnchantmentSummary mapValue(ItemStack stack) {
+    return EnchantmentSummary.of(stack, this.type);
   }
 
   private static HashMap<Enchantment, Integer> getEnchantmentIndices() {
@@ -45,7 +47,7 @@ public class EnchantmentComparator implements Comparator<ItemStack> {
     return indices;
   }
 
-  private record EnchantmentSummary(int count, int max, int sum, int first, List<Integer> indices) {
+  protected record EnchantmentSummary(int count, int max, int sum, int first, List<Integer> indices) {
     public static EnchantmentSummary of(ItemStack stack, DataComponentType<ItemEnchantmentsComponent> type) {
       ItemEnchantmentsComponent component = stack.get(type);
       if (component == null || component.isEmpty()) {

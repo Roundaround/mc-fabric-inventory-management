@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import com.google.common.collect.Lists;
+import me.roundaround.inventorymanagement.testing.BaseMinecraftTest;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.component.DataComponentTypes;
@@ -22,7 +23,7 @@ import java.util.function.Function;
 import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.assertIterableMatches;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
-public class BannerComparatorTest {
+public class BannerComparatorTest extends BaseMinecraftTest {
   @Test
   void ignoresActualItem() {
     ArrayList<ItemStack> actual = Lists.newArrayList(new ItemStack(Items.NETHERITE_CHESTPLATE),

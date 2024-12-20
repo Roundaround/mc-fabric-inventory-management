@@ -1,7 +1,6 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
-import me.roundaround.inventorymanagement.server.network.ServerI18nTracker;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.ItemStack;
@@ -13,8 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ItemStackComparator extends SerialComparator<ItemStack> {
-  private static Comparator<ItemStack> cachedItemMetadataComparator;
-
   private ItemStackComparator(Collection<Comparator<ItemStack>> subComparators) {
     super(subComparators);
   }
@@ -25,15 +22,16 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   }
 
   public static ItemStackComparator containersFirst(Comparator<ItemStack> andThen) {
-    return new ItemStackComparator(containersFirst(), andThen);
+    return new ItemStackComparator(new ContainerFirstComparator(), andThen);
   }
 
   public static ItemStackComparator creativeInventoryOrder(UUID player) {
-    return new ItemStackComparator(creativeIndex(), itemName(player), itemMetadata(), viaRegistry());
+    return new ItemStackComparator(
+        creativeIndex(), itemName(player), itemMetadata(), viaRegistry(), containerContents());
   }
 
   public static ItemStackComparator alphabetical(UUID player) {
-    return new ItemStackComparator(itemName(player), itemMetadata(), viaRegistry());
+    return new ItemStackComparator(itemName(player), itemMetadata(), viaRegistry(), containerContents());
   }
 
   private static String getCustomName(ItemStack stack) {
@@ -54,17 +52,10 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   }
 
   private static Comparator<ItemStack> itemMetadata() {
-    if (cachedItemMetadataComparator == null) {
-      cachedItemMetadataComparator = SerialComparator.comparing(customName(), playerHeadName(), containerContents(),
-          enchantments(), storedEnchantments(), paintingVariant(), bannerPattern(), fireworkAndRocket(),
-          instrumentType(), potionEffects(), suspiciousStewEffects(), countOrDurability()
-      );
-    }
-    return cachedItemMetadataComparator;
-  }
-
-  private static Comparator<ItemStack> containersFirst() {
-    return new ContainerFirstComparator();
+    return SerialComparator.comparing(customName(), playerHeadName(), enchantments(), storedEnchantments(),
+        paintingVariant(), bannerPattern(), fireworkAndRocket(), instrumentType(), potionEffects(),
+        suspiciousStewEffects(), countOrDurability()
+    );
   }
 
   private static Comparator<ItemStack> creativeIndex() {
@@ -91,6 +82,7 @@ public class ItemStackComparator extends SerialComparator<ItemStack> {
   private static Comparator<ItemStack> containerContents() {
     // TODO: Order based on shulker and bundle contents
     // TODO: Registry/hook for mods to hook in to sort their own custom containers
+    // TODO: Pass all the other comparators down to this one internally so that it matches top level algorithm
     return Comparator.comparingInt((stack) -> 0);
   }
 
