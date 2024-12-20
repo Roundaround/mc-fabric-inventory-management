@@ -1,8 +1,8 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
+import me.roundaround.inventorymanagement.inventory.sorting.CachingComparatorImpl;
 import me.roundaround.inventorymanagement.inventory.sorting.IntListComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
-import me.roundaround.inventorymanagement.inventory.sorting.WrapperComparatorImpl;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BannerPatternsComponent;
@@ -17,14 +17,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BannerComparator extends WrapperComparatorImpl<ItemStack> {
+public class BannerComparator extends CachingComparatorImpl<ItemStack, BannerComparator.BannerSummary> {
   private static HashMap<RegistryEntry<BannerPattern>, Integer> indices;
 
   public BannerComparator() {
-    super(Comparator.comparing(BannerSummary::of, SerialComparator.comparing(
+    super(SerialComparator.comparing(
         Comparator.comparingInt(BannerSummary::count),
         Comparator.comparing(BannerSummary::indices, new IntListComparator())
-    )));
+    ));
+  }
+
+  @Override
+  protected BannerSummary mapValue(ItemStack stack) {
+    return BannerSummary.of(stack);
   }
 
   private static HashMap<RegistryEntry<BannerPattern>, Integer> getPatternIndices() {
@@ -41,7 +46,7 @@ public class BannerComparator extends WrapperComparatorImpl<ItemStack> {
     return indices;
   }
 
-  private record BannerSummary(int count, List<Integer> indices) {
+  protected record BannerSummary(int count, List<Integer> indices) {
     public static BannerSummary of(ItemStack stack) {
       BannerPatternsComponent component = stack.get(DataComponentTypes.BANNER_PATTERNS);
       if (component == null || component.layers().isEmpty()) {

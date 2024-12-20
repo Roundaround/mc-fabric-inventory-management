@@ -26,10 +26,17 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 public class BannerComparatorTest extends BaseMinecraftTest {
   @Test
   void ignoresActualItem() {
-    ArrayList<ItemStack> actual = Lists.newArrayList(new ItemStack(Items.NETHERITE_CHESTPLATE),
-        new ItemStack(Items.RED_BANNER), new ItemStack(Items.DIAMOND_CHESTPLATE), new ItemStack(Items.FIRE_CHARGE),
-        new ItemStack(Items.BLUE_BANNER), new ItemStack(Items.BAMBOO)
+    //@formatter:off
+    ArrayList<ItemStack> actual = Lists.newArrayList(
+        new ItemStack(Items.NETHERITE_CHESTPLATE),
+        new ItemStack(Items.RED_BANNER),
+        new ItemStack(Items.DIAMOND_CHESTPLATE),
+        new ItemStack(Items.FIRE_CHARGE),
+        new ItemStack(Items.BLUE_BANNER),
+        new ItemStack(Items.BAMBOO)
     );
+    //@formatter:on
+
     List<ItemStack> expected = List.copyOf(actual);
     actual.sort(new BannerComparator());
 
@@ -38,11 +45,15 @@ public class BannerComparatorTest extends BaseMinecraftTest {
 
   @Test
   void sortsNumberOfLayersAsc() {
-    // Originally 1, 3, 0, 2
-    ArrayList<ItemStack> actual = Lists.newArrayList(createStack(createLayer()),
-        createStack(createLayer(), createLayer(), createLayer()), createStack(),
+    //@formatter:off
+    ArrayList<ItemStack> actual = Lists.newArrayList(
+        createStack(createLayer()),
+        createStack(createLayer(), createLayer(), createLayer()),
+        createStack(),
         createStack(createLayer(), createLayer())
     );
+    //@formatter:on
+
     actual.sort(new BannerComparator());
 
     assertIterableMatches(List.of(0, 1, 2, 3), actual, Function.identity(), (stack) -> {

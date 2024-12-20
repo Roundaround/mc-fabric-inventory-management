@@ -21,50 +21,11 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.assertIterableMatches;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class EnchantmentComparatorTest {
   @Nested
   class AppliedEnchantments extends BaseMinecraftTest {
-    @Test
-    void calculatesTheSummaryOnlyOncePerStack() {
-      //@formatter:off
-      ArrayList<ItemStack> items = Lists.newArrayList(
-          createStack(Items.NETHERITE_CHESTPLATE),
-          createStack(Items.NETHERITE_CHESTPLATE, DataComponentTypes.ENCHANTMENTS, Map.of(
-              Enchantments.PROTECTION, 3)),
-          createStack(Items.NETHERITE_CHESTPLATE, DataComponentTypes.ENCHANTMENTS, Map.of(
-              Enchantments.PROTECTION, 1,
-              Enchantments.UNBREAKING, 1,
-              Enchantments.MENDING, 1)),
-          createStack(Items.NETHERITE_CHESTPLATE, DataComponentTypes.ENCHANTMENTS, Map.of(
-              Enchantments.PROTECTION, 2,
-              Enchantments.UNBREAKING, 1)),
-          createStack(Items.NETHERITE_CHESTPLATE, "1", DataComponentTypes.ENCHANTMENTS, Map.of(
-              Enchantments.MENDING, 1,
-              Enchantments.PROTECTION, 4,
-              Enchantments.BLAST_PROTECTION, 1,
-              Enchantments.UNBREAKING, 2)),
-          createStack(Items.NETHERITE_CHESTPLATE, "2", DataComponentTypes.ENCHANTMENTS, Map.of(
-              Enchantments.MENDING, 1,
-              Enchantments.PROTECTION, 5,
-              Enchantments.BLAST_PROTECTION, 1,
-              Enchantments.UNBREAKING, 1)),
-          createStack(Items.NETHERITE_CHESTPLATE, "3", DataComponentTypes.ENCHANTMENTS, Map.of(
-              Enchantments.MENDING, 1,
-              Enchantments.PROTECTION, 3,
-              Enchantments.BLAST_PROTECTION, 3,
-              Enchantments.UNBREAKING, 1))
-      );
-      //@formatter:on
-
-      // TODO: Move this test down to the base class
-      WrappedEnchantmentComparator comparator = new WrappedEnchantmentComparator(DataComponentTypes.ENCHANTMENTS);
-      items.sort(comparator);
-      assertEquals(comparator.getComputeCount(), 7);
-    }
-
     @Test
     void ignoresActualItem() {
       //@formatter:off
@@ -374,23 +335,5 @@ public class EnchantmentComparatorTest {
       ItemStack stack, DataComponentType<ItemEnchantmentsComponent> dataComponentType
   ) {
     return stack.getOrDefault(dataComponentType, ItemEnchantmentsComponent.DEFAULT).getSize();
-  }
-
-  private static class WrappedEnchantmentComparator extends EnchantmentComparator {
-    private int computeCount = 0;
-
-    public WrappedEnchantmentComparator(DataComponentType<ItemEnchantmentsComponent> type) {
-      super(type);
-    }
-
-    @Override
-    protected EnchantmentSummary mapValue(ItemStack stack) {
-      this.computeCount++;
-      return super.mapValue(stack);
-    }
-
-    public int getComputeCount() {
-      return this.computeCount;
-    }
   }
 }

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class ItemStackComparator implements SerialComparator<ItemStack> {
+public class ItemStackComparator implements SerialComparator<ItemStack>, AutoCloseable {
   private final List<Comparator<ItemStack>> subComparators;
 
   private ItemStackComparator(Collection<Comparator<ItemStack>> subComparators) {
@@ -24,6 +24,11 @@ public class ItemStackComparator implements SerialComparator<ItemStack> {
   @Override
   public @NotNull Iterator<Comparator<ItemStack>> iterator() {
     return this.subComparators.iterator();
+  }
+
+  @Override
+  public void close() {
+    this.clearCache();
   }
 
   public static ItemStackComparator containersFirst(Comparator<ItemStack> andThen) {

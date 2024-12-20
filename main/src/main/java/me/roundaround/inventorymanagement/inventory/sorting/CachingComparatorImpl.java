@@ -25,4 +25,8 @@ public abstract class CachingComparatorImpl<T, O> implements Comparator<T>, Cach
   public void clearCache() {
     this.cache.remove();
   }
+
+  public final Comparator<O> getDelegate() {
+    return this.delegate;
+  }
 }
