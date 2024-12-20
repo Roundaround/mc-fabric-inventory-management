@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 
 public class EnchantmentComparator extends AbstractCachingComparator<ItemStack,
     EnchantmentComparator.EnchantmentSummary> {
+  // TODO: Find a way to bubble caching up so that we can do ItemStackComparator.clearCache or even have
+  //  ItemStackComparator implement AutoClosable and use a try (ItemStackComparator comparator = ...) {}
+
   private static HashMap<Enchantment, Integer> indices;
 
   private final DataComponentType<ItemEnchantmentsComponent> type;

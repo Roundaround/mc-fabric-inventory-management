@@ -59,6 +59,7 @@ public class EnchantmentComparatorTest {
       );
       //@formatter:on
 
+      // TODO: Move this test down to the base class
       WrappedEnchantmentComparator comparator = new WrappedEnchantmentComparator(DataComponentTypes.ENCHANTMENTS);
       items.sort(comparator);
       assertEquals(comparator.getComputeCount(), 7);
