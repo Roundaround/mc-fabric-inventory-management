@@ -2,6 +2,7 @@ package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.inventory.sorting.ConditionalComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.WrapperComparatorImpl;
 import me.roundaround.inventorymanagement.mixin.ItemGroupsAccessor;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
@@ -15,16 +16,9 @@ import net.minecraft.registry.entry.RegistryEntry;
 import java.util.Comparator;
 import java.util.Objects;
 
-public class PaintingComparator implements Comparator<ItemStack> {
-  private final Comparator<ItemStack> base;
-
+public class PaintingComparator extends WrapperComparatorImpl<ItemStack> {
   public PaintingComparator() {
-    this.base = Comparator.comparing(PaintingComparator::getVariant, getVariantComparator());
-  }
-
-  @Override
-  public int compare(ItemStack o1, ItemStack o2) {
-    return this.base.compare(o1, o2);
+    super(Comparator.comparing(PaintingComparator::getVariant, getVariantComparator()));
   }
 
   private static RegistryEntry<PaintingVariant> getVariant(ItemStack stack) {

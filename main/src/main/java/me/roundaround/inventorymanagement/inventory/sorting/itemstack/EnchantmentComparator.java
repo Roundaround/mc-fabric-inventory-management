@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
-import me.roundaround.inventorymanagement.inventory.sorting.AbstractCachingComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.CachingComparatorImpl;
 import me.roundaround.inventorymanagement.inventory.sorting.IntListComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.component.DataComponentType;
@@ -14,8 +14,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class EnchantmentComparator extends AbstractCachingComparator<ItemStack,
-    EnchantmentComparator.EnchantmentSummary> {
+public class EnchantmentComparator extends CachingComparatorImpl<ItemStack, EnchantmentComparator.EnchantmentSummary> {
   // TODO: Find a way to bubble caching up so that we can do ItemStackComparator.clearCache or even have
   //  ItemStackComparator implement AutoClosable and use a try (ItemStackComparator comparator = ...) {}
 

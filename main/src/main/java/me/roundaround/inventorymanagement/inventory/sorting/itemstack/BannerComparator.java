@@ -2,6 +2,7 @@ package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.inventory.sorting.IntListComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.WrapperComparatorImpl;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BannerPatternsComponent;
@@ -16,21 +17,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BannerComparator implements Comparator<ItemStack> {
+public class BannerComparator extends WrapperComparatorImpl<ItemStack> {
   private static HashMap<RegistryEntry<BannerPattern>, Integer> indices;
 
-  protected final Comparator<ItemStack> base;
-
   public BannerComparator() {
-    this.base = Comparator.comparing(BannerSummary::of, SerialComparator.comparing(
+    super(Comparator.comparing(BannerSummary::of, SerialComparator.comparing(
         Comparator.comparingInt(BannerSummary::count),
         Comparator.comparing(BannerSummary::indices, new IntListComparator())
-    ));
-  }
-
-  @Override
-  public int compare(ItemStack o1, ItemStack o2) {
-    return this.base.compare(o1, o2);
+    )));
   }
 
   private static HashMap<RegistryEntry<BannerPattern>, Integer> getPatternIndices() {

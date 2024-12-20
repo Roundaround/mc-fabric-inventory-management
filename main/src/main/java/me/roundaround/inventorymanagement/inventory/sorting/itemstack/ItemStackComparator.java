@@ -5,20 +5,25 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class ItemStackComparator extends SerialComparator<ItemStack> {
+public class ItemStackComparator implements SerialComparator<ItemStack> {
+  private final List<Comparator<ItemStack>> subComparators;
+
   private ItemStackComparator(Collection<Comparator<ItemStack>> subComparators) {
-    super(subComparators);
+    this.subComparators = List.copyOf(subComparators);
   }
 
   @SafeVarargs
   private ItemStackComparator(Comparator<ItemStack>... subComparators) {
     this(List.of(subComparators));
+  }
+
+  @Override
+  public @NotNull Iterator<Comparator<ItemStack>> iterator() {
+    return this.subComparators.iterator();
   }
 
   public static ItemStackComparator containersFirst(Comparator<ItemStack> andThen) {

@@ -1,17 +1,19 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
-import me.roundaround.inventorymanagement.inventory.sorting.AbstractComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class CreativeInventoryOrderItemStackComparator extends AbstractComparator<ItemStack> {
+public class CreativeInventoryOrderItemStackComparator implements SerialComparator<ItemStack> {
   private static CreativeInventoryOrderItemStackComparator instance;
+
+  private final List<Comparator<ItemStack>> delegates;
 
   private final List<ItemGroup> itemGroups = ItemGroups.getGroups();
   private final HashMap<ItemGroup, LinkedHashSet<Item>> itemsByGroup = new HashMap<>(this.itemGroups.size());
@@ -19,17 +21,6 @@ public class CreativeInventoryOrderItemStackComparator extends AbstractComparato
   private final HashMap<Item, ItemGroup> groupByItem = new HashMap<>();
 
   private CreativeInventoryOrderItemStackComparator() {
-  }
-
-  public static CreativeInventoryOrderItemStackComparator getInstance() {
-    if (instance == null) {
-      instance = new CreativeInventoryOrderItemStackComparator();
-    }
-    return instance;
-  }
-
-  @Override
-  protected Comparator<ItemStack> init() {
     this.itemGroups.forEach((group) -> {
       LinkedHashSet<Item> items = new LinkedHashSet<>();
       group.getDisplayStacks().forEach((stack) -> {
@@ -52,10 +43,22 @@ public class CreativeInventoryOrderItemStackComparator extends AbstractComparato
       this.groupByItem.put(item, null);
     });
 
-    return SerialComparator.comparing(
+    this.delegates = List.of(
         Comparator.comparing(this::getGroupIndexOrNull, Comparator.nullsLast(Integer::compareTo)),
         Comparator.comparing(this::getIndexInGroupOrNull, Comparator.nullsLast(Integer::compareTo))
     );
+  }
+
+  public static CreativeInventoryOrderItemStackComparator getInstance() {
+    if (instance == null) {
+      instance = new CreativeInventoryOrderItemStackComparator();
+    }
+    return instance;
+  }
+
+  @Override
+  public @NotNull Iterator<Comparator<ItemStack>> iterator() {
+    return this.delegates.iterator();
   }
 
   private Integer getGroupIndexOrNull(ItemStack stack) {

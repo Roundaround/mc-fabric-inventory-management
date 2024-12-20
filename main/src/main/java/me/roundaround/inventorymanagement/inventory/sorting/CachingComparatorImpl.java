@@ -3,11 +3,11 @@ package me.roundaround.inventorymanagement.inventory.sorting;
 import java.util.Comparator;
 import java.util.IdentityHashMap;
 
-public abstract class AbstractCachingComparator<T, O> implements Comparator<T> {
+public abstract class CachingComparatorImpl<T, O> implements Comparator<T>, CachingComparator {
   private final Comparator<O> delegate;
   private final ThreadLocal<IdentityHashMap<T, O>> cache = ThreadLocal.withInitial(IdentityHashMap::new);
 
-  protected AbstractCachingComparator(Comparator<O> delegate) {
+  protected CachingComparatorImpl(Comparator<O> delegate) {
     this.delegate = delegate;
   }
 
@@ -21,6 +21,7 @@ public abstract class AbstractCachingComparator<T, O> implements Comparator<T> {
     return this.delegate.compare(o1, o2);
   }
 
+  @Override
   public void clearCache() {
     this.cache.remove();
   }
