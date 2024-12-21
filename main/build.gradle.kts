@@ -6,5 +6,4 @@ plugins {
 
 dependencies {
   testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")
-  testImplementation("org.mockito", "mockito-core", "5.11.0")
 }
