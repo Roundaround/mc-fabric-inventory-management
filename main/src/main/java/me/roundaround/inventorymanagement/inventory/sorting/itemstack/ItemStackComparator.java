@@ -2,9 +2,7 @@ package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -44,16 +42,6 @@ public class ItemStackComparator implements SerialComparator<ItemStack>, AutoClo
     return new ItemStackComparator(itemName(player), itemMetadata(), viaRegistry(), containerContents());
   }
 
-  private static String getCustomName(ItemStack stack) {
-    Text customName = stack.get(DataComponentTypes.CUSTOM_NAME);
-    return customName == null ? null : customName.getString();
-  }
-
-  private static String getPlayerHeadName(ItemStack stack) {
-    ProfileComponent profile = stack.get(DataComponentTypes.PROFILE);
-    return profile == null || profile.name().isEmpty() ? null : profile.name().get();
-  }
-
   private static int getCountOrDurability(ItemStack stack) {
     if (stack.getCount() > 1) {
       return stack.getCount();
@@ -77,12 +65,11 @@ public class ItemStackComparator implements SerialComparator<ItemStack>, AutoClo
   }
 
   private static Comparator<ItemStack> customName() {
-    return Comparator.comparing(ItemStackComparator::getCustomName, Comparator.nullsLast(String::compareToIgnoreCase));
+    return new CustomNameComparator();
   }
 
   private static Comparator<ItemStack> playerHeadName() {
-    return Comparator.comparing(
-        ItemStackComparator::getPlayerHeadName, Comparator.nullsLast(String::compareToIgnoreCase));
+    return new PlayerHeadNameComparator();
   }
 
   private static Comparator<ItemStack> countOrDurability() {
