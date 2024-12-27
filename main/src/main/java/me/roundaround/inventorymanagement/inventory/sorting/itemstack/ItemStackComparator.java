@@ -42,17 +42,10 @@ public class ItemStackComparator implements SerialComparator<ItemStack>, AutoClo
     return new ItemStackComparator(itemName(player), itemMetadata(), viaRegistry(), containerContents());
   }
 
-  private static int getCountOrDurability(ItemStack stack) {
-    if (stack.getCount() > 1) {
-      return stack.getCount();
-    }
-    return stack.getMaxDamage() - stack.getDamage();
-  }
-
   private static Comparator<ItemStack> itemMetadata() {
     return SerialComparator.comparing(customName(), playerHeadName(), enchantments(), storedEnchantments(),
         paintingVariant(), bannerPattern(), fireworkAndRocket(), instrumentType(), potionEffects(),
-        suspiciousStewEffects(), countOrDurability()
+        suspiciousStewEffects(), count(), damage()
     );
   }
 
@@ -72,8 +65,12 @@ public class ItemStackComparator implements SerialComparator<ItemStack>, AutoClo
     return new PlayerHeadNameComparator();
   }
 
-  private static Comparator<ItemStack> countOrDurability() {
-    return Comparator.comparingInt(ItemStackComparator::getCountOrDurability).reversed();
+  private static Comparator<ItemStack> count() {
+    return new CountComparator();
+  }
+
+  private static Comparator<ItemStack> damage() {
+    return new DamageComparator();
   }
 
   private static Comparator<ItemStack> containerContents() {
