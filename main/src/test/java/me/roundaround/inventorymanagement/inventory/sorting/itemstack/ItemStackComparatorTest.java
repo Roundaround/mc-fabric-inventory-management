@@ -1,10 +1,8 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
-import com.google.common.collect.Lists;
 import me.roundaround.inventorymanagement.testing.BaseMinecraftTest;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,7 +11,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ItemStackComparatorTest extends BaseMinecraftTest {
@@ -40,7 +37,7 @@ public class ItemStackComparatorTest extends BaseMinecraftTest {
     for (int i = 0; i < runs; i++) {
       ArrayList<ItemStack> actual = genRandomLargeInventory(inventorySize);
       long startTime = System.nanoTime();
-      actual.sort(ItemStackComparator.alphabetical(PLAYER_UUID));
+      actual.sort(ItemStackComparator.get(PLAYER_UUID));
       long endTime = System.nanoTime();
 
       Duration duration = Duration.ofNanos(endTime - startTime);
@@ -82,19 +79,6 @@ public class ItemStackComparatorTest extends BaseMinecraftTest {
       inventory.add(genStack(randItem(allItems, maxIndex)));
     }
     return inventory;
-  }
-
-  @Test
-  void containersFirst_putsContainersFirst() {
-    ArrayList<ItemStack> items = Lists.newArrayList(new ItemStack(Items.FIRE_CHARGE, 17),
-        new ItemStack(Items.BONE_MEAL, 17), new ItemStack(Items.SHULKER_BOX), new ItemStack(Items.TARGET, 17),
-        new ItemStack(Items.SHULKER_BOX), new ItemStack(Items.NETHERITE_CHESTPLATE)
-    );
-
-    items.sort(ItemStackComparator.containersFirst(NOOP_COMPARATOR));
-
-    assertEquals(items.get(0).getItem(), Items.SHULKER_BOX);
-    assertEquals(items.get(1).getItem(), Items.SHULKER_BOX);
   }
 
   private static Item randItem(ArrayList<Item> allItems, int maxIndex) {
