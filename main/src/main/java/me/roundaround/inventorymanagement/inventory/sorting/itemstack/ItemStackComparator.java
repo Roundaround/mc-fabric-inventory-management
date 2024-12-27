@@ -33,8 +33,8 @@ public class ItemStackComparator implements SerialComparator<ItemStack>, AutoClo
   }
 
   public static ItemStackComparator creativeInventoryOrder(UUID player) {
-    return new ItemStackComparator(CreativeInventoryOrderItemStackComparator.getInstance(),
-        new ItemNameComparator(player), ItemMetadataComparator.getInstance(), viaRegistry(), containerContents()
+    return new ItemStackComparator(CreativeIndexComparator.getInstance(), new ItemNameComparator(player),
+        ItemMetadataComparator.getInstance(), viaRegistry(), containerContents()
     );
   }
 

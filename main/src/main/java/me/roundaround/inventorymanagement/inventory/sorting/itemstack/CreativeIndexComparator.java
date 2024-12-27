@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class CreativeInventoryOrderItemStackComparator implements SerialComparator<ItemStack> {
-  private static CreativeInventoryOrderItemStackComparator instance;
+public class CreativeIndexComparator implements SerialComparator<ItemStack> {
+  private static CreativeIndexComparator instance;
 
   private final List<Comparator<ItemStack>> delegates;
 
@@ -20,7 +20,7 @@ public class CreativeInventoryOrderItemStackComparator implements SerialComparat
   private final HashMap<Item, Integer> groupIndexByItem = new HashMap<>();
   private final HashMap<Item, ItemGroup> groupByItem = new HashMap<>();
 
-  private CreativeInventoryOrderItemStackComparator() {
+  private CreativeIndexComparator() {
     this.itemGroups.forEach((group) -> {
       LinkedHashSet<Item> items = new LinkedHashSet<>();
       group.getDisplayStacks().forEach((stack) -> {
@@ -49,9 +49,9 @@ public class CreativeInventoryOrderItemStackComparator implements SerialComparat
     );
   }
 
-  public static CreativeInventoryOrderItemStackComparator getInstance() {
+  public static CreativeIndexComparator getInstance() {
     if (instance == null) {
-      instance = new CreativeInventoryOrderItemStackComparator();
+      instance = new CreativeIndexComparator();
     }
     return instance;
   }
