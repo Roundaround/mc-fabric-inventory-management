@@ -1,7 +1,6 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,85 +33,20 @@ public class ItemStackComparator implements SerialComparator<ItemStack>, AutoClo
   }
 
   public static ItemStackComparator creativeInventoryOrder(UUID player) {
-    return new ItemStackComparator(
-        creativeIndex(), itemName(player), itemMetadata(), viaRegistry(), containerContents());
-  }
-
-  public static ItemStackComparator alphabetical(UUID player) {
-    return new ItemStackComparator(itemName(player), itemMetadata(), viaRegistry(), containerContents());
-  }
-
-  private static Comparator<ItemStack> itemMetadata() {
-    return SerialComparator.comparing(customName(), playerHeadName(), enchantments(), storedEnchantments(),
-        paintingVariant(), bannerPattern(), fireworkAndRocket(), instrumentType(), potionEffects(),
-        suspiciousStewEffects(), count(), damage()
+    return new ItemStackComparator(CreativeInventoryOrderItemStackComparator.getInstance(),
+        new ItemNameComparator(player), ItemMetadataComparator.getInstance(), viaRegistry(), containerContents()
     );
   }
 
-  private static Comparator<ItemStack> creativeIndex() {
-    return CreativeInventoryOrderItemStackComparator.getInstance();
-  }
-
-  private static Comparator<ItemStack> itemName(UUID player) {
-    return new ItemNameComparator(player);
-  }
-
-  private static Comparator<ItemStack> customName() {
-    return new CustomNameComparator();
-  }
-
-  private static Comparator<ItemStack> playerHeadName() {
-    return new PlayerHeadNameComparator();
-  }
-
-  private static Comparator<ItemStack> count() {
-    return new CountComparator();
-  }
-
-  private static Comparator<ItemStack> damage() {
-    return new DamageComparator();
+  public static ItemStackComparator alphabetical(UUID player) {
+    return new ItemStackComparator(
+        new ItemNameComparator(player), ItemMetadataComparator.getInstance(), viaRegistry(), containerContents());
   }
 
   private static Comparator<ItemStack> containerContents() {
     // TODO: Order based on shulker and bundle contents
     // TODO: Registry/hook for mods to hook in to sort their own custom containers
     // TODO: Pass all the other comparators down to this one internally so that it matches top level algorithm
-    return Comparator.comparingInt((stack) -> 0);
-  }
-
-  private static Comparator<ItemStack> enchantments() {
-    return new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS);
-  }
-
-  private static Comparator<ItemStack> storedEnchantments() {
-    return new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS);
-  }
-
-  private static Comparator<ItemStack> paintingVariant() {
-    return new PaintingComparator();
-  }
-
-  private static Comparator<ItemStack> bannerPattern() {
-    return new BannerComparator();
-  }
-
-  private static Comparator<ItemStack> fireworkAndRocket() {
-    // TODO: Order based on rocket duration or firework colors/patterns
-    return Comparator.comparingInt((stack) -> 0);
-  }
-
-  private static Comparator<ItemStack> instrumentType() {
-    // TODO: Order based on instrument type (goat horn sound)
-    return Comparator.comparingInt((stack) -> 0);
-  }
-
-  private static Comparator<ItemStack> potionEffects() {
-    // TODO: Order based on potion type, then effects
-    return Comparator.comparingInt((stack) -> 0);
-  }
-
-  private static Comparator<ItemStack> suspiciousStewEffects() {
-    // TODO: Order based on suspicious stew effects
     return Comparator.comparingInt((stack) -> 0);
   }
 
