@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
-import me.roundaround.inventorymanagement.inventory.sorting.NoOpComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.CachingComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -18,31 +18,28 @@ public class ItemStackComparator implements SerialComparator<ItemStack> {
     this.subComparators = List.copyOf(subComparators);
   }
 
-  @SafeVarargs
-  private ItemStackComparator(UUID player, Comparator<ItemStack>... subComparators) {
-    this(player, List.of(subComparators));
-  }
-
   @Override
   public @NotNull Iterator<Comparator<ItemStack>> iterator() {
     return this.subComparators.iterator();
   }
 
-  public static ItemStackComparator creativeInventoryOrder(UUID player) {
-    return new ItemStackComparator(player, CreativeIndexComparator.getInstance(), new ItemNameComparator(player),
-        ItemMetadataComparator.getInstance(), viaRegistry(), containerContents()
-    );
-  }
-
-  private static List<Comparator<ItemStack>> alphabetical(UUID player, boolean containersFirst) {
-    return List.of(containersFirst ? new ContainerFirstComparator() : new NoOpComparator<>(),
-        new ItemNameComparator(player), ItemMetadataComparator.getInstance(), viaRegistry(), containerContents()
-    );
-  }
-
   public static ItemStackComparator create(UUID player) {
     Parameters parameters = new Parameters(player);
-    ItemStackComparator comparator = new ItemStackComparator(player, alphabetical(player, parameters.containersFirst));
+    ArrayList<Comparator<ItemStack>> delegates = new ArrayList<>();
+
+    if (parameters.alphabetical && parameters.containersFirst) {
+      delegates.add(new ContainerFirstComparator());
+    }
+    if (!parameters.alphabetical) {
+      delegates.add(CreativeIndexComparator.getInstance());
+    }
+
+    delegates.add(new ItemNameComparator(player));
+    delegates.add(ItemMetadataComparator.getInstance());
+    delegates.add(RegistryBackedComparator.getInstance());
+    delegates.add(ContainerContentsComparator.getInstance());
+
+    ItemStackComparator comparator = new ItemStackComparator(player, delegates);
     COMPARATORS.put(player, comparator);
     return comparator;
   }
@@ -55,21 +52,13 @@ public class ItemStackComparator implements SerialComparator<ItemStack> {
     return create(player);
   }
 
-  public static void remove(UUID player) {
+  public static void invalidatePlayerCache(UUID player) {
+    // TODO: Call anywhere that justifies clearing the cached comparator: player logout, config change, lang change, etc
     COMPARATORS.remove(player);
   }
 
-  private static Comparator<ItemStack> containerContents() {
-    // TODO: Order based on shulker and bundle contents
-    // TODO: Registry/hook for mods to hook in to sort their own custom containers
-    // TODO: Pass all the other comparators down to this one internally so that it matches top level algorithm
-    return Comparator.comparingInt((stack) -> 0);
-  }
-
-  private static Comparator<ItemStack> viaRegistry() {
-    // TODO: Order based on the comparator registry
-    // TODO: Create a comparator registry for mods to register custom comparators based on their own data
-    return Comparator.comparingInt((stack) -> 0);
+  public static void invalidateRegistryCache() {
+    COMPARATORS.values().forEach(CachingComparator::clearCache);
   }
 
   private static class Parameters {

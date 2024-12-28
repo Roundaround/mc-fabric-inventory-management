@@ -27,9 +27,11 @@ public class ContainerFirstComparator extends WrapperComparatorImpl<ItemStack> {
 
   private static List<Predicate<ItemStack>> getMatchers() {
     // TODO: Registry/hook for mods to hook in their custom containers
+    //@formatter:off
     return List.of(
         (stack) -> stack.getItem() instanceof BlockItem block && block.getBlock() instanceof ShulkerBoxBlock,
         (stack) -> stack.getItem() instanceof BundleItem
     );
+    //@formatter:on
   }
 }
