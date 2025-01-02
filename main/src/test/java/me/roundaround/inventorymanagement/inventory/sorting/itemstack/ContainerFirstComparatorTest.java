@@ -23,7 +23,7 @@ public class ContainerFirstComparatorTest extends BaseMinecraftTest {
         new ItemStack(Items.SHULKER_BOX), new ItemStack(Items.BUNDLE), new ItemStack(Items.TARGET),
         new ItemStack(Items.BLUE_SHULKER_BOX), new ItemStack(Items.NETHERITE_CHESTPLATE)
     );
-    this.items.sort(new ContainerFirstComparator());
+    this.items.sort(ContainerFirstComparator.getInstance());
   }
 
   @Test

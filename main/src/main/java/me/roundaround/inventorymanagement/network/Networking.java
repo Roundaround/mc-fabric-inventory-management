@@ -19,12 +19,14 @@ public final class Networking {
   public static final Identifier SORT_C2S = new Identifier(InventoryManagementMod.MOD_ID, "sort_c2s");
   public static final Identifier SORT_ALL_C2S = new Identifier(InventoryManagementMod.MOD_ID, "sort_all_c2s");
   public static final Identifier TRANSFER_C2S = new Identifier(InventoryManagementMod.MOD_ID, "transfer_c2s");
+  public static final Identifier RECALCULATE_C2S = new Identifier(InventoryManagementMod.MOD_ID, "recalculate_c2s");
 
   public static void registerC2SPayloads() {
     PayloadTypeRegistry.playC2S().register(StackC2S.ID, StackC2S.CODEC);
     PayloadTypeRegistry.playC2S().register(SortC2S.ID, SortC2S.CODEC);
     PayloadTypeRegistry.playC2S().register(SortAllC2S.ID, SortAllC2S.CODEC);
     PayloadTypeRegistry.playC2S().register(TransferC2S.ID, TransferC2S.CODEC);
+    PayloadTypeRegistry.playC2S().register(RecalculateC2S.ID, RecalculateC2S.CODEC);
   }
 
   public record StackC2S(boolean fromPlayerInventory) implements CustomPayload {
@@ -69,6 +71,16 @@ public final class Networking {
 
     @Override
     public Id<TransferC2S> getId() {
+      return ID;
+    }
+  }
+
+  public record RecalculateC2S() implements CustomPayload {
+    public static final CustomPayload.Id<RecalculateC2S> ID = new CustomPayload.Id<>(RECALCULATE_C2S);
+    public static final PacketCodec<RegistryByteBuf, RecalculateC2S> CODEC = CustomCodecs.empty(RecalculateC2S::new);
+
+    @Override
+    public Id<RecalculateC2S> getId() {
       return ID;
     }
   }

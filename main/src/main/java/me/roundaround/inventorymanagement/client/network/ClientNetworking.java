@@ -43,6 +43,13 @@ public final class ClientNetworking {
     ClientPlayNetworking.send(new Networking.TransferC2S(true));
   }
 
+  public static void trySendRecalculatePacket() {
+    if (!ClientPlayNetworking.canSend(Networking.RECALCULATE_C2S)) {
+      return;
+    }
+    ClientPlayNetworking.send(new Networking.RecalculateC2S());
+  }
+
   private static HashMap<String, String> getItemNames() {
     if (!(MinecraftClient.getInstance().currentScreen instanceof HandledScreen<?> screen)) {
       return new HashMap<>(0);

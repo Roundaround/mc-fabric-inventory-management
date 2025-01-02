@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.server.network;
 
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
+import me.roundaround.inventorymanagement.inventory.sorting.itemstack.ItemStackComparator;
 import me.roundaround.inventorymanagement.network.Networking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
@@ -13,6 +14,7 @@ public final class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(Networking.SortC2S.ID, ServerNetworking::handleSort);
     ServerPlayNetworking.registerGlobalReceiver(Networking.SortAllC2S.ID, ServerNetworking::handleSortAll);
     ServerPlayNetworking.registerGlobalReceiver(Networking.TransferC2S.ID, ServerNetworking::handleTransfer);
+    ServerPlayNetworking.registerGlobalReceiver(Networking.RecalculateC2S.ID, ServerNetworking::handleRecalculate);
   }
 
   private static void handleStack(Networking.StackC2S payload, ServerPlayNetworking.Context context) {
@@ -35,5 +37,9 @@ public final class ServerNetworking {
 
   private static void handleTransfer(Networking.TransferC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> InventoryHelper.transferAll(context.player(), payload.fromPlayerInventory()));
+  }
+
+  private static void handleRecalculate(Networking.RecalculateC2S payload, ServerPlayNetworking.Context context) {
+    context.player().server.execute(() -> ItemStackComparator.remove(context.player().getUuid()));
   }
 }

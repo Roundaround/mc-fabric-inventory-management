@@ -1,6 +1,5 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
-import me.roundaround.inventorymanagement.inventory.sorting.CachingComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +27,7 @@ public class ItemStackComparator implements SerialComparator<ItemStack> {
     ArrayList<Comparator<ItemStack>> delegates = new ArrayList<>();
 
     if (parameters.alphabetical && parameters.containersFirst) {
-      delegates.add(new ContainerFirstComparator());
+      delegates.add(ContainerFirstComparator.getInstance());
     }
     if (!parameters.alphabetical) {
       delegates.add(CreativeIndexComparator.getInstance());
@@ -52,13 +51,13 @@ public class ItemStackComparator implements SerialComparator<ItemStack> {
     return create(player);
   }
 
-  public static void invalidatePlayerCache(UUID player) {
+  public static void remove(UUID player) {
     // TODO: Call anywhere that justifies clearing the cached comparator: player logout, config change, lang change, etc
     COMPARATORS.remove(player);
   }
 
-  public static void invalidateRegistryCache() {
-    COMPARATORS.values().forEach(CachingComparator::clearCache);
+  public static void clear() {
+    COMPARATORS.clear();
   }
 
   private static class Parameters {

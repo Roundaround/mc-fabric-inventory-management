@@ -9,7 +9,8 @@
   ],
   "client": [
     "ClientPlayerEntityMixin",
-    "HandledScreenAccessor"
+    "HandledScreenAccessor",
+    "MinecraftClientMixin"
   ],
   "server": [],
   "injectors": {

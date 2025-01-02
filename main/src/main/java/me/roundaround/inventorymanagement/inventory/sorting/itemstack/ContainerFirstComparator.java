@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class ContainerFirstComparator extends WrapperComparatorImpl<ItemStack> {
-  public ContainerFirstComparator() {
+  private static ContainerFirstComparator instance;
+
+  private ContainerFirstComparator() {
     super(Comparator.comparing((stack) -> {
       int index = 0;
       for (Predicate<ItemStack> matcher : getMatchers()) {
@@ -23,6 +25,13 @@ public class ContainerFirstComparator extends WrapperComparatorImpl<ItemStack> {
 
       return null;
     }, Comparator.nullsLast(Integer::compareTo)));
+  }
+
+  public static ContainerFirstComparator getInstance() {
+    if (instance == null) {
+      instance = new ContainerFirstComparator();
+    }
+    return instance;
   }
 
   private static List<Predicate<ItemStack>> getMatchers() {

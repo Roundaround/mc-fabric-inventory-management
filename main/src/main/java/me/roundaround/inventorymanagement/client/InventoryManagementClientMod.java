@@ -6,7 +6,9 @@ import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandl
 import me.roundaround.inventorymanagement.api.positioning.Coords;
 import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.api.positioning.SlotPositionReference;
+import me.roundaround.inventorymanagement.client.network.ClientNetworking;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
+import me.roundaround.inventorymanagement.event.ResourcesReloadedEvent;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;
 import me.roundaround.roundalib.client.gui.GuiUtil;
@@ -37,6 +39,8 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         ));
 
     this.initButtonRegistry();
+
+    ResourcesReloadedEvent.EVENT.register((client) -> ClientNetworking.trySendRecalculatePacket());
   }
 
   private void initButtonRegistry() {
