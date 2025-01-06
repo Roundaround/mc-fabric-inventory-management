@@ -65,9 +65,10 @@ public class InventoryHelper {
       }
     }
 
-    try (ItemStackComparator comparator = ItemStackComparator.alphabetical(player.getUuid())) {
-      stacks = stacks.stream().filter(itemStack -> !itemStack.isEmpty()).sorted(comparator).toList();
-    }
+    stacks = stacks.stream()
+        .filter(itemStack -> !itemStack.isEmpty())
+        .sorted(ItemStackComparator.get(player.getUuid()))
+        .toList();
 
     for (int slotIndex = slotRange.min(); slotIndex < slotRange.max(); slotIndex++) {
       int stacksIndex = slotIndex - slotRange.min();
