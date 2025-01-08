@@ -2,9 +2,10 @@ package me.roundaround.inventorymanagement.inventory.sorting;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 
-public class LexicographicalListComparator<T, U> implements Comparator<Iterable<T>> {
+public class LexicographicalListComparator<T, U> implements Comparator<List<T>> {
   private final Function<T, U> extractor;
   private final Comparator<U> comparator;
 
@@ -34,7 +35,7 @@ public class LexicographicalListComparator<T, U> implements Comparator<Iterable<
   }
 
   @Override
-  public int compare(Iterable<T> o1, Iterable<T> o2) {
+  public int compare(List<T> o1, List<T> o2) {
     Iterator<T> iter1 = o1.iterator();
     Iterator<T> iter2 = o2.iterator();
 
