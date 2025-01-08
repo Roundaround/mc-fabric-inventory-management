@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.inventory.sorting.CachingComparatorImpl;
+import me.roundaround.inventorymanagement.inventory.sorting.PredicatedComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
@@ -14,7 +15,7 @@ public class ContainerContentsComparator extends CachingComparatorImpl<ItemStack
   private static ContainerContentsComparator instance;
 
   private ContainerContentsComparator() {
-    super(Comparator.naturalOrder());
+    super(PredicatedComparator.ignoreNullsNaturalOrder());
   }
 
   public static ContainerContentsComparator getInstance() {

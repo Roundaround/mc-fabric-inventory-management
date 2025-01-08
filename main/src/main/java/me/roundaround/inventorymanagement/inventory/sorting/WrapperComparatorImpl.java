@@ -2,7 +2,7 @@ package me.roundaround.inventorymanagement.inventory.sorting;
 
 import java.util.Comparator;
 
-public abstract class WrapperComparatorImpl<T> implements WrapperComparator<T> {
+public abstract class WrapperComparatorImpl<T> implements WrapperComparator<T>, CachingComparator {
   private final Comparator<T> delegate;
 
   protected WrapperComparatorImpl(Comparator<T> delegate) {
