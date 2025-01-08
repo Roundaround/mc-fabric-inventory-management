@@ -34,7 +34,7 @@ public class ItemStackComparator implements SerialComparator<ItemStack> {
       delegates.add(CreativeIndexComparator.getInstance());
     }
 
-    delegates.add(new ItemNameComparator(player));
+    delegates.add(new ItemNameComparator(parameters));
     delegates.add(new DecoratedPotComparator(player));
     delegates.add(ItemMetadataComparator.getInstance());
     delegates.add(RegistryBackedComparator.getInstance());
