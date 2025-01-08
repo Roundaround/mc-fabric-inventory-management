@@ -1,30 +1,20 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
-import me.roundaround.inventorymanagement.inventory.sorting.WrapperComparatorImpl;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BundleItem;
+import me.roundaround.inventorymanagement.inventory.sorting.CachingComparatorImpl;
+import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.function.Predicate;
+import java.util.Comparator;
 
-public class ContainerContentsComparator extends WrapperComparatorImpl<ItemStack> {
+public class ContainerContentsComparator extends CachingComparatorImpl<ItemStack,
+    ContainerContentsComparator.ContentsSummary> {
   private static ContainerContentsComparator instance;
 
   private ContainerContentsComparator() {
-    super((o1, o2) -> {
-      if (!isContainer(o1) || !isContainer(o2)) {
-        return 0;
-      }
-      // TODO: Order based on shulker and bundle contents
-      return 0;
-    });
-  }
-
-  @Override
-  public void clearCache() {
-    instance = null;
+    super(Comparator.naturalOrder());
   }
 
   public static ContainerContentsComparator getInstance() {
@@ -34,22 +24,53 @@ public class ContainerContentsComparator extends WrapperComparatorImpl<ItemStack
     return instance;
   }
 
-  private static boolean isContainer(ItemStack stack) {
-    for (Predicate<ItemStack> matcher : getMatchers()) {
-      if (matcher.test(stack)) {
-        return true;
-      }
-    }
-    return false;
+  @Override
+  protected ContentsSummary mapValue(ItemStack stack) {
+    return ContentsSummary.of(stack);
   }
 
-  private static List<Predicate<ItemStack>> getMatchers() {
-    // TODO: Registry/hook for mods to hook in their custom containers
-    //@formatter:off
-    return List.of(
-        (stack) -> stack.getItem() instanceof BlockItem block && block.getBlock() instanceof ShulkerBoxBlock,
-        (stack) -> stack.getItem() instanceof BundleItem
-    );
-    //@formatter:on
+  protected record ContentsSummary(int usedSlots, int totalCount) implements Comparable<ContentsSummary> {
+    private static Comparator<ContentsSummary> comparator;
+
+    public static ContentsSummary of(ItemStack stack) {
+      ContainerComponent component = stack.get(DataComponentTypes.CONTAINER);
+      if (component == null) {
+        return null;
+      }
+
+      // This is one of the very few cases where I don't get too specific. If you have two full shulker boxes, they will
+      // be treated as equivalent, even if the actual contained items differ.
+
+      var usedSlots = new Object() {
+        int value = 0;
+      };
+      var totalCount = new Object() {
+        int value = 0;
+      };
+      component.stream().forEach((slotStack) -> {
+        if (!slotStack.isEmpty()) {
+          usedSlots.value++;
+        }
+
+        totalCount.value += slotStack.getCount();
+      });
+
+      return new ContentsSummary(usedSlots.value, totalCount.value);
+    }
+
+    @Override
+    public int compareTo(@NotNull ContainerContentsComparator.ContentsSummary other) {
+      return getComparator().compare(this, other);
+    }
+
+    private static Comparator<ContentsSummary> getComparator() {
+      if (comparator == null) {
+        comparator = SerialComparator.comparing(
+            Comparator.comparingInt(ContentsSummary::usedSlots).reversed(),
+            Comparator.comparingInt(ContentsSummary::totalCount).reversed()
+        );
+      }
+      return comparator;
+    }
   }
 }
