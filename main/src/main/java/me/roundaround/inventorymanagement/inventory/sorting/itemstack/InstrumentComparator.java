@@ -1,13 +1,40 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
-import me.roundaround.inventorymanagement.inventory.sorting.WrapperComparatorImpl;
+import me.roundaround.inventorymanagement.inventory.sorting.CachingComparatorImpl;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.item.Instrument;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class InstrumentComparator extends WrapperComparatorImpl<ItemStack> {
+public class InstrumentComparator extends CachingComparatorImpl<ItemStack, Integer> {
+  private static HashMap<RegistryEntry<Instrument>, Integer> indices;
+
   public InstrumentComparator() {
-    // TODO: Order based on instrument type (goat horn sound)
-    super(Comparator.comparingInt((stack) -> 0));
+    super(Comparator.naturalOrder());
+  }
+
+  @Override
+  protected Integer mapValue(ItemStack stack) {
+    return getInstrumentIndices().get(stack.get(DataComponentTypes.INSTRUMENT));
+  }
+
+  private static HashMap<RegistryEntry<Instrument>, Integer> getInstrumentIndices() {
+    if (indices != null) {
+      return indices;
+    }
+
+    indices = new HashMap<>();
+    AtomicInteger index = new AtomicInteger(0);
+    BuiltinRegistries.createWrapperLookup()
+        .getWrapperOrThrow(RegistryKeys.INSTRUMENT)
+        .streamEntries()
+        .forEachOrdered((entry) -> indices.put(entry, index.getAndIncrement()));
+    return indices;
   }
 }
