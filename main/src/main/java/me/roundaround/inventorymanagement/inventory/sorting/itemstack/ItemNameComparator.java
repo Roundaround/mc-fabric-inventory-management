@@ -59,10 +59,6 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<It
     return List.of(stack);
   }
 
-  private String getName(ItemStack stack) {
-    return ServerI18nTracker.getInstance(this.parameters.getPlayer()).snapshot().get(stack);
-  }
-
   protected record Group(Predicate<ItemStack> predicate, Function<ItemStack, List<ItemStack>> groupProducer) {
     public static Group rootItem(Item root, Item... items) {
       return rootItem(root, List.of(items));
