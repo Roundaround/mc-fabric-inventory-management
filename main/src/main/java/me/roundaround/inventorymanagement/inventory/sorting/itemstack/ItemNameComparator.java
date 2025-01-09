@@ -42,7 +42,7 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
           Items.GREEN_STAINED_GLASS,
           Items.RED_STAINED_GLASS,
           Items.BLACK_STAINED_GLASS),
-      Group.byItems(Items.GLASS,
+      Group.byItems(Items.GLASS_PANE,
           Items.WHITE_STAINED_GLASS_PANE,
           Items.ORANGE_STAINED_GLASS_PANE,
           Items.MAGENTA_STAINED_GLASS_PANE,
