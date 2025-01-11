@@ -16,8 +16,59 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class InventoryHelper {
+  public static List<ChangeTrackingInventory.Operation> trackedSortInventory(
+      PlayerEntity player, boolean isPlayerInventory
+  ) {
+    Inventory containerInventory = getContainerInventory(player);
+    Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
+
+    SlotRange slotRange = isPlayerInventory ?
+        SlotRangeRegistry.getPlayerSide(player, inventory) :
+        SlotRangeRegistry.getContainerSide(player, inventory);
+
+    return trackedSortInventory(player, inventory, slotRange);
+  }
+
+  public static List<ChangeTrackingInventory.Operation> trackedSortInventory(
+      PlayerEntity player, Inventory inventory, SlotRange slotRange
+  ) {
+    ChangeTrackingInventory workingInventory = new ChangeTrackingInventory(inventory);
+    ChangeTrackingInventory.StacksList stacks = workingInventory.getNonEmptyStacksInRange(slotRange);
+
+    for (int i = 0; i < stacks.size(); i++) {
+      for (int j = i + 1; j < stacks.size(); j++) {
+        ItemStack a = stacks.get(i).stack();
+        ItemStack b = stacks.get(j).stack();
+
+        if (canStacksBeMerged(a, b)) {
+          int itemsToShift = Math.min(a.getMaxCount() - a.getCount(), b.getCount());
+          if (itemsToShift > 0) {
+            a.increment(itemsToShift);
+            b.decrement(itemsToShift);
+          }
+        }
+      }
+    }
+
+    stacks = stacks.stream()
+        .filter((ref) -> !ref.stack().isEmpty())
+        .sorted(Comparator.comparing(ChangeTrackingInventory.ItemStackRef::stack,
+            ItemStackComparator.get(player.getUuid())
+        ))
+        .collect(Collectors.toCollection(ChangeTrackingInventory.StacksList::new));
+
+    for (int slotIndex = slotRange.min(); slotIndex < slotRange.max(); slotIndex++) {
+      int stacksIndex = slotIndex - slotRange.min();
+      ChangeTrackingInventory.ItemStackRef ref = stacks.get(stacksIndex);
+      workingInventory.setStackTracked(slotIndex, ref);
+    }
+
+    return workingInventory.getOperations();
+  }
+
   public static void sortInventory(PlayerEntity player, boolean isPlayerInventory) {
     Inventory containerInventory = getContainerInventory(player);
     Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
@@ -48,7 +99,7 @@ public class InventoryHelper {
       stacks.add(inventory.getStack(i).copy());
     }
 
-    stacks = stacks.stream().filter(itemStack -> !itemStack.isEmpty()).toList();
+    stacks = stacks.stream().filter((stack) -> !stack.isEmpty()).toList();
 
     for (int i = 0; i < stacks.size(); i++) {
       for (int j = i + 1; j < stacks.size(); j++) {
@@ -66,14 +117,14 @@ public class InventoryHelper {
     }
 
     stacks = stacks.stream()
-        .filter(itemStack -> !itemStack.isEmpty())
+        .filter((stack) -> !stack.isEmpty())
         .sorted(ItemStackComparator.get(player.getUuid()))
         .toList();
 
     for (int slotIndex = slotRange.min(); slotIndex < slotRange.max(); slotIndex++) {
       int stacksIndex = slotIndex - slotRange.min();
-      ItemStack itemStack = stacksIndex < stacks.size() ? stacks.get(stacksIndex) : ItemStack.EMPTY;
-      inventory.setStack(slotIndex, itemStack);
+      ItemStack stack = stacksIndex < stacks.size() ? stacks.get(stacksIndex) : ItemStack.EMPTY;
+      inventory.setStack(slotIndex, stack);
     }
   }
 
@@ -219,7 +270,7 @@ public class InventoryHelper {
   }
 
   private static boolean canPlaceItemInSlot(
-      ScreenHandler screenHandler, Inventory inventory, int inventoryIndex, ItemStack itemStack
+      ScreenHandler screenHandler, Inventory inventory, int inventoryIndex, ItemStack stack
   ) {
     if (screenHandler == null) {
       return true;
@@ -231,7 +282,7 @@ public class InventoryHelper {
     }
 
     try {
-      return screenHandler.getSlot(slotIndex.getAsInt()).canInsert(itemStack);
+      return screenHandler.getSlot(slotIndex.getAsInt()).canInsert(stack);
     } catch (IndexOutOfBoundsException e) {
       return false;
     }
