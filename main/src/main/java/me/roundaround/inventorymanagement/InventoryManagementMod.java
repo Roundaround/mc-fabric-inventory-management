@@ -11,9 +11,12 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.screen.HorseScreenHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class InventoryManagementMod implements ModInitializer {
   public static final String MOD_ID = "inventorymanagement";
+  public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
   @Override
   public void onInitialize() {
