@@ -6,6 +6,7 @@ import me.roundaround.inventorymanagement.api.positioning.Coords;
 import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
+import me.roundaround.inventorymanagement.inventory.SortableInventory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
@@ -15,6 +16,8 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+
+import java.util.ArrayList;
 
 public class SortInventoryButton<H extends ScreenHandler, S extends HandledScreen<H>> extends ButtonBase<H, S> {
   private static final Identifier ICON = new Identifier(InventoryManagementMod.MOD_ID, "icon/sort");
@@ -46,7 +49,8 @@ public class SortInventoryButton<H extends ScreenHandler, S extends HandledScree
     return (button) -> {
       MinecraftClient client = MinecraftClient.getInstance();
       PlayerEntity player = client.player;
-      InventoryHelper.trackedSortInventory(player, isPlayerInventory);
+      ArrayList<Integer> sorted = InventoryHelper.tempSortInventory(player, isPlayerInventory);
+      InventoryManagementMod.LOGGER.info(sorted);
     };
   }
 }

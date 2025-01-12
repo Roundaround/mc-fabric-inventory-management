@@ -7,14 +7,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
-public class ChangeTrackingInventory implements Inventory {
-  private final ArrayList<Operation> operations = new ArrayList<>();
+public class SortableInventory implements Inventory {
   private final Inventory source;
   private final DefaultedList<ItemStack> stacks;
 
-  public ChangeTrackingInventory(Inventory source) {
+  public SortableInventory(Inventory source) {
     this.source = source;
     this.stacks = DefaultedList.ofSize(source.size(), ItemStack.EMPTY);
     this.copyStacks();
@@ -69,6 +69,24 @@ public class ChangeTrackingInventory implements Inventory {
     this.stacks.clear();
   }
 
+  public ArrayList<Integer> sort(SlotRange slotRange, Comparator<ItemStack> comparator) {
+    StacksList stacks = this.getNonEmptyStacksInRange(slotRange)
+        .stream()
+        .filter((ref) -> !ref.stack().isEmpty())
+        .sorted(Comparator.comparing(ItemStackRef::stack, comparator))
+        .collect(Collectors.toCollection(StacksList::new));
+
+    ArrayList<Integer> sorted = new ArrayList<>(stacks.size());
+
+    for (int slot = slotRange.min(); slot < slotRange.max(); slot++) {
+      int stackIndex = slot - slotRange.min();
+      ItemStackRef ref = stacks.getOrEmpty(stackIndex);
+      sorted.add(ref.originalSlot());
+    }
+
+    return sorted;
+  }
+
   public StacksList getNonEmptyStacksInRange(SlotRange slotRange) {
     StacksList stacks = new StacksList(slotRange.size());
     for (int i = slotRange.min(); i < slotRange.max(); i++) {
@@ -81,21 +99,8 @@ public class ChangeTrackingInventory implements Inventory {
     return stacks;
   }
 
-  public void setStackTracked(int slot, ItemStackRef ref) {
-    this.setStack(slot, ref.stack());
-    this.operations.add(new Operation(ref.originalSlot(), slot, ref.stack().getCount()));
-  }
-
-  public void reset() {
-    this.operations.clear();
-    this.copyStacks();
-  }
-
-  public List<Operation> getOperations() {
-    return List.copyOf(this.operations);
-  }
-
   private void copyStacks() {
+    this.clear();
     for (int i = 0; i < this.size(); i++) {
       this.setStack(i, this.source.getStack(i).copy());
     }
@@ -107,9 +112,6 @@ public class ChangeTrackingInventory implements Inventory {
     }
   }
 
-  public record Operation(int sourceSlot, int destSlot, int count) {
-  }
-
   public static class StacksList extends ArrayList<ItemStackRef> {
     public StacksList() {
       super();
@@ -119,12 +121,14 @@ public class ChangeTrackingInventory implements Inventory {
       super(initialSize);
     }
 
-    @Override
-    public ItemStackRef get(int index) {
+    public ItemStackRef getOrEmpty(int index) {
       if (index >= this.size()) {
         return ItemStackRef.empty();
       }
-      return super.get(index);
+      return this.get(index);
     }
+  }
+
+  public record SortedEntry(int source, int destination) {
   }
 }
