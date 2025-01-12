@@ -3,11 +3,11 @@ package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 import me.roundaround.inventorymanagement.inventory.sorting.CachingComparatorImpl;
 import me.roundaround.inventorymanagement.inventory.sorting.LexicographicalListComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.PredicatedComparator;
-import me.roundaround.inventorymanagement.server.network.ServerI18nTracker;
 import net.minecraft.block.entity.Sherds;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.Language;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,7 +18,8 @@ public class DecoratedPotComparator extends CachingComparatorImpl<ItemStack, Lis
     //@formatter:off
     super(PredicatedComparator.ignoreNulls(
         LexicographicalListComparator.comparing(
-            ServerI18nTracker.getInstance(player).snapshot()::get,
+            Language.getInstance()::get,
+//            ServerI18nTracker.getInstance(player).snapshot()::get,
             Comparator.nullsLast(String::compareToIgnoreCase)
         )
     ));

@@ -2,7 +2,6 @@ package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import com.google.common.collect.ImmutableSet;
 import me.roundaround.inventorymanagement.inventory.sorting.*;
-import me.roundaround.inventorymanagement.server.network.ServerI18nTracker;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -11,6 +10,7 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Language;
 
 import java.util.Comparator;
 import java.util.List;
@@ -153,14 +153,15 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
   }
 
   private String getName(ItemStack stack) {
-    return ServerI18nTracker.getInstance(this.parameters.getPlayer()).snapshot().get(stack);
+    return getName(this.parameters.getPlayer(), stack);
   }
 
   private static String getName(UUID player, ItemStack stack) {
     if (stack.isEmpty()) {
       return "";
     }
-    return ServerI18nTracker.getInstance(player).snapshot().get(stack);
+    return Language.getInstance().get(stack.getTranslationKey());
+    //    return ServerI18nTracker.getInstance(player).snapshot().get(stack);
   }
 
   protected record Group(Predicate<ItemStack> predicate, BiFunction<UUID, ItemStack, List<String>> groupProducer) {
