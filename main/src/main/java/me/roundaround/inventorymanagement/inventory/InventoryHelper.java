@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.HorseScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.collection.DefaultedList;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,7 +36,18 @@ public class InventoryHelper {
       PlayerEntity player, Inventory inventory, SlotRange slotRange
   ) {
     SortableInventory copy = new SortableInventory(inventory);
-    return copy.sort(slotRange, ItemStackComparator.get(player.getUuid()));
+    ArrayList<Integer> result = copy.sort(slotRange, ItemStackComparator.get(player.getUuid()));
+
+    SortableInventory copy2 = new SortableInventory(inventory);
+    sortInventory(player, copy2, slotRange);
+
+    DefaultedList<ItemStack> reconstructed = DefaultedList.ofSize(result.size(), ItemStack.EMPTY);
+    for (int dest = 0; dest < result.size(); dest++) {
+      int source = result.get(dest);
+      reconstructed.set(dest, inventory.getStack(source).copy());
+    }
+
+    return result;
   }
 
   public static void sortInventory(PlayerEntity player, boolean isPlayerInventory) {
