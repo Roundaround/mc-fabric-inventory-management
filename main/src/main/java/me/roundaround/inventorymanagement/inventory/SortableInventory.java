@@ -128,7 +128,4 @@ public class SortableInventory implements Inventory {
       return this.get(index);
     }
   }
-
-  public record SortedEntry(int source, int destination) {
-  }
 }
