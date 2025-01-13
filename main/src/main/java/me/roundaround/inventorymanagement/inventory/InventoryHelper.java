@@ -44,7 +44,8 @@ public class InventoryHelper {
     DefaultedList<ItemStack> reconstructed = DefaultedList.ofSize(result.size(), ItemStack.EMPTY);
     for (int dest = 0; dest < result.size(); dest++) {
       int source = result.get(dest);
-      reconstructed.set(dest, inventory.getStack(source).copy());
+      ItemStack stack = source == -1 ? ItemStack.EMPTY : inventory.getStack(source).copy();
+      reconstructed.set(dest, stack);
     }
 
     return result;
