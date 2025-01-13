@@ -7,3 +7,7 @@ plugins {
 dependencies {
   testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.11.4")
 }
+
+fabricApi {
+  configureDataGeneration()
+}

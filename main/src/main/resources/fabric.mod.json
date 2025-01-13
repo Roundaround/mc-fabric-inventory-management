@@ -24,6 +24,9 @@
     ],
     "modmenu": [
       "me.roundaround.inventorymanagement.compat.modmenu.ModMenuImpl"
+    ],
+    "fabric-datagen": [
+      "me.roundaround.inventorymanagement.data.InventoryManagementDataGenerator"
     ]
   },
   "mixins": [

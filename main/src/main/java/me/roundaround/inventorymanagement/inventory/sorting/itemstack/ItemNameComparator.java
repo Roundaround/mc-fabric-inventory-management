@@ -2,12 +2,13 @@ package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import com.google.common.collect.ImmutableSet;
 import me.roundaround.inventorymanagement.inventory.sorting.*;
+import me.roundaround.inventorymanagement.registry.tag.InventoryManagementItemTags;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Language;
@@ -21,102 +22,24 @@ import java.util.function.Predicate;
 public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<String>> {
   //@formatter:off
   // TODO: Move into some kind of custom registry
-  // TODO: Create tags for the ones with items listed out explicitly (i.e. stained glass)
-  // TODO: Find a way to implement proper i18n for the ones that have no root item (i.e. wool)
   private static final List<Group> groups = List.of(
-      Group.byBlockTag(Items.SHULKER_BOX, BlockTags.SHULKER_BOXES),
-      Group.byItems(Items.GLASS,
-          Items.WHITE_STAINED_GLASS,
-          Items.ORANGE_STAINED_GLASS,
-          Items.MAGENTA_STAINED_GLASS,
-          Items.LIGHT_BLUE_STAINED_GLASS,
-          Items.YELLOW_STAINED_GLASS,
-          Items.LIME_STAINED_GLASS,
-          Items.PINK_STAINED_GLASS,
-          Items.GRAY_STAINED_GLASS,
-          Items.LIGHT_GRAY_STAINED_GLASS,
-          Items.CYAN_STAINED_GLASS,
-          Items.PURPLE_STAINED_GLASS,
-          Items.BLUE_STAINED_GLASS,
-          Items.BROWN_STAINED_GLASS,
-          Items.GREEN_STAINED_GLASS,
-          Items.RED_STAINED_GLASS,
-          Items.BLACK_STAINED_GLASS),
-      Group.byItems(Items.GLASS_PANE,
-          Items.WHITE_STAINED_GLASS_PANE,
-          Items.ORANGE_STAINED_GLASS_PANE,
-          Items.MAGENTA_STAINED_GLASS_PANE,
-          Items.LIGHT_BLUE_STAINED_GLASS_PANE,
-          Items.YELLOW_STAINED_GLASS_PANE,
-          Items.LIME_STAINED_GLASS_PANE,
-          Items.PINK_STAINED_GLASS_PANE,
-          Items.GRAY_STAINED_GLASS_PANE,
-          Items.LIGHT_GRAY_STAINED_GLASS_PANE,
-          Items.CYAN_STAINED_GLASS_PANE,
-          Items.PURPLE_STAINED_GLASS_PANE,
-          Items.BLUE_STAINED_GLASS_PANE,
-          Items.BROWN_STAINED_GLASS_PANE,
-          Items.GREEN_STAINED_GLASS_PANE,
-          Items.RED_STAINED_GLASS_PANE,
-          Items.BLACK_STAINED_GLASS_PANE),
-      Group.byItemTag("Wool", ItemTags.WOOL),
-      Group.byItemTag("Carpet", ItemTags.WOOL_CARPETS),
-      Group.byItems("Dye",
-          Items.WHITE_DYE,
-          Items.ORANGE_DYE,
-          Items.MAGENTA_DYE,
-          Items.LIGHT_BLUE_DYE,
-          Items.YELLOW_DYE,
-          Items.LIME_DYE,
-          Items.PINK_DYE,
-          Items.GRAY_DYE,
-          Items.LIGHT_GRAY_DYE,
-          Items.CYAN_DYE,
-          Items.PURPLE_DYE,
-          Items.BLUE_DYE,
-          Items.BROWN_DYE,
-          Items.GREEN_DYE,
-          Items.RED_DYE,
-          Items.BLACK_DYE),
-      Group.byItemTag(Items.CANDLE, ItemTags.CANDLES),
-      Group.byItemTag("Bed", ItemTags.BEDS),
-      Group.byItemTag("Banner", ItemTags.BANNERS),
-      Group.byItemTag(Items.TERRACOTTA, ItemTags.TERRACOTTA),
-      Group.byItems("Glazed Terracotta",
-          Items.WHITE_GLAZED_TERRACOTTA,
-          Items.ORANGE_GLAZED_TERRACOTTA,
-          Items.MAGENTA_GLAZED_TERRACOTTA,
-          Items.LIGHT_BLUE_GLAZED_TERRACOTTA,
-          Items.YELLOW_GLAZED_TERRACOTTA,
-          Items.LIME_GLAZED_TERRACOTTA,
-          Items.PINK_GLAZED_TERRACOTTA,
-          Items.GRAY_GLAZED_TERRACOTTA,
-          Items.LIGHT_GRAY_GLAZED_TERRACOTTA,
-          Items.CYAN_GLAZED_TERRACOTTA,
-          Items.PURPLE_GLAZED_TERRACOTTA,
-          Items.BLUE_GLAZED_TERRACOTTA,
-          Items.BROWN_GLAZED_TERRACOTTA,
-          Items.GREEN_GLAZED_TERRACOTTA,
-          Items.RED_GLAZED_TERRACOTTA,
-          Items.BLACK_GLAZED_TERRACOTTA),
-      Group.byItems("Concrete",
-          Items.WHITE_CONCRETE,
-          Items.ORANGE_CONCRETE,
-          Items.MAGENTA_CONCRETE,
-          Items.LIGHT_BLUE_CONCRETE,
-          Items.YELLOW_CONCRETE,
-          Items.LIME_CONCRETE,
-          Items.PINK_CONCRETE,
-          Items.GRAY_CONCRETE,
-          Items.LIGHT_GRAY_CONCRETE,
-          Items.CYAN_CONCRETE,
-          Items.PURPLE_CONCRETE,
-          Items.BLUE_CONCRETE,
-          Items.BROWN_CONCRETE,
-          Items.GREEN_CONCRETE,
-          Items.RED_CONCRETE,
-          Items.BLACK_CONCRETE),
-      Group.byBlockTag("Concrete Powder", BlockTags.CONCRETE_POWDER)
+      Group.by(Items.SHULKER_BOX, ConventionalItemTags.SHULKER_BOXES),
+      // TODO: Replace with ConventionalItemTags.GLASS_BLOCKS_CHEAP starting in 1.21
+      Group.by(Items.GLASS, GroupPredicates.GLASS_SANS_TINTED),
+      Group.by(Items.GLASS_PANE, ConventionalItemTags.GLASS_PANES),
+      Group.by(GroupNames.WOOL, ItemTags.WOOL),
+      Group.by(GroupNames.WOOL_CARPET, ItemTags.WOOL_CARPETS),
+      Group.by(GroupNames.DYE, ConventionalItemTags.DYES),
+      Group.by(Items.CANDLE, ItemTags.CANDLES),
+      Group.by(GroupNames.BED, ItemTags.BEDS),
+      Group.by(GroupNames.BANNER, ItemTags.BANNERS),
+      Group.by(Items.TERRACOTTA, ItemTags.TERRACOTTA),
+      // TODO: Replace with ConventionalItemTags.GLAZED_TERRACOTTAS starting in 1.21
+      Group.by(GroupNames.GLAZED_TERRACOTTA, InventoryManagementItemTags.GLAZED_TERRACOTTAS),
+      // TODO: Replace with ConventionalItemTags.CONCRETES starting in 1.21
+      Group.by(GroupNames.CONCRETE, InventoryManagementItemTags.CONCRETES),
+      // TODO: Replace with ConventionalItemTags.CONCRETE_POWDERS starting in 1.21
+      Group.by(GroupNames.CONCRETE_POWDER, InventoryManagementItemTags.CONCRETE_POWDERS)
   );
   //@formatter:on
 
@@ -139,8 +62,12 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
 
   @Override
   protected List<String> mapValue(ItemStack stack) {
+    return this.mapToTranslationKeys(stack).stream().map(Language.getInstance()::get).toList();
+  }
+
+  private List<String> mapToTranslationKeys(ItemStack stack) {
     if (!this.parameters.isGroupItems()) {
-      return List.of(this.getName(stack));
+      return List.of(getTranslationKey(stack));
     }
 
     for (Group group : groups) {
@@ -149,36 +76,61 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
       }
     }
 
-    return List.of(this.getName(stack));
+    return List.of(getTranslationKey(stack));
   }
 
-  private String getName(ItemStack stack) {
-    return getName(this.parameters.getPlayer(), stack);
-  }
-
-  private static String getName(UUID player, ItemStack stack) {
+  private static String getTranslationKey(ItemStack stack) {
     if (stack.isEmpty()) {
       return "";
     }
-    return Language.getInstance().get(stack.getTranslationKey());
-    //    return ServerI18nTracker.getInstance(player).snapshot().get(stack);
+    return stack.getTranslationKey();
+  }
+
+  // TODO: Replace all usages of GroupNames with a new Group static method that pulls i18n key from tag
+  public static class GroupNames {
+    // TODO: Replace with ItemTags.WOOL.getTranslationKey() starting in 1.21
+    public static String WOOL = "tag.item.inventorymanagement.wools";
+    // TODO: Replace with ItemTags.WOOL_CARPETS.getTranslationKey() starting in 1.21
+    public static String WOOL_CARPET = "tag.item.inventorymanagement.wool_carpets";
+    // TODO: Replace with ConventionalItemTags.DYES.getTranslationKey() starting in 1.21
+    public static String DYE = "tag.item.inventorymanagement.dyes";
+    // TODO: Replace with ItemTags.BEDS.getTranslationKey() starting in 1.21
+    public static String BED = "tag.item.inventorymanagement.beds";
+    // TODO: Replace with ItemTags.BANNERS.getTranslationKey() starting in 1.21
+    public static String BANNER = "tag.item.inventorymanagement.banners";
+    // TODO: Replace with ConventionalItemTags.GLAZED_TERRACOTTAS.getTranslationKey() starting in 1.21
+    public static String GLAZED_TERRACOTTA = "tag.item.inventorymanagement.glazed_terracottas";
+    // TODO: Replace with ConventionalItemTags.CONCRETES.getTranslationKey() starting in 1.21
+    public static String CONCRETE = "tag.item.inventorymanagement.concretes";
+    // TODO: Replace with ConventionalItemTags.CONCRETE_POWDERS.getTranslationKey() starting in 1.21
+    public static String CONCRETE_POWDER = "tag.item.inventorymanagement.concrete_powders";
+  }
+
+  public static class GroupPredicates {
+    // TODO: Starting with 1.21, simply use the ConventionalItemTags.GLASS_BLOCKS_CHEAP instead
+    public static Predicate<ItemStack> GLASS_SANS_TINTED = (stack) -> stack.isIn(ConventionalItemTags.GLASS_BLOCKS) &&
+                                                                      !stack.isOf(Items.TINTED_GLASS);
   }
 
   protected record Group(Predicate<ItemStack> predicate, BiFunction<UUID, ItemStack, List<String>> groupProducer) {
-    public static Group byItemTag(Item root, TagKey<Item> tag) {
+    public static Group by(Item root, Predicate<ItemStack> predicate) {
+      return new Group(predicate, groupUnderItem(root));
+    }
+
+    public static Group by(Item root, TagKey<Item> tag) {
       return new Group((stack) -> stack.isIn(tag), groupUnderItem(root));
     }
 
-    public static Group byItemTag(String root, TagKey<Item> tag) {
+    public static Group by(String root, TagKey<Item> tag) {
       return new Group((stack) -> stack.isIn(tag), groupUnderName(root));
     }
 
-    public static Group byItems(Item root, Item first, Item... additional) {
+    public static Group by(Item root, Item first, Item... additional) {
       ImmutableSet<Item> items = ImmutableSet.<Item>builder().add(first).addAll(List.of(additional)).build();
       return new Group((stack) -> items.contains(stack.getItem()), groupUnderItem(root));
     }
 
-    public static Group byItems(String root, Item first, Item... additional) {
+    public static Group by(String root, Item first, Item... additional) {
       ImmutableSet<Item> items = ImmutableSet.<Item>builder().add(first).addAll(List.of(additional)).build();
       return new Group((stack) -> items.contains(stack.getItem()), groupUnderName(root));
     }
@@ -199,13 +151,13 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
 
     private static BiFunction<UUID, ItemStack, List<String>> groupUnderItem(Item item) {
       return (uuid, stack) -> List.of(
-          getName(uuid, stack.copyComponentsToNewStack(item, stack.getCount())),
-          getName(uuid, stack.isOf(item) ? ItemStack.EMPTY : stack)
+          getTranslationKey(stack.copyComponentsToNewStack(item, stack.getCount())),
+          getTranslationKey(stack.isOf(item) ? ItemStack.EMPTY : stack)
       );
     }
 
     private static BiFunction<UUID, ItemStack, List<String>> groupUnderName(String root) {
-      return (uuid, stack) -> List.of(root, getName(uuid, stack));
+      return (uuid, stack) -> List.of(root, getTranslationKey(stack));
     }
   }
 }
