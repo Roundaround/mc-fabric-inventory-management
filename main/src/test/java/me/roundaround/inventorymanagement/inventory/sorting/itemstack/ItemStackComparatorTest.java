@@ -34,6 +34,10 @@ public class ItemStackComparatorTest extends BaseMinecraftTest {
 
     ArrayList<Duration> executionTimes = new ArrayList<>(runs);
 
+    // Warm up pass to get i18n initialized
+    ArrayList<ItemStack> warmup = genRandomLargeInventory(inventorySize);
+    warmup.sort(ItemStackComparator.get(PLAYER_UUID));
+
     for (int i = 0; i < runs; i++) {
       ArrayList<ItemStack> actual = genRandomLargeInventory(inventorySize);
       long startTime = System.nanoTime();

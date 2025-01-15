@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.inventory.sorting.CachingComparatorImpl;
+import me.roundaround.inventorymanagement.inventory.sorting.PredicatedComparator;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Instrument;
 import net.minecraft.item.ItemStack;
@@ -8,7 +9,6 @@ import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,7 +16,7 @@ public class InstrumentComparator extends CachingComparatorImpl<ItemStack, Integ
   private static HashMap<RegistryEntry<Instrument>, Integer> indices;
 
   public InstrumentComparator() {
-    super(Comparator.naturalOrder());
+    super(PredicatedComparator.ignoreNullsNaturalOrder());
   }
 
   @Override

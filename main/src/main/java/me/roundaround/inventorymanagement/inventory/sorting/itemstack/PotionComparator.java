@@ -70,10 +70,10 @@ public class PotionComparator extends CachingComparatorImpl<ItemStack, PotionCom
       if (comparator == null) {
         //@formatter:off
         comparator = SerialComparator.comparing(
-            Comparator.nullsLast(Comparator.comparingInt(PotionSummary::index)),
+            Comparator.comparing(PotionSummary::index, Comparator.nullsLast(Comparator.naturalOrder())),
             Comparator.comparing((summary) -> summary.customEffects().size(), Comparator.reverseOrder()),
             Comparator.comparing(PotionSummary::customEffects, LexicographicalListComparator.naturalOrder()),
-            Comparator.nullsLast(Comparator.comparingInt(PotionSummary::customColor))
+            Comparator.comparing(PotionSummary::customColor, Comparator.nullsLast(Comparator.naturalOrder()))
         );
         //@formatter:on
       }
