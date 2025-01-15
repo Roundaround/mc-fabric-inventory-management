@@ -6,11 +6,11 @@ import net.minecraft.item.ItemStack;
 
 import java.util.Comparator;
 
-public class ContainerFirstComparator extends CachingComparatorImpl<ItemStack, Boolean> {
+public class ContainerFirstComparator extends CachingComparatorImpl<ItemStack, Integer> {
   private static ContainerFirstComparator instance;
 
   private ContainerFirstComparator() {
-    super(Comparator.reverseOrder());
+    super(Comparator.naturalOrder());
   }
 
   public static ContainerFirstComparator getInstance() {
@@ -21,7 +21,13 @@ public class ContainerFirstComparator extends CachingComparatorImpl<ItemStack, B
   }
 
   @Override
-  protected Boolean mapValue(ItemStack stack) {
-    return stack.get(DataComponentTypes.CONTAINER) != null;
+  protected Integer mapValue(ItemStack stack) {
+    if (stack.get(DataComponentTypes.CONTAINER) != null) {
+      return 1;
+    }
+    if (stack.get(DataComponentTypes.BUNDLE_CONTENTS) != null) {
+      return 2;
+    }
+    return 10;
   }
 }

@@ -19,10 +19,17 @@ public class ContainerFirstComparatorTest extends BaseMinecraftTest {
 
   @BeforeEach
   void populateItems() {
-    this.items = Lists.newArrayList(new ItemStack(Items.FIRE_CHARGE), new ItemStack(Items.BONE_MEAL),
-        new ItemStack(Items.SHULKER_BOX), new ItemStack(Items.BUNDLE), new ItemStack(Items.TARGET),
-        new ItemStack(Items.BLUE_SHULKER_BOX), new ItemStack(Items.NETHERITE_CHESTPLATE)
+    //@formatter:off
+    this.items = Lists.newArrayList(
+        new ItemStack(Items.FIRE_CHARGE),
+        new ItemStack(Items.BONE_MEAL),
+        new ItemStack(Items.SHULKER_BOX),
+        new ItemStack(Items.BUNDLE),
+        new ItemStack(Items.TARGET),
+        new ItemStack(Items.BLUE_SHULKER_BOX),
+        new ItemStack(Items.NETHERITE_CHESTPLATE)
     );
+    //@formatter:on
     this.items.sort(ContainerFirstComparator.getInstance());
   }
 
