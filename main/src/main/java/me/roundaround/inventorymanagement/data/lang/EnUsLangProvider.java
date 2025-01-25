@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.registry.RegistryWrapper;
 
+import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 public class EnUsLangProvider extends FabricLanguageProvider {
@@ -13,14 +14,23 @@ public class EnUsLangProvider extends FabricLanguageProvider {
 
   @Override
   public void generateTranslations(RegistryWrapper.WrapperLookup lookup, TranslationBuilder builder) {
+//    try {
+//      Path existingFile = this.dataOutput.getModContainer()
+//          .findPath("assets/inventorymanagement/lang/en_us.existing.json")
+//          .get();
+//      builder.add(existingFile);
+//    } catch (Exception e) {
+//      throw new RuntimeException("Failed to add existing language file!", e);
+//    }
+
     // TODO: Remove starting in 1.21
-    builder.add("tag.item.c.concrete_powders", "Concrete Powders");
+    builder.add("tag.item.inventorymanagement.concrete_powders", "Concrete Powders");
     // TODO: Remove starting in 1.21
-    builder.add("tag.item.c.concretes", "Concretes");
+    builder.add("tag.item.inventorymanagement.concretes", "Concretes");
     // TODO: Remove starting in 1.21
-    builder.add("tag.item.c.dyes", "Dyes");
+    builder.add("tag.item.inventorymanagement.dyes", "Dyes");
     // TODO: Remove starting in 1.21
-    builder.add("tag.item.c.glazed_terracottas", "Glazed Terracottas");
+    builder.add("tag.item.inventorymanagement.glazed_terracottas", "Glazed Terracottas");
 
     // TODO: Replace with ItemTags.BANNERS.getTranslationKey() starting in 1.21
     builder.add("tag.item.inventorymanagement.banners", "Banners");

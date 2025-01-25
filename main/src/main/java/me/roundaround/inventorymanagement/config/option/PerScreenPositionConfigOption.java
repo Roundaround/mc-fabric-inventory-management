@@ -1,9 +1,9 @@
 package me.roundaround.inventorymanagement.config.option;
 
-import me.roundaround.roundalib.config.ConfigPath;
-import me.roundaround.roundalib.config.option.ConfigOption;
-import me.roundaround.roundalib.config.value.Position;
-import me.roundaround.roundalib.nightconfig.core.Config;
+import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
+import me.roundaround.inventorymanagement.roundalib.config.option.ConfigOption;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.roundalib.nightconfig.core.Config;
 import net.minecraft.client.gui.screen.Screen;
 
 import java.util.HashMap;

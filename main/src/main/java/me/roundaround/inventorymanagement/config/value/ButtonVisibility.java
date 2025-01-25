@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.config.value;
 
-import me.roundaround.roundalib.config.value.EnumValue;
+import me.roundaround.inventorymanagement.roundalib.config.value.EnumValue;
 
 import java.util.Arrays;
 import java.util.Optional;
