@@ -34,7 +34,3 @@ bin/
 
 run/
 **/generated/.cache/
-
-# roundalib
-
-**/src/roundalib

@@ -13,11 +13,3 @@ includeBuild("../../roundalib-gradle") {
       .using(project(":")) // Replace with the root project of the plugin
   }
 }
-
-include("main")
-
-include("expandedstorage")
-project(":expandedstorage").projectDir = file("compat/expandedstorage")
-
-include("reinfcore")
-project(":reinfcore").projectDir = file("compat/reinfcore")
