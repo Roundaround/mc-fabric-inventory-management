@@ -3,17 +3,14 @@ package me.roundaround.inventorymanagement.data;
 import me.roundaround.inventorymanagement.registry.tag.InventoryManagementItemTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
 
 import java.util.concurrent.CompletableFuture;
 
-public class TagProvider extends FabricTagProvider<Item> {
+public class TagProvider extends FabricTagProvider.ItemTagProvider {
   public TagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> future) {
-    super(output, RegistryKeys.ITEM, future);
+    super(output, future);
   }
 
   @Override
@@ -21,7 +18,7 @@ public class TagProvider extends FabricTagProvider<Item> {
     //@formatter:off
 
     // TODO: Remove in favor of ConventionalItemTags.GLAZED_TERRACOTTAS starting in 1.21
-    getOrCreateTagBuilder(InventoryManagementItemTags.GLAZED_TERRACOTTAS).add(
+    this.getOrCreateTagBuilder(InventoryManagementItemTags.GLAZED_TERRACOTTAS).add(
         Items.WHITE_GLAZED_TERRACOTTA,
         Items.ORANGE_GLAZED_TERRACOTTA,
         Items.MAGENTA_GLAZED_TERRACOTTA,
@@ -41,7 +38,7 @@ public class TagProvider extends FabricTagProvider<Item> {
     );
 
     // TODO: Remove in favor of ConventionalItemTags.CONCRETES starting in 1.21
-    getOrCreateTagBuilder(InventoryManagementItemTags.CONCRETES).add(
+    this.getOrCreateTagBuilder(InventoryManagementItemTags.CONCRETES).add(
         Items.WHITE_CONCRETE,
         Items.ORANGE_CONCRETE,
         Items.MAGENTA_CONCRETE,
@@ -61,8 +58,24 @@ public class TagProvider extends FabricTagProvider<Item> {
     );
 
     // TODO: Remove in favor of ConventionalItemTags.CONCRETE_POWDERS starting in 1.21
-    getOrCreateTagBuilder(InventoryManagementItemTags.CONCRETE_POWDERS)
-        .addOptionalTag(BlockTags.CONCRETE_POWDER.id());
+    this.getOrCreateTagBuilder(InventoryManagementItemTags.CONCRETE_POWDERS).add(
+        Items.WHITE_CONCRETE_POWDER,
+        Items.ORANGE_CONCRETE_POWDER,
+        Items.MAGENTA_CONCRETE_POWDER,
+        Items.LIGHT_BLUE_CONCRETE_POWDER,
+        Items.YELLOW_CONCRETE_POWDER,
+        Items.LIME_CONCRETE_POWDER,
+        Items.PINK_CONCRETE_POWDER,
+        Items.GRAY_CONCRETE_POWDER,
+        Items.LIGHT_GRAY_CONCRETE_POWDER,
+        Items.CYAN_CONCRETE_POWDER,
+        Items.PURPLE_CONCRETE_POWDER,
+        Items.BLUE_CONCRETE_POWDER,
+        Items.BROWN_CONCRETE_POWDER,
+        Items.GREEN_CONCRETE_POWDER,
+        Items.RED_CONCRETE_POWDER,
+        Items.BLACK_CONCRETE_POWDER
+    );
 
     //@formatter:on
   }

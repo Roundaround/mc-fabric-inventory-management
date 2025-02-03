@@ -1,7 +1,6 @@
 package me.roundaround.inventorymanagement.registry.tag;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
-import net.fabricmc.fabric.impl.tag.convention.v2.TagRegistration;
 import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
@@ -14,8 +13,4 @@ public class InventoryManagementItemTags {
       RegistryKeys.ITEM, Identifier.of(InventoryManagementMod.MOD_ID, "concretes"));
   public static final TagKey<Item> CONCRETE_POWDERS = TagKey.of(
       RegistryKeys.ITEM, Identifier.of(InventoryManagementMod.MOD_ID, "concrete_powders"));
-
-  private static TagKey<Item> register(String tagId) {
-    return TagRegistration.ITEM_TAG.registerC(tagId);
-  }
 }
