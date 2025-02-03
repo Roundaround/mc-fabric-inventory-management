@@ -27,5 +27,13 @@
   "inventorymanagement.buttonVisibility.default": "Default/inherit",
   "inventorymanagement.buttonVisibility.show": "Always",
   "inventorymanagement.buttonVisibility.hide": "Never",
-  "inventorymanagement.perScreen.value.none": "Default/inherit"
+  "inventorymanagement.perScreen.value.none": "Default/inherit",
+  "tag.item.inventorymanagement.banners": "Banners",
+  "tag.item.inventorymanagement.beds": "Beds",
+  "tag.item.inventorymanagement.concrete_powders": "Concrete Powders",
+  "tag.item.inventorymanagement.concretes": "Concretes",
+  "tag.item.inventorymanagement.dyes": "Dyes",
+  "tag.item.inventorymanagement.glazed_terracottas": "Glazed Terracottas",
+  "tag.item.inventorymanagement.wool_carpets": "Carpets",
+  "tag.item.inventorymanagement.wools": "Wools"
 }
