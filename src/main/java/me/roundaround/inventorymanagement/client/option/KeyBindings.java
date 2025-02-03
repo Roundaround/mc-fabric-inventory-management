@@ -2,8 +2,8 @@ package me.roundaround.inventorymanagement.client.option;
 
 import me.roundaround.inventorymanagement.client.ButtonManager;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
-import me.roundaround.roundalib.client.event.ScreenInputEvent;
-import me.roundaround.roundalib.client.gui.GuiUtil;
+import me.roundaround.inventorymanagement.roundalib.client.event.ScreenInputEvent;
+import me.roundaround.inventorymanagement.roundalib.client.gui.GuiUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;

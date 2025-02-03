@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.config.value;
 
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 
 import java.util.HashMap;
 import java.util.Map;
