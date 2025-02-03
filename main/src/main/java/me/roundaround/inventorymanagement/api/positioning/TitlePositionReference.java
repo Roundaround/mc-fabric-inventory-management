@@ -2,7 +2,7 @@ package me.roundaround.inventorymanagement.api.positioning;
 
 import me.roundaround.inventorymanagement.api.ButtonContext;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
-import me.roundaround.roundalib.client.gui.GuiUtil;
+import me.roundaround.inventorymanagement.roundalib.client.gui.GuiUtil;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;

@@ -1,7 +1,7 @@
 package me.roundaround.inventorymanagement.config.value;
 
-import me.roundaround.roundalib.client.gui.GuiUtil;
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.roundalib.client.gui.GuiUtil;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 
 public class ScreenOverrides {
   private PosRefType posRefType = PosRefType.AUTO;

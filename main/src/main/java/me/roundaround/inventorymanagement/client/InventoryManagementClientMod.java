@@ -13,7 +13,7 @@ import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import me.roundaround.inventorymanagement.event.ResourcesReloadedEvent;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;
-import me.roundaround.roundalib.client.gui.GuiUtil;
+import me.roundaround.inventorymanagement.roundalib.client.gui.GuiUtil;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;

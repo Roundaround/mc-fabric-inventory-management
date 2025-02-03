@@ -1,7 +1,7 @@
 package me.roundaround.inventorymanagement.network;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
-import me.roundaround.roundalib.network.CustomCodecs;
+import me.roundaround.inventorymanagement.roundalib.network.CustomCodecs;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;

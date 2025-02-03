@@ -1,8 +1,8 @@
 package me.roundaround.inventorymanagement.config.option;
 
 import me.roundaround.inventorymanagement.config.value.ScreenOverrides;
-import me.roundaround.roundalib.config.ConfigPath;
-import me.roundaround.roundalib.config.option.ConfigOption;
+import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
+import me.roundaround.inventorymanagement.roundalib.config.option.ConfigOption;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.ScreenHandler;
 
