@@ -1,4 +1,5 @@
 {
+  "inventorymanagement.resource.dark": "Inventory Management Dark UI",
   "inventorymanagement.config.title": "Inventory Management Config",
   "inventorymanagement.button.sortPlayer": "Sort inventory",
   "inventorymanagement.button.sortContainer": "Sort container",

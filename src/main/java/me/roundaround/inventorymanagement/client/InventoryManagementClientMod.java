@@ -32,8 +32,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         .getModContainer(InventoryManagementMod.MOD_ID)
         .ifPresent((container) -> ResourceManagerHelper.registerBuiltinResourcePack(
             new Identifier(InventoryManagementMod.MOD_ID, "inventorymanagement-dark-ui"), container,
-            // TODO: i18n
-            Text.literal("Inventory Management Dark UI"), ResourcePackActivationType.NORMAL
+            Text.translatable("inventorymanagement.resource.dark"), ResourcePackActivationType.NORMAL
         ));
 
     this.initButtonRegistry();
