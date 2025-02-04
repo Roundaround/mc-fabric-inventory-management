@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public final class ClientNetworking {
@@ -23,16 +24,28 @@ public final class ClientNetworking {
     ClientPlayNetworking.send(new Networking.StackC2S(true));
   }
 
-  public static void sendSortContainerPacket() {
-    ClientPlayNetworking.send(new Networking.SortC2S(false, getItemNames()));
+  public static void sendSortContainerPacket(List<Integer> sorted) {
+    sendSortInventoryPacket(false, sorted);
   }
 
-  public static void sendSortInventoryPacket() {
-    ClientPlayNetworking.send(new Networking.SortC2S(true, getItemNames()));
+  public static void sendSortInventoryPacket(List<Integer> sorted) {
+    sendSortInventoryPacket(true, sorted);
   }
 
-  public static void sendSortAllPacket() {
-    ClientPlayNetworking.send(new Networking.SortAllC2S(getItemNames()));
+  public static void sendSortInventoryPacket(boolean isPlayerInventory, List<Integer> sorted) {
+    ClientPlayNetworking.send(new Networking.SortC2S(isPlayerInventory, sorted));
+  }
+
+  public static void sendServerSortContainerPacket() {
+    ClientPlayNetworking.send(new Networking.ServerSortC2S(false, getItemNames()));
+  }
+
+  public static void sendServerSortInventoryPacket() {
+    ClientPlayNetworking.send(new Networking.ServerSortC2S(true, getItemNames()));
+  }
+
+  public static void sendServerSortAllPacket() {
+    ClientPlayNetworking.send(new Networking.ServerSortAllC2S(getItemNames()));
   }
 
   public static void sendTransferFromContainerPacket() {

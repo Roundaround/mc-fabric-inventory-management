@@ -12,16 +12,11 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.collection.DefaultedList;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.OptionalInt;
+import java.util.*;
 import java.util.function.BiFunction;
 
 public class InventoryHelper {
-  public static ArrayList<Integer> tempSortInventory(
-      PlayerEntity player, boolean isPlayerInventory
-  ) {
+  public static ArrayList<Integer> tempSortInventory(PlayerEntity player, boolean isPlayerInventory) {
     Inventory containerInventory = getContainerInventory(player);
     Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
 
@@ -32,23 +27,84 @@ public class InventoryHelper {
     return tempSortInventory(player, inventory, slotRange);
   }
 
-  public static ArrayList<Integer> tempSortInventory(
-      PlayerEntity player, Inventory inventory, SlotRange slotRange
-  ) {
-    SortableInventory copy = new SortableInventory(inventory);
-    ArrayList<Integer> result = copy.sort(slotRange, ItemStackComparator.get(player.getUuid()));
+  public static ArrayList<Integer> tempSortInventory(PlayerEntity player, Inventory inventory, SlotRange slotRange) {
+    return new SortableInventory(inventory).sort(slotRange, ItemStackComparator.get(player.getUuid()));
+  }
 
-    SortableInventory copy2 = new SortableInventory(inventory);
-    sortInventory(player, copy2, slotRange);
+  public static void applySort(PlayerEntity player, boolean isPlayerInventory, List<Integer> sorted) {
+    Inventory containerInventory = getContainerInventory(player);
+    Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
 
-    DefaultedList<ItemStack> reconstructed = DefaultedList.ofSize(result.size(), ItemStack.EMPTY);
-    for (int dest = 0; dest < result.size(); dest++) {
-      int source = result.get(dest);
-      ItemStack stack = source == -1 ? ItemStack.EMPTY : inventory.getStack(source).copy();
-      reconstructed.set(dest, stack);
+    SlotRange slotRange = isPlayerInventory ?
+        SlotRangeRegistry.getPlayerSide(player, inventory) :
+        SlotRangeRegistry.getContainerSide(player, inventory);
+    applySort(player, inventory, slotRange, sorted);
+  }
+
+  public static void applySort(PlayerEntity player, Inventory inventory, SlotRange slotRange, List<Integer> sorted) {
+    HashSet<Integer> slotsWithItems = new HashSet<>();
+    for (int i = slotRange.min(); i < slotRange.max(); i++) {
+      if (!inventory.getStack(i).isEmpty()) {
+        slotsWithItems.add(i);
+      }
     }
 
-    return result;
+    DefaultedList<ItemStack> reconstructed = DefaultedList.ofSize(sorted.size(), ItemStack.EMPTY);
+    for (int destIndex = 0; destIndex < sorted.size(); destIndex++) {
+      int srcIndex = sorted.get(destIndex);
+      ItemStack stack = srcIndex == -1 ? ItemStack.EMPTY : inventory.getStack(srcIndex).copy();
+      reconstructed.set(destIndex, stack);
+
+      if (srcIndex > -1 && !slotsWithItems.remove(srcIndex)) {
+        // TODO: CHEATER (Specified an invalid source inventory slot index)
+        return;
+      }
+    }
+
+    if (!slotsWithItems.isEmpty()) {
+      // TODO: CHEATER (Missing destination index for at least one slot)
+      // TODO: This one could also just be resolved by tossing any non-specified slots at the end if there's room
+      return;
+    }
+
+    for (int i = 1; i < reconstructed.size(); i++) {
+      ItemStack current = reconstructed.get(i);
+      if (current.isEmpty()) {
+        continue;
+      }
+
+      // Search backwards for a non-empty merge candidate
+      for (int j = i - 1; j >= 0 && !current.isEmpty(); j--) {
+        ItemStack dest = reconstructed.get(j);
+
+        // Skip empty stacks (result of emptying stacks during merges)
+        if (dest.isEmpty()) {
+          continue;
+        }
+        // Stop searching and move on to the next stack if we hit even one that isn't mergeable, since we know it means
+        // anything before it is empty, non-mergeable, or full (and therefore also non-mergeable).
+        if (!canStacksBeMerged(dest, current)) {
+          break;
+        }
+
+        mergeStacks(dest, current);
+        if (current.isEmpty()) {
+          reconstructed.set(i, ItemStack.EMPTY);
+        }
+      }
+    }
+
+    Iterator<ItemStack> merged = reconstructed.iterator();
+    for (int slotIndex = slotRange.min(); slotIndex < slotRange.max(); slotIndex++) {
+      ItemStack stack = ItemStack.EMPTY;
+      while (merged.hasNext()) {
+        stack = merged.next();
+        if (!stack.isEmpty()) {
+          break;
+        }
+      }
+      inventory.setStack(slotIndex, stack);
+    }
   }
 
   public static void sortInventory(PlayerEntity player, boolean isPlayerInventory) {
@@ -283,9 +339,9 @@ public class InventoryHelper {
     }
   }
 
-  public static boolean canStacksBeMerged(ItemStack a, ItemStack b) {
-    return !a.isEmpty() && ItemStack.areItemsAndComponentsEqual(a, b) && a.isStackable() &&
-           a.getCount() < a.getMaxCount();
+  public static boolean canStacksBeMerged(ItemStack toStack, ItemStack fromStack) {
+    return !toStack.isEmpty() && ItemStack.areItemsAndComponentsEqual(toStack, fromStack) && toStack.isStackable() &&
+           toStack.getCount() < toStack.getMaxCount();
   }
 
   public static boolean mergeStacks(ItemStack toStack, ItemStack fromStack) {

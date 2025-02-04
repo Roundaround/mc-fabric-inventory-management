@@ -85,28 +85,28 @@ public class KeyBindings {
 
       if (ButtonManager.getInstance().hasContainerSideSort() && SORT_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendSortContainerPacket();
+        ClientNetworking.sendServerSortContainerPacket();
         return true;
       }
 
       if (ButtonManager.getInstance().hasPlayerSideSort() && SORT_PLAYER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendSortInventoryPacket();
+        ClientNetworking.sendServerSortInventoryPacket();
         return true;
       }
 
       if (SORT_ALL.matchesKey(keyCode, scanCode)) {
         if (ButtonManager.getInstance().hasContainerSideSort() && ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendSortAllPacket();
+          ClientNetworking.sendServerSortAllPacket();
           return true;
         } else if (ButtonManager.getInstance().hasContainerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendSortContainerPacket();
+          ClientNetworking.sendServerSortContainerPacket();
           return true;
         } else if (ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendSortInventoryPacket();
+          ClientNetworking.sendServerSortInventoryPacket();
           return true;
         }
       }

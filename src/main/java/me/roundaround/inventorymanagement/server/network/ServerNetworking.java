@@ -12,7 +12,8 @@ public final class ServerNetworking {
   public static void registerReceivers() {
     ServerPlayNetworking.registerGlobalReceiver(Networking.StackC2S.ID, ServerNetworking::handleStack);
     ServerPlayNetworking.registerGlobalReceiver(Networking.SortC2S.ID, ServerNetworking::handleSort);
-    ServerPlayNetworking.registerGlobalReceiver(Networking.SortAllC2S.ID, ServerNetworking::handleSortAll);
+    ServerPlayNetworking.registerGlobalReceiver(Networking.ServerSortC2S.ID, ServerNetworking::handleServerSort);
+    ServerPlayNetworking.registerGlobalReceiver(Networking.ServerSortAllC2S.ID, ServerNetworking::handleServerSortAll);
     ServerPlayNetworking.registerGlobalReceiver(Networking.TransferC2S.ID, ServerNetworking::handleTransfer);
     ServerPlayNetworking.registerGlobalReceiver(Networking.RecalculateC2S.ID, ServerNetworking::handleRecalculate);
   }
@@ -22,13 +23,18 @@ public final class ServerNetworking {
   }
 
   private static void handleSort(Networking.SortC2S payload, ServerPlayNetworking.Context context) {
+    context.player().server.execute(
+        () -> InventoryHelper.applySort(context.player(), payload.isPlayerInventory(), payload.sorted()));
+  }
+
+  private static void handleServerSort(Networking.ServerSortC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
       ServerI18nTracker.getInstance(context.player().getUuid()).track(payload.itemNames());
       InventoryHelper.sortInventory(context.player(), payload.isPlayerInventory());
     });
   }
 
-  private static void handleSortAll(Networking.SortAllC2S payload, ServerPlayNetworking.Context context) {
+  private static void handleServerSortAll(Networking.ServerSortAllC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
       ServerI18nTracker.getInstance(context.player().getUuid()).track(payload.itemNames());
       InventoryHelper.sortAll(context.player());
