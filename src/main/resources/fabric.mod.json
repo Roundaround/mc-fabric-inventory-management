@@ -29,6 +29,13 @@
   "mixins": [
     "inventorymanagement.mixins.json"
   ],
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_6862": [
+        "me/roundaround/inventorymanagement/registry/tag/TagKeyWithI18n"
+      ]
+    }
+  },
   "depends": {
     "fabricloader": "*",
     "fabric-api": "*",
