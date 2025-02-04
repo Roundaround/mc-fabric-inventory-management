@@ -11,15 +11,13 @@ import net.minecraft.util.Language;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 
 public class DecoratedPotComparator extends CachingComparatorImpl<ItemStack, List<String>> {
-  public DecoratedPotComparator(UUID player) {
+  public DecoratedPotComparator() {
     //@formatter:off
     super(PredicatedComparator.ignoreNulls(
         LexicographicalListComparator.comparing(
             Language.getInstance()::get,
-//            ServerI18nTracker.getInstance(player).snapshot()::get,
             Comparator.nullsLast(String::compareToIgnoreCase)
         )
     ));

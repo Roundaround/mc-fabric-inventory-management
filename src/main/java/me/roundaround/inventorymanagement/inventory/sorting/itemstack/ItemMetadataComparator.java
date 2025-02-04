@@ -21,6 +21,7 @@ public class ItemMetadataComparator extends WrapperComparatorImpl<ItemStack> {
         new InstrumentComparator(),
         new PotionComparator(),
         new SuspiciousStewComparator(),
+        new DecoratedPotComparator(),
         new CountComparator(),
         new DamageComparator()
     ));
