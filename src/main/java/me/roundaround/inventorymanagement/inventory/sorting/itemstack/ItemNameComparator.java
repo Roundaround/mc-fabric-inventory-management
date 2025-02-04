@@ -18,30 +18,67 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<String>> {
   //@formatter:off
   // TODO: Move into some kind of custom registry
-  private static final List<Group> groups = List.of(
+  private static final List<Group> COLOR_GROUPS = List.of(
       Group.by(Items.SHULKER_BOX, ConventionalItemTags.SHULKER_BOXES),
       // TODO: Replace with ConventionalItemTags.GLASS_BLOCKS_CHEAP starting in 1.21
       Group.by(Items.GLASS, GroupPredicates.GLASS_SANS_TINTED),
       Group.by(Items.GLASS_PANE, ConventionalItemTags.GLASS_PANES),
-      Group.by(GroupNames.WOOL, ItemTags.WOOL),
-      Group.by(GroupNames.WOOL_CARPET, ItemTags.WOOL_CARPETS),
-      Group.by(GroupNames.DYE, ConventionalItemTags.DYES),
+      Group.by(GroupNames.WOOLS, ItemTags.WOOL),
+      Group.by(GroupNames.WOOL_CARPETS, ItemTags.WOOL_CARPETS),
+      Group.by(GroupNames.DYES, ConventionalItemTags.DYES),
       Group.by(Items.CANDLE, ItemTags.CANDLES),
-      Group.by(GroupNames.BED, ItemTags.BEDS),
-      Group.by(GroupNames.BANNER, ItemTags.BANNERS),
+      Group.by(GroupNames.BEDS, ItemTags.BEDS),
+      Group.by(GroupNames.BANNERS, ItemTags.BANNERS),
       Group.by(Items.TERRACOTTA, ItemTags.TERRACOTTA),
       // TODO: Replace with ConventionalItemTags.GLAZED_TERRACOTTAS starting in 1.21
-      Group.by(GroupNames.GLAZED_TERRACOTTA, InventoryManagementItemTags.GLAZED_TERRACOTTAS),
+      Group.by(GroupNames.GLAZED_TERRACOTTAS, InventoryManagementItemTags.GLAZED_TERRACOTTAS),
       // TODO: Replace with ConventionalItemTags.CONCRETES starting in 1.21
-      Group.by(GroupNames.CONCRETE, InventoryManagementItemTags.CONCRETES),
+      Group.by(GroupNames.CONCRETES, InventoryManagementItemTags.CONCRETES),
       // TODO: Replace with ConventionalItemTags.CONCRETE_POWDERS starting in 1.21
-      Group.by(GroupNames.CONCRETE_POWDER, InventoryManagementItemTags.CONCRETE_POWDERS)
+      Group.by(GroupNames.CONCRETE_POWDERS, InventoryManagementItemTags.CONCRETE_POWDERS)
   );
   //@formatter:on
+
+  //@formatter:off
+  // TODO: Move into some kind of custom registry
+  private static final List<Group> MATERIAL_GROUPS = List.of(
+      // TODO: E.g. logs, planks, fences, stairs, doors, etc. etc. etc.
+  );
+  //@formatter:on
+
+  // TODO: Move into some kind of custom registry
+  private static final List<Group> GROUPS = Stream.concat(COLOR_GROUPS.stream(), MATERIAL_GROUPS.stream()).toList();
+
+  // TODO: Replace all usages of GroupNames with a new Group static method that pulls i18n key from tag
+  private static class GroupNames {
+    // TODO: Replace with ItemTags.WOOL.getTranslationKey() starting in 1.21
+    public static String WOOLS = "tag.item.inventorymanagement.wools";
+    // TODO: Replace with ItemTags.WOOL_CARPETS.getTranslationKey() starting in 1.21
+    public static String WOOL_CARPETS = "tag.item.inventorymanagement.wool_carpets";
+    // TODO: Replace with ConventionalItemTags.DYES.getTranslationKey() starting in 1.21
+    public static String DYES = "tag.item.inventorymanagement.dyes";
+    // TODO: Replace with ItemTags.BEDS.getTranslationKey() starting in 1.21
+    public static String BEDS = "tag.item.inventorymanagement.beds";
+    // TODO: Replace with ItemTags.BANNERS.getTranslationKey() starting in 1.21
+    public static String BANNERS = "tag.item.inventorymanagement.banners";
+    // TODO: Replace with ConventionalItemTags.GLAZED_TERRACOTTAS.getTranslationKey() starting in 1.21
+    public static String GLAZED_TERRACOTTAS = "tag.item.inventorymanagement.glazed_terracottas";
+    // TODO: Replace with ConventionalItemTags.CONCRETES.getTranslationKey() starting in 1.21
+    public static String CONCRETES = "tag.item.inventorymanagement.concretes";
+    // TODO: Replace with ConventionalItemTags.CONCRETE_POWDERS.getTranslationKey() starting in 1.21
+    public static String CONCRETE_POWDERS = "tag.item.inventorymanagement.concrete_powders";
+  }
+
+  private static class GroupPredicates {
+    // TODO: Starting with 1.21, simply use the ConventionalItemTags.GLASS_BLOCKS_CHEAP instead
+    public static Predicate<ItemStack> GLASS_SANS_TINTED = (stack) -> stack.isIn(ConventionalItemTags.GLASS_BLOCKS) &&
+                                                                      !stack.isOf(Items.TINTED_GLASS);
+  }
 
   private final PlayerSortParameters parameters;
 
@@ -70,7 +107,9 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
       return List.of(getTranslationKey(stack));
     }
 
-    for (Group group : groups) {
+    // TODO: Further customization options to e.g. let you group by color only
+
+    for (Group group : GROUPS) {
       if (group.predicate().test(stack)) {
         return group.groupProducer().apply(this.parameters.getPlayer(), stack);
       }
@@ -84,32 +123,6 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
       return "";
     }
     return stack.getTranslationKey();
-  }
-
-  // TODO: Replace all usages of GroupNames with a new Group static method that pulls i18n key from tag
-  public static class GroupNames {
-    // TODO: Replace with ItemTags.WOOL.getTranslationKey() starting in 1.21
-    public static String WOOL = "tag.item.inventorymanagement.wools";
-    // TODO: Replace with ItemTags.WOOL_CARPETS.getTranslationKey() starting in 1.21
-    public static String WOOL_CARPET = "tag.item.inventorymanagement.wool_carpets";
-    // TODO: Replace with ConventionalItemTags.DYES.getTranslationKey() starting in 1.21
-    public static String DYE = "tag.item.inventorymanagement.dyes";
-    // TODO: Replace with ItemTags.BEDS.getTranslationKey() starting in 1.21
-    public static String BED = "tag.item.inventorymanagement.beds";
-    // TODO: Replace with ItemTags.BANNERS.getTranslationKey() starting in 1.21
-    public static String BANNER = "tag.item.inventorymanagement.banners";
-    // TODO: Replace with ConventionalItemTags.GLAZED_TERRACOTTAS.getTranslationKey() starting in 1.21
-    public static String GLAZED_TERRACOTTA = "tag.item.inventorymanagement.glazed_terracottas";
-    // TODO: Replace with ConventionalItemTags.CONCRETES.getTranslationKey() starting in 1.21
-    public static String CONCRETE = "tag.item.inventorymanagement.concretes";
-    // TODO: Replace with ConventionalItemTags.CONCRETE_POWDERS.getTranslationKey() starting in 1.21
-    public static String CONCRETE_POWDER = "tag.item.inventorymanagement.concrete_powders";
-  }
-
-  public static class GroupPredicates {
-    // TODO: Starting with 1.21, simply use the ConventionalItemTags.GLASS_BLOCKS_CHEAP instead
-    public static Predicate<ItemStack> GLASS_SANS_TINTED = (stack) -> stack.isIn(ConventionalItemTags.GLASS_BLOCKS) &&
-                                                                      !stack.isOf(Items.TINTED_GLASS);
   }
 
   protected record Group(Predicate<ItemStack> predicate, BiFunction<UUID, ItemStack, List<String>> groupProducer) {
