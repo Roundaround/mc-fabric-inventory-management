@@ -21,11 +21,11 @@ repositories {
   maven("https://raw.githubusercontent.com/Aton-Kish/mcmod/maven")
   maven("https://maven.shedaniel.me/")
   maven("https://maven.rnda.dev/releases/")
+  maven("https://maven.rnda.dev/snapshots/")
 }
 
 dependencies {
-  implementation(project(":main", "namedElements"))
-  modImplementation(project(":main", "roundaLibShade"))
+  modImplementation(group = "me.roundaround", name = "inventorymanagement", version = "2.0.0+1.20.5-SNAPSHOT")
   modImplementation(group = "atonkish.reinfcore", name = "reinforced-core", version = "4.0.0+1.20")
   modImplementation(group = "maven.modrinth", name = "reinforced-chests", version = "3.0.0+1.20")
   modImplementation(group = "maven.modrinth", name = "reinforced-barrels", version = "2.5.0+1.20")
