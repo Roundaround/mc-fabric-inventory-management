@@ -12,7 +12,6 @@ import net.minecraft.util.Language;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -57,9 +56,9 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
                                                                       !stack.isOf(Items.TINTED_GLASS);
   }
 
-  private final PlayerSortParameters parameters;
+  private final SortContext parameters;
 
-  public ItemNameComparator(PlayerSortParameters parameters) {
+  public ItemNameComparator(SortContext parameters) {
     //@formatter:off
     super(LexicographicalListComparator.comparing(
         SerialComparator.comparing(
@@ -80,7 +79,7 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
   }
 
   private List<String> mapToTranslationKeys(ItemStack stack) {
-    if (!this.parameters.isGroupItems()) {
+    if (!this.parameters.itemGrouping()) {
       return List.of(getTranslationKey(stack));
     }
 
@@ -88,7 +87,7 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
 
     for (Group group : GROUPS) {
       if (group.predicate().test(stack)) {
-        return group.groupProducer().apply(this.parameters.getPlayer(), stack);
+        return group.groupProducer().apply(this.parameters, stack);
       }
     }
 
@@ -102,7 +101,8 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
     return stack.getTranslationKey();
   }
 
-  protected record Group(Predicate<ItemStack> predicate, BiFunction<UUID, ItemStack, List<String>> groupProducer) {
+  protected record Group(Predicate<ItemStack> predicate,
+                         BiFunction<SortContext, ItemStack, List<String>> groupProducer) {
     public static Group by(Item root, Predicate<ItemStack> predicate) {
       return new Group(predicate, groupUnderItem(root));
     }
@@ -115,15 +115,15 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
       return new Group((stack) -> stack.isIn(tag), groupUnderName(tag.getTranslationKey()));
     }
 
-    private static BiFunction<UUID, ItemStack, List<String>> groupUnderItem(Item item) {
-      return (uuid, stack) -> List.of(
+    private static BiFunction<SortContext, ItemStack, List<String>> groupUnderItem(Item item) {
+      return (context, stack) -> List.of(
           getTranslationKey(stack.copyComponentsToNewStack(item, stack.getCount())),
           getTranslationKey(stack.isOf(item) ? ItemStack.EMPTY : stack)
       );
     }
 
-    private static BiFunction<UUID, ItemStack, List<String>> groupUnderName(String root) {
-      return (uuid, stack) -> List.of(root, getTranslationKey(stack));
+    private static BiFunction<SortContext, ItemStack, List<String>> groupUnderName(String root) {
+      return (context, stack) -> List.of(root, getTranslationKey(stack));
     }
   }
 }

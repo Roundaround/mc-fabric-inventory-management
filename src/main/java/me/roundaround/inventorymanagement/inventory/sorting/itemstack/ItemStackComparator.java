@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
-import me.roundaround.inventorymanagement.inventory.sorting.PlayerSortParameters;
+import me.roundaround.inventorymanagement.inventory.sorting.SortContext;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -10,11 +10,11 @@ import java.util.*;
 public class ItemStackComparator implements SerialComparator<ItemStack> {
   private static final HashMap<UUID, ItemStackComparator> COMPARATORS = new HashMap<>();
 
-  private final PlayerSortParameters parameters;
+  private final SortContext parameters;
   private final List<Comparator<ItemStack>> subComparators;
 
   private ItemStackComparator(UUID player, Collection<Comparator<ItemStack>> subComparators) {
-    this.parameters = new PlayerSortParameters(player);
+    this.parameters = new SortContext(player);
     this.subComparators = List.copyOf(subComparators);
   }
 
@@ -24,13 +24,13 @@ public class ItemStackComparator implements SerialComparator<ItemStack> {
   }
 
   public static ItemStackComparator create(UUID player) {
-    PlayerSortParameters parameters = new PlayerSortParameters(player);
+    SortContext parameters = new SortContext(player);
     ArrayList<Comparator<ItemStack>> delegates = new ArrayList<>();
 
-    if (parameters.isAlphabetical() && parameters.isContainersFirst()) {
+    if (parameters.alphabetical() && parameters.containersFirst()) {
       delegates.add(ContainerFirstComparator.getInstance());
     }
-    if (!parameters.isAlphabetical()) {
+    if (!parameters.alphabetical()) {
       delegates.add(CreativeIndexComparator.getInstance());
     }
 
