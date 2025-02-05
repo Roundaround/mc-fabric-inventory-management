@@ -42,7 +42,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         ));
 
     this.initButtonRegistry();
-    this.initItemVariantRegistries();
+    this.initItemVariantRegistry();
 
     FabricLoader.getInstance()
         .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
@@ -115,62 +115,24 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         });
   }
 
-  private void initItemVariantRegistries() {
-    ItemVariantRegistry color = ItemVariantRegistry.COLOR;
-    color.register(VariantGroup.by(Items.SHULKER_BOX, ConventionalItemTags.SHULKER_BOXES));
+  private void initItemVariantRegistry() {
+    ItemVariantRegistry registry = ItemVariantRegistry.COLOR;
+    registry.register(VariantGroup.by(Items.SHULKER_BOX, ConventionalItemTags.SHULKER_BOXES));
     // TODO: Replace with ConventionalItemTags.GLASS_BLOCKS_CHEAP starting in 1.21
-    color.register(VariantGroup.by(Items.GLASS, InventoryManagementItemTags.GLASSES));
-    color.register(VariantGroup.by(Items.GLASS_PANE, ConventionalItemTags.GLASS_PANES));
-    color.register(VariantGroup.by(ItemTags.WOOL));
-    color.register(VariantGroup.by(ItemTags.WOOL_CARPETS));
-    color.register(VariantGroup.by(ConventionalItemTags.DYES));
-    color.register(VariantGroup.by(Items.CAKE, InventoryManagementItemTags.CAKES));
-    color.register(VariantGroup.by(ItemTags.CANDLES));
-    color.register(VariantGroup.by(ItemTags.BEDS));
-    color.register(VariantGroup.by(ItemTags.BANNERS));
-    color.register(VariantGroup.by(ItemTags.TERRACOTTA));
+    registry.register(VariantGroup.by(Items.GLASS, InventoryManagementItemTags.GLASSES));
+    registry.register(VariantGroup.by(Items.GLASS_PANE, ConventionalItemTags.GLASS_PANES));
+    registry.register(VariantGroup.by(ItemTags.WOOL));
+    registry.register(VariantGroup.by(ItemTags.WOOL_CARPETS));
+    registry.register(VariantGroup.by(ConventionalItemTags.DYES));
+    registry.register(VariantGroup.by(ItemTags.CANDLES));
+    registry.register(VariantGroup.by(ItemTags.BEDS));
+    registry.register(VariantGroup.by(ItemTags.BANNERS));
+    registry.register(VariantGroup.by(ItemTags.TERRACOTTA));
     // TODO: Replace with ConventionalItemTags.GLAZED_TERRACOTTAS starting in 1.21
-    color.register(VariantGroup.by(InventoryManagementItemTags.GLAZED_TERRACOTTAS));
+    registry.register(VariantGroup.by(InventoryManagementItemTags.GLAZED_TERRACOTTAS));
     // TODO: Replace with ConventionalItemTags.CONCRETES starting in 1.21
-    color.register(VariantGroup.by(InventoryManagementItemTags.CONCRETES));
+    registry.register(VariantGroup.by(InventoryManagementItemTags.CONCRETES));
     // TODO: Replace with ConventionalItemTags.CONCRETE_POWDERS starting in 1.21
-    color.register(VariantGroup.by(InventoryManagementItemTags.CONCRETE_POWDERS));
-
-    ItemVariantRegistry material = ItemVariantRegistry.MATERIAL;
-    material.register(VariantGroup.by(ConventionalItemTags.BARRELS));
-    material.register(VariantGroup.by("Boats", ItemTags.BOATS));
-    material.register(VariantGroup.by(ConventionalItemTags.BOOKSHELVES));
-    material.register(VariantGroup.by("Buttons", ItemTags.BUTTONS));
-    material.register(VariantGroup.by(ConventionalItemTags.CHESTS));
-    material.register(VariantGroup.by("Doors", ItemTags.DOORS));
-    material.register(VariantGroup.by("Fences", ItemTags.FENCES));
-    material.register(VariantGroup.by("Fence gates", ItemTags.FENCE_GATES));
-    material.register(VariantGroup.by("Hanging signs", ItemTags.HANGING_SIGNS));
-    material.register(VariantGroup.by("Leaves", ItemTags.LEAVES));
-    material.register(VariantGroup.by("Logs", InventoryManagementItemTags.NATURAL_LOGS));
-    material.register(VariantGroup.by("Planks", ItemTags.PLANKS));
-    material.register(VariantGroup.by("Pressure plates", InventoryManagementItemTags.PRESSURE_PLATES));
-    material.register(VariantGroup.by("Rails", ItemTags.RAILS));
-    material.register(VariantGroup.by("Saplings", ItemTags.SAPLINGS));
-    // TODO: Replace with ConventionalItemTags.SEEDS starting in 1.21
-    material.register(VariantGroup.by("Seeds", InventoryManagementItemTags.SEEDS));
-    material.register(VariantGroup.by("Signs", ItemTags.SIGNS));
-    material.register(VariantGroup.by("Slabs", ItemTags.SLABS));
-    material.register(VariantGroup.by("Stairs", ItemTags.STAIRS));
-    // TODO: Replace with ConventionalItemTags.STRIPPED_LOGS starting in 1.21
-    material.register(VariantGroup.by("Stripped logs", InventoryManagementItemTags.STRIPPED_LOGS));
-    // TODO: Replace with ConventionalItemTags.STRIPPED_WOODS starting in 1.21
-    material.register(VariantGroup.by("Stripped woods", InventoryManagementItemTags.STRIPPED_WOODS));
-    material.register(VariantGroup.by("Trapdoors", ItemTags.TRAPDOORS));
-    material.register(VariantGroup.by("Walls", ItemTags.WALLS));
-    material.register(VariantGroup.by("Woods", InventoryManagementItemTags.NATURAL_WOODS));
-
-    ItemVariantRegistry shape = ItemVariantRegistry.SHAPE;
-    shape.register(VariantGroup.by(ItemTags.ANVIL));
-    shape.register(VariantGroup.by(ConventionalItemTags.POTIONS));
-    shape.register(VariantGroup.by("Coppers", InventoryManagementItemTags.COPPERS));
-    // TODO: Other cuttable stones
-    // TODO: Pottery sherds (and shards?)
-    // TODO: Equipment?
+    registry.register(VariantGroup.by(InventoryManagementItemTags.CONCRETE_POWDERS));
   }
 }

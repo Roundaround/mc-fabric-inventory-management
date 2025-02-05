@@ -6,7 +6,6 @@ import me.roundaround.inventorymanagement.inventory.sorting.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Language;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -38,13 +37,7 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
       return List.of(getTranslationKey(stack));
     }
 
-    // TODO: Further customization options to e.g. let you group by color only
-    ArrayList<VariantGroup> groups = new ArrayList<>();
-    groups.addAll(ItemVariantRegistry.COLOR.list());
-    groups.addAll(ItemVariantRegistry.MATERIAL.list());
-    groups.addAll(ItemVariantRegistry.SHAPE.list());
-
-    for (VariantGroup group : groups) {
+    for (VariantGroup group : ItemVariantRegistry.COLOR.list()) {
       if (group.predicate().test(stack)) {
         return group.groupProducer().apply(this.parameters, stack);
       }

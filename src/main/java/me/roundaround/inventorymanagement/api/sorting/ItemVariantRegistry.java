@@ -8,8 +8,6 @@ import java.util.*;
 public class ItemVariantRegistry {
   private static final HashMap<Identifier, ItemVariantRegistry> REGISTRIES = new HashMap<>();
   public static final ItemVariantRegistry COLOR = register("color");
-  public static final ItemVariantRegistry MATERIAL = register("material");
-  public static final ItemVariantRegistry SHAPE = register("shape");
 
   private final Identifier id;
   private final ArrayList<VariantGroup> groups = new ArrayList<>();
