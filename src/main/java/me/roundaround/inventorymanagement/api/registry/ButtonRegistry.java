@@ -1,7 +1,8 @@
-package me.roundaround.inventorymanagement.api;
+package me.roundaround.inventorymanagement.api.registry;
 
-import me.roundaround.inventorymanagement.api.positioning.PositionReference;
-import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
+import me.roundaround.inventorymanagement.api.gui.ButtonContext;
+import me.roundaround.inventorymanagement.api.gui.positioning.PositionReference;
+import me.roundaround.inventorymanagement.api.gui.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

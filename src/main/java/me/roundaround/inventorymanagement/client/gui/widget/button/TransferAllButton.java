@@ -1,9 +1,9 @@
 package me.roundaround.inventorymanagement.client.gui.widget.button;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
-import me.roundaround.inventorymanagement.api.ButtonContext;
-import me.roundaround.inventorymanagement.api.positioning.Coords;
-import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
+import me.roundaround.inventorymanagement.api.gui.ButtonContext;
+import me.roundaround.inventorymanagement.api.gui.positioning.Coords;
+import me.roundaround.inventorymanagement.api.gui.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;

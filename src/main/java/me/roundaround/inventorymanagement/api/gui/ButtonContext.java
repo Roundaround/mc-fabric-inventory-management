@@ -1,4 +1,4 @@
-package me.roundaround.inventorymanagement.api;
+package me.roundaround.inventorymanagement.api.gui;
 
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;

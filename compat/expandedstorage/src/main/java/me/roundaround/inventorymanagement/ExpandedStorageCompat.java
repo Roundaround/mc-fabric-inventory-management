@@ -5,7 +5,6 @@ import compasses.expandedstorage.impl.client.gui.ScrollScreen;
 import compasses.expandedstorage.impl.inventory.handler.AbstractHandler;
 import me.roundaround.inventorymanagement.api.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
-import me.roundaround.inventorymanagement.api.positioning.*;
 import net.minecraft.client.gui.screen.Screen;
 
 public class ExpandedStorageCompat implements InventoryManagementEntrypointHandler {

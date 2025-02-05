@@ -1,8 +1,8 @@
 package me.roundaround.inventorymanagement.config.value;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
-import me.roundaround.inventorymanagement.api.positioning.BackgroundPositionReference;
-import me.roundaround.inventorymanagement.api.positioning.PositionReference;
+import me.roundaround.inventorymanagement.api.gui.positioning.BackgroundPositionReference;
+import me.roundaround.inventorymanagement.api.gui.positioning.PositionReference;
 import me.roundaround.inventorymanagement.roundalib.config.value.EnumValue;
 
 import java.util.Arrays;

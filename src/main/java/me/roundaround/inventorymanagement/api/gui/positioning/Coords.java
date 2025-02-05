@@ -1,4 +1,4 @@
-package me.roundaround.inventorymanagement.api.positioning;
+package me.roundaround.inventorymanagement.api.gui.positioning;
 
 public record Coords(int x, int y) {
   public Coords movedUp(int amount) {

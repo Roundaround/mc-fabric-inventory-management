@@ -1,5 +1,6 @@
-package me.roundaround.inventorymanagement.api;
+package me.roundaround.inventorymanagement.api.registry;
 
+import me.roundaround.inventorymanagement.api.gui.SlotRangeFunction;
 import me.roundaround.inventorymanagement.inventory.SlotRange;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;

@@ -1,11 +1,11 @@
 package me.roundaround.inventorymanagement.client;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
-import me.roundaround.inventorymanagement.api.ButtonRegistry;
+import me.roundaround.inventorymanagement.api.registry.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
-import me.roundaround.inventorymanagement.api.positioning.Coords;
-import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
-import me.roundaround.inventorymanagement.api.positioning.SlotPositionReference;
+import me.roundaround.inventorymanagement.api.gui.positioning.Coords;
+import me.roundaround.inventorymanagement.api.gui.positioning.PositioningFunction;
+import me.roundaround.inventorymanagement.api.gui.positioning.SlotPositionReference;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;

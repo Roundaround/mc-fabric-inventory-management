@@ -2,9 +2,9 @@ package me.roundaround.inventorymanagement.client.gui.widget.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.inventorymanagement.InventoryManagementMod;
-import me.roundaround.inventorymanagement.api.ButtonContext;
-import me.roundaround.inventorymanagement.api.positioning.Coords;
-import me.roundaround.inventorymanagement.api.positioning.PositioningFunction;
+import me.roundaround.inventorymanagement.api.gui.ButtonContext;
+import me.roundaround.inventorymanagement.api.gui.positioning.Coords;
+import me.roundaround.inventorymanagement.api.gui.positioning.PositioningFunction;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
