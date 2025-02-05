@@ -16,6 +16,10 @@ public record VariantGroup(Predicate<ItemStack> predicate, VariantGroupProducer 
     return new VariantGroup((stack) -> stack.isIn(tag), groupUnderName(tag.getTranslationKey()));
   }
 
+  public static VariantGroup by(String root, TagKey<Item> tag) {
+    return new VariantGroup((stack) -> stack.isIn(tag), groupUnderName(root));
+  }
+
   private static VariantGroupProducer groupUnderItem(Item item) {
     return (context, stack) -> List.of(
         getTranslationKey(stack.copyComponentsToNewStack(item, stack.getCount())),

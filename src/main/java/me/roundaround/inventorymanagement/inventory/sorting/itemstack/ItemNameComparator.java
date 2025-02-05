@@ -6,9 +6,9 @@ import me.roundaround.inventorymanagement.inventory.sorting.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Language;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<String>> {
   private final SortContext parameters;
@@ -39,8 +39,10 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
     }
 
     // TODO: Further customization options to e.g. let you group by color only
-    List<VariantGroup> groups = Stream.concat(
-        ItemVariantRegistry.COLOR.list().stream(), ItemVariantRegistry.MATERIAL.list().stream()).toList();
+    ArrayList<VariantGroup> groups = new ArrayList<>();
+    groups.addAll(ItemVariantRegistry.COLOR.list());
+    groups.addAll(ItemVariantRegistry.MATERIAL.list());
+    groups.addAll(ItemVariantRegistry.SHAPE.list());
 
     for (VariantGroup group : groups) {
       if (group.predicate().test(stack)) {
