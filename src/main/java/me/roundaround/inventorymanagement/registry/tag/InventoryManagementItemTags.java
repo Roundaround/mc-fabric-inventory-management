@@ -7,6 +7,8 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
 public class InventoryManagementItemTags {
+  public static final TagKey<Item> GLASSES = TagKey.of(
+      RegistryKeys.ITEM, Identifier.of(InventoryManagementMod.MOD_ID, "glasses"));
   public static final TagKey<Item> GLAZED_TERRACOTTAS = TagKey.of(
       RegistryKeys.ITEM, Identifier.of(InventoryManagementMod.MOD_ID, "glazed_terracottas"));
   public static final TagKey<Item> CONCRETES = TagKey.of(

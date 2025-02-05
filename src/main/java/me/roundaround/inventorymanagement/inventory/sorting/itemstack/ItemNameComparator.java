@@ -22,7 +22,7 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
   private static final List<Group> COLOR_GROUPS = List.of(
       Group.by(Items.SHULKER_BOX, ConventionalItemTags.SHULKER_BOXES),
       // TODO: Replace with ConventionalItemTags.GLASS_BLOCKS_CHEAP starting in 1.21
-      Group.by(Items.GLASS, GroupPredicates.GLASS_SANS_TINTED),
+      Group.by(Items.GLASS, InventoryManagementItemTags.GLASSES),
       Group.by(Items.GLASS_PANE, ConventionalItemTags.GLASS_PANES),
       Group.by(ItemTags.WOOL),
       Group.by(ItemTags.WOOL_CARPETS),
@@ -49,12 +49,6 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
 
   // TODO: Move into some kind of custom registry
   private static final List<Group> GROUPS = Stream.concat(COLOR_GROUPS.stream(), MATERIAL_GROUPS.stream()).toList();
-
-  private static class GroupPredicates {
-    // TODO: Starting with 1.21, simply use the ConventionalItemTags.GLASS_BLOCKS_CHEAP instead
-    public static Predicate<ItemStack> GLASS_SANS_TINTED = (stack) -> stack.isIn(ConventionalItemTags.GLASS_BLOCKS) &&
-                                                                      !stack.isOf(Items.TINTED_GLASS);
-  }
 
   private final SortContext parameters;
 
@@ -103,10 +97,6 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
 
   protected record Group(Predicate<ItemStack> predicate,
                          BiFunction<SortContext, ItemStack, List<String>> groupProducer) {
-    public static Group by(Item root, Predicate<ItemStack> predicate) {
-      return new Group(predicate, groupUnderItem(root));
-    }
-
     public static Group by(Item root, TagKey<Item> tag) {
       return new Group((stack) -> stack.isIn(tag), groupUnderItem(root));
     }
