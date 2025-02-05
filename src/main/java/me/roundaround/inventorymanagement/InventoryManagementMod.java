@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement;
 
-import me.roundaround.inventorymanagement.api.registry.SlotRangeRegistry;
+import me.roundaround.inventorymanagement.api.gui.SlotRangeRegistry;
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
 import me.roundaround.inventorymanagement.inventory.SlotRange;
 import me.roundaround.inventorymanagement.inventory.sorting.itemstack.ItemStackComparator;

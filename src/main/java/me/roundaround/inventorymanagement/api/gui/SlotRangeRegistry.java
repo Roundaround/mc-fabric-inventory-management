@@ -1,6 +1,5 @@
-package me.roundaround.inventorymanagement.api.registry;
+package me.roundaround.inventorymanagement.api.gui;
 
-import me.roundaround.inventorymanagement.api.gui.SlotRangeFunction;
 import me.roundaround.inventorymanagement.inventory.SlotRange;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -12,11 +11,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class SlotRangeRegistry {
-  private SlotRangeRegistry() {
-  }
-
   public static final Registry<Class<? extends ScreenHandler>> SCREEN_HANDLERS = new Registry<>();
   public static final Registry<Class<? extends Inventory>> INVENTORIES = new Registry<>();
+
+  private SlotRangeRegistry() {
+  }
 
   public static <H extends ScreenHandler> SlotRange getPlayerSide(PlayerEntity player, Inventory inventory) {
     return getPlayerSideFunction(player.currentScreenHandler, inventory).apply(player, inventory, true);

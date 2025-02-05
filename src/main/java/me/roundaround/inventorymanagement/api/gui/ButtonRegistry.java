@@ -1,6 +1,5 @@
-package me.roundaround.inventorymanagement.api.registry;
+package me.roundaround.inventorymanagement.api.gui;
 
-import me.roundaround.inventorymanagement.api.gui.ButtonContext;
 import me.roundaround.inventorymanagement.api.gui.positioning.PositionReference;
 import me.roundaround.inventorymanagement.api.gui.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
@@ -91,7 +90,7 @@ public class ButtonRegistry {
 
     boolean isPlayerSide = context.isPlayerInventory();
     return ButtonVisibility.of(isPlayerSide && registration.getHasPlayerInventory(context) ||
-        !isPlayerSide && registration.getHasContainerInventory(context));
+                               !isPlayerSide && registration.getHasContainerInventory(context));
   }
 
   @SuppressWarnings("DuplicatedCode")

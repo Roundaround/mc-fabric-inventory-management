@@ -1,55 +1,16 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
+import me.roundaround.inventorymanagement.api.sorting.ItemVariantRegistry;
+import me.roundaround.inventorymanagement.api.sorting.VariantGroup;
 import me.roundaround.inventorymanagement.inventory.sorting.*;
-import me.roundaround.inventorymanagement.registry.tag.InventoryManagementItemTags;
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Language;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<String>> {
-  //@formatter:off
-  // TODO: Move into some kind of custom registry
-  private static final List<Group> COLOR_GROUPS = List.of(
-      Group.by(Items.SHULKER_BOX, ConventionalItemTags.SHULKER_BOXES),
-      // TODO: Replace with ConventionalItemTags.GLASS_BLOCKS_CHEAP starting in 1.21
-      Group.by(Items.GLASS, InventoryManagementItemTags.GLASSES),
-      Group.by(Items.GLASS_PANE, ConventionalItemTags.GLASS_PANES),
-      Group.by(ItemTags.WOOL),
-      Group.by(ItemTags.WOOL_CARPETS),
-      Group.by(ConventionalItemTags.DYES),
-      Group.by(ItemTags.CANDLES),
-      Group.by(ItemTags.BEDS),
-      Group.by(ItemTags.BANNERS),
-      Group.by(ItemTags.TERRACOTTA),
-      // TODO: Replace with ConventionalItemTags.GLAZED_TERRACOTTAS starting in 1.21
-      Group.by(InventoryManagementItemTags.GLAZED_TERRACOTTAS),
-      // TODO: Replace with ConventionalItemTags.CONCRETES starting in 1.21
-      Group.by(InventoryManagementItemTags.CONCRETES),
-      // TODO: Replace with ConventionalItemTags.CONCRETE_POWDERS starting in 1.21
-      Group.by(InventoryManagementItemTags.CONCRETE_POWDERS)
-  );
-  //@formatter:on
-
-  //@formatter:off
-  // TODO: Move into some kind of custom registry
-  private static final List<Group> MATERIAL_GROUPS = List.of(
-      // TODO: E.g. logs, planks, fences, stairs, doors, etc. etc. etc.
-  );
-  //@formatter:on
-
-  // TODO: Move into some kind of custom registry
-  private static final List<Group> GROUPS = Stream.concat(COLOR_GROUPS.stream(), MATERIAL_GROUPS.stream()).toList();
-
   private final SortContext parameters;
 
   public ItemNameComparator(SortContext parameters) {
@@ -78,8 +39,10 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
     }
 
     // TODO: Further customization options to e.g. let you group by color only
+    List<VariantGroup> groups = Stream.concat(
+        ItemVariantRegistry.COLOR.list().stream(), ItemVariantRegistry.MATERIAL.list().stream()).toList();
 
-    for (Group group : GROUPS) {
+    for (VariantGroup group : groups) {
       if (group.predicate().test(stack)) {
         return group.groupProducer().apply(this.parameters, stack);
       }
@@ -93,27 +56,5 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
       return "";
     }
     return stack.getTranslationKey();
-  }
-
-  protected record Group(Predicate<ItemStack> predicate,
-                         BiFunction<SortContext, ItemStack, List<String>> groupProducer) {
-    public static Group by(Item root, TagKey<Item> tag) {
-      return new Group((stack) -> stack.isIn(tag), groupUnderItem(root));
-    }
-
-    public static Group by(TagKey<Item> tag) {
-      return new Group((stack) -> stack.isIn(tag), groupUnderName(tag.getTranslationKey()));
-    }
-
-    private static BiFunction<SortContext, ItemStack, List<String>> groupUnderItem(Item item) {
-      return (context, stack) -> List.of(
-          getTranslationKey(stack.copyComponentsToNewStack(item, stack.getCount())),
-          getTranslationKey(stack.isOf(item) ? ItemStack.EMPTY : stack)
-      );
-    }
-
-    private static BiFunction<SortContext, ItemStack, List<String>> groupUnderName(String root) {
-      return (context, stack) -> List.of(root, getTranslationKey(stack));
-    }
   }
 }

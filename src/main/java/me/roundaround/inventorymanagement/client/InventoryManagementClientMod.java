@@ -1,20 +1,26 @@
 package me.roundaround.inventorymanagement.client;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
-import me.roundaround.inventorymanagement.api.registry.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.InventoryManagementEntrypointHandler;
+import me.roundaround.inventorymanagement.api.gui.ButtonRegistry;
 import me.roundaround.inventorymanagement.api.gui.positioning.Coords;
 import me.roundaround.inventorymanagement.api.gui.positioning.PositioningFunction;
 import me.roundaround.inventorymanagement.api.gui.positioning.SlotPositionReference;
+import me.roundaround.inventorymanagement.api.sorting.ItemVariantRegistry;
+import me.roundaround.inventorymanagement.api.sorting.VariantGroup;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.mixin.HorseScreenHandlerAccessor;
+import me.roundaround.inventorymanagement.registry.tag.InventoryManagementItemTags;
 import me.roundaround.inventorymanagement.roundalib.client.gui.GuiUtil;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
+import net.minecraft.item.Items;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.screen.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -36,6 +42,11 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         ));
 
     this.initButtonRegistry();
+    this.initItemVariantRegistries();
+
+    FabricLoader.getInstance()
+        .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
+        .forEach((entrypoint) -> entrypoint.getEntrypoint().onInventoryManagementInit());
   }
 
   private void initButtonRegistry() {
@@ -102,9 +113,30 @@ public class InventoryManagementClientMod implements ClientModInitializer {
               PositioningFunction.refSlotYAndBgRight();
           return base.apply(context);
         });
+  }
 
-    FabricLoader.getInstance()
-        .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
-        .forEach((entrypoint) -> entrypoint.getEntrypoint().onInventoryManagementInit());
+  private void initItemVariantRegistries() {
+    ItemVariantRegistry color = ItemVariantRegistry.COLOR;
+    color.register(VariantGroup.by(Items.SHULKER_BOX, ConventionalItemTags.SHULKER_BOXES));
+    // TODO: Replace with ConventionalItemTags.GLASS_BLOCKS_CHEAP starting in 1.21
+    color.register(VariantGroup.by(Items.GLASS, InventoryManagementItemTags.GLASSES));
+    color.register(VariantGroup.by(Items.GLASS_PANE, ConventionalItemTags.GLASS_PANES));
+    color.register(VariantGroup.by(ItemTags.WOOL));
+    color.register(VariantGroup.by(ItemTags.WOOL_CARPETS));
+    color.register(VariantGroup.by(ConventionalItemTags.DYES));
+    color.register(VariantGroup.by(ItemTags.CANDLES));
+    color.register(VariantGroup.by(ItemTags.BEDS));
+    color.register(VariantGroup.by(ItemTags.BANNERS));
+    color.register(VariantGroup.by(ItemTags.TERRACOTTA));
+    // TODO: Replace with ConventionalItemTags.GLAZED_TERRACOTTAS starting in 1.21
+    color.register(VariantGroup.by(InventoryManagementItemTags.GLAZED_TERRACOTTAS));
+    // TODO: Replace with ConventionalItemTags.CONCRETES starting in 1.21
+    color.register(VariantGroup.by(InventoryManagementItemTags.CONCRETES));
+    // TODO: Replace with ConventionalItemTags.CONCRETE_POWDERS starting in 1.21
+    color.register(VariantGroup.by(InventoryManagementItemTags.CONCRETE_POWDERS));
+
+    // TODO: E.g. logs, planks, fences, stairs, doors, etc. etc. etc.
+    // ItemVariantRegistry material = ItemVariantRegistry.MATERIAL;
+    // material.register(...);
   }
 }
