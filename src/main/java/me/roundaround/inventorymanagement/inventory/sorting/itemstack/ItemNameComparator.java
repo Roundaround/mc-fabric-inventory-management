@@ -29,7 +29,7 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
 
   @Override
   protected List<String> mapValue(ItemStack stack) {
-    return this.mapToTranslationKeys(stack).stream().map(Language.getInstance()::get).toList();
+    return this.mapToTranslationKeys(stack).stream().map(ItemNameComparator::translate).toList();
   }
 
   private List<String> mapToTranslationKeys(ItemStack stack) {
@@ -51,5 +51,10 @@ public class ItemNameComparator extends CachingComparatorImpl<ItemStack, List<St
       return "";
     }
     return stack.getTranslationKey();
+  }
+
+  private static String translate(String i18nKey) {
+    Language lang = Language.getInstance();
+    return lang.get(i18nKey + ".sort", lang.get(i18nKey));
   }
 }
