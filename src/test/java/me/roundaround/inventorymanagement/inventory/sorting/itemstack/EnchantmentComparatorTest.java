@@ -17,10 +17,10 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.assertIterableMatches;
+import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.selectNames;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class EnchantmentComparatorTest {
@@ -90,7 +90,7 @@ public class EnchantmentComparatorTest {
 
       items.sort(new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS));
 
-      assertIterableEquals(List.of("2", "1", "3"), names(items));
+      assertIterableEquals(List.of("2", "1", "3"), selectNames(items));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class EnchantmentComparatorTest {
 
       items.sort(new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS));
 
-      assertIterableEquals(List.of("2", "1", "3"), names(items));
+      assertIterableEquals(List.of("2", "1", "3"), selectNames(items));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class EnchantmentComparatorTest {
       items.sort(new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS));
 
       // Enchantments are registered in PROTECTION, BLAST_PROTECTION, UNBREAKING order.
-      assertIterableEquals(List.of("2", "1", "3"), names(items));
+      assertIterableEquals(List.of("2", "1", "3"), selectNames(items));
     }
 
     @Test
@@ -161,7 +161,7 @@ public class EnchantmentComparatorTest {
       items.sort(new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS));
 
       // Enchantments are registered in PROTECTION, FIRE_PROTECTION, BLAST_PROTECTION, UNBREAKING, MENDING order.
-      assertIterableEquals(List.of("1", "3", "2"), names(items));
+      assertIterableEquals(List.of("1", "3", "2"), selectNames(items));
     }
   }
 
@@ -215,7 +215,7 @@ public class EnchantmentComparatorTest {
 
       items.sort(new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS));
 
-      assertIterableEquals(List.of("2", "1", "3"), names(items));
+      assertIterableEquals(List.of("2", "1", "3"), selectNames(items));
     }
 
     @Test
@@ -236,7 +236,7 @@ public class EnchantmentComparatorTest {
 
       items.sort(new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS));
 
-      assertIterableEquals(List.of("2", "1", "3"), names(items));
+      assertIterableEquals(List.of("2", "1", "3"), selectNames(items));
     }
 
     @Test
@@ -261,7 +261,7 @@ public class EnchantmentComparatorTest {
       items.sort(new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS));
 
       // Enchantments are registered in PROTECTION, BLAST_PROTECTION, UNBREAKING order.
-      assertIterableEquals(List.of("2", "1", "3"), names(items));
+      assertIterableEquals(List.of("2", "1", "3"), selectNames(items));
     }
 
     @Test
@@ -285,7 +285,7 @@ public class EnchantmentComparatorTest {
       items.sort(new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS));
 
       // Enchantments are registered in PROTECTION, FIRE_PROTECTION, BLAST_PROTECTION, UNBREAKING, MENDING order.
-      assertIterableEquals(List.of("1", "3", "2"), names(items));
+      assertIterableEquals(List.of("1", "3", "2"), selectNames(items));
     }
   }
 
@@ -321,14 +321,6 @@ public class EnchantmentComparatorTest {
     stack.set(dataComponentType, builder.build());
 
     return stack;
-  }
-
-  private static <T, U> List<U> select(List<T> source, Function<T, U> map) {
-    return source.stream().map(map).toList();
-  }
-
-  private static List<String> names(List<ItemStack> source) {
-    return select(source, (stack) -> Objects.requireNonNull(stack.get(DataComponentTypes.CUSTOM_NAME)).getString());
   }
 
   private static int getSize(

@@ -1,6 +1,10 @@
 package me.roundaround.inventorymanagement.testing;
 
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.item.ItemStack;
+
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -73,5 +77,13 @@ public class AssertIterableMatches {
     if (expectedIterator.hasNext() || actualIterator.hasNext()) {
       fail("Iterables are of different lengths.");
     }
+  }
+
+  public static <T, U> List<U> select(List<T> source, Function<T, U> map) {
+    return source.stream().map(map).toList();
+  }
+
+  public static List<String> selectNames(List<ItemStack> source) {
+    return select(source, (stack) -> Objects.requireNonNull(stack.get(DataComponentTypes.CUSTOM_NAME)).getString());
   }
 }
