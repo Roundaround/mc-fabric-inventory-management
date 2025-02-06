@@ -116,6 +116,8 @@ public class InventoryManagementClientMod implements ClientModInitializer {
   }
 
   private void initItemVariantRegistry() {
+    // TODO: Find a way to translate these groups into consistent i18n key format i.e. "inventorymanagement.sort.foo"
+
     ItemVariantRegistry registry = ItemVariantRegistry.COLOR;
     registry.register(VariantGroup.by(Items.SHULKER_BOX, ConventionalItemTags.SHULKER_BOXES));
     // TODO: Replace with ConventionalItemTags.GLASS_BLOCKS_CHEAP starting in 1.21
