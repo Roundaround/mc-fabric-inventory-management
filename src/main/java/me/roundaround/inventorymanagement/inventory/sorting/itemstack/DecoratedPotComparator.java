@@ -2,6 +2,7 @@ package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.inventory.sorting.CachingComparatorImpl;
 import me.roundaround.inventorymanagement.inventory.sorting.LexicographicalListComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.PredicatedComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.block.entity.Sherds;
 import net.minecraft.component.DataComponentTypes;
@@ -18,7 +19,7 @@ import java.util.List;
 public class DecoratedPotComparator extends CachingComparatorImpl<ItemStack,
     DecoratedPotComparator.DecoratedPotSummary> {
   public DecoratedPotComparator() {
-    super(Comparator.naturalOrder());
+    super(PredicatedComparator.ignoreNullsNaturalOrder());
   }
 
   @Override
@@ -32,7 +33,7 @@ public class DecoratedPotComparator extends CachingComparatorImpl<ItemStack,
     public static DecoratedPotSummary of(ItemStack stack) {
       Sherds component = stack.get(DataComponentTypes.POT_DECORATIONS);
       if (component == null) {
-        return new DecoratedPotSummary(0, List.of());
+        return null;
       }
 
       List<Item> items = component.stream();

@@ -12,17 +12,8 @@ import java.util.Comparator;
 
 public class ContainerContentsComparator extends CachingComparatorImpl<ItemStack,
     ContainerContentsComparator.ContentsSummary> {
-  private static ContainerContentsComparator instance;
-
-  private ContainerContentsComparator() {
+  public ContainerContentsComparator() {
     super(PredicatedComparator.ignoreNullsNaturalOrder());
-  }
-
-  public static ContainerContentsComparator getInstance() {
-    if (instance == null) {
-      instance = new ContainerContentsComparator();
-    }
-    return instance;
   }
 
   @Override

@@ -1,56 +1,115 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
-import com.google.common.collect.Lists;
+import me.roundaround.inventorymanagement.registry.tag.InventoryManagementItemTags;
 import me.roundaround.inventorymanagement.testing.BaseMinecraftTest;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.item.BlockItem;
+import me.roundaround.inventorymanagement.testing.TestServerManager;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
+import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import org.junit.jupiter.api.BeforeEach;
+import net.minecraft.registry.tag.ItemTags;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContainerFirstComparatorTest extends BaseMinecraftTest {
-  private ArrayList<ItemStack> items;
+  @BeforeAll
+  static void beforeAll() {
+    TestServerManager.initialize();
+  }
 
-  @BeforeEach
-  void populateItems() {
+  @AfterAll
+  static void afterAll() {
+    TestServerManager.close();
+  }
+
+  @ParameterizedTest
+  @MethodSource("getAllItemPairs")
+  void putsContainersFirst(Item container, Item other) {
+    assertEquals(-1, new ContainerFirstComparator().compare(new ItemStack(container), new ItemStack(other)));
+  }
+
+  @ParameterizedTest
+  @MethodSource("getAllContainerPairs")
+  void treatsAllContainersAsEqual(Item a, Item b) {
+    assertEquals(0, new ContainerFirstComparator().compare(new ItemStack(a), new ItemStack(b)));
+  }
+
+  @ParameterizedTest
+  @MethodSource("getAllContainers")
+  void includesAllItemsInTag(Item item) {
+    assertTrue(TagUtil.isIn(InventoryManagementItemTags.HAS_INVENTORY, item));
+  }
+
+  @Test
+  void testGlassesTag() {
+    assertTrue(TagUtil.isIn(InventoryManagementItemTags.GLASSES, Items.RED_STAINED_GLASS));
+  }
+
+  @Test
+  void testShulkersTag() {
+    assertTrue(TagUtil.isIn(ConventionalItemTags.SHULKER_BOXES, Items.SHULKER_BOX));
+  }
+
+  @Test
+  void testFlowersTag() {
+    assertTrue(TagUtil.isIn(ItemTags.FLOWERS, Items.ALLIUM));
+  }
+
+  private static Stream<Arguments> getAllItemPairs() {
+    return getAllContainers().stream().flatMap((a) -> getSomeNonContainers().stream().map((b) -> Arguments.of(a, b)));
+  }
+
+  private static Stream<Arguments> getAllContainerPairs() {
+    return getAllContainers().stream().flatMap((a) -> getAllContainers().stream().map((b) -> Arguments.of(a, b)));
+  }
+
+  private static List<Item> getAllContainers() {
     //@formatter:off
-    this.items = Lists.newArrayList(
-        new ItemStack(Items.FIRE_CHARGE),
-        new ItemStack(Items.BONE_MEAL),
-        new ItemStack(Items.SHULKER_BOX),
-        new ItemStack(Items.BUNDLE),
-        new ItemStack(Items.TARGET),
-        new ItemStack(Items.BLUE_SHULKER_BOX),
-        new ItemStack(Items.NETHERITE_CHESTPLATE)
+    return List.of(
+        Items.SHULKER_BOX,
+        Items.WHITE_SHULKER_BOX,
+        Items.ORANGE_SHULKER_BOX,
+        Items.MAGENTA_SHULKER_BOX,
+        Items.LIGHT_BLUE_SHULKER_BOX,
+        Items.YELLOW_SHULKER_BOX,
+        Items.LIME_SHULKER_BOX,
+        Items.PINK_SHULKER_BOX,
+        Items.GRAY_SHULKER_BOX,
+        Items.LIGHT_GRAY_SHULKER_BOX,
+        Items.CYAN_SHULKER_BOX,
+        Items.PURPLE_SHULKER_BOX,
+        Items.BLUE_SHULKER_BOX,
+        Items.BROWN_SHULKER_BOX,
+        Items.GREEN_SHULKER_BOX,
+        Items.RED_SHULKER_BOX,
+        Items.BLACK_SHULKER_BOX,
+        Items.BUNDLE
     );
     //@formatter:on
-    this.items.sort(ContainerFirstComparator.getInstance());
   }
 
-  @Test
-  void putsShulkersFirst() {
-    assertTrue(isShulker(this.items.get(0)));
-    assertTrue(isShulker(this.items.get(1)));
-  }
-
-  @Test
-  void doesNotReorderShulkersOfDifferentColors() {
-    assertEquals(this.items.get(0).getItem(), Items.SHULKER_BOX);
-    assertEquals(this.items.get(1).getItem(), Items.BLUE_SHULKER_BOX);
-  }
-
-  @Test
-  void putsBundlesSecond() {
-    assertEquals(this.items.get(2).getItem(), Items.BUNDLE);
-  }
-
-  private static boolean isShulker(ItemStack stack) {
-    return stack.getItem() instanceof BlockItem block && block.getBlock() instanceof ShulkerBoxBlock;
+  private static List<Item> getSomeNonContainers() {
+    //@formatter:off
+    return List.of(
+        Items.FIRE_CHARGE,
+        Items.BONE_MEAL,
+        Items.DIAMOND,
+        Items.DIAMOND_CHESTPLATE,
+        Items.CHEST,
+        Items.BARREL,
+        Items.ENDER_CHEST
+    );
+    //@formatter:on
   }
 }

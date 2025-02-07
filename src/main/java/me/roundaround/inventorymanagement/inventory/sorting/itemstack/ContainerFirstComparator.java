@@ -1,33 +1,18 @@
 package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.inventory.sorting.CachingComparatorImpl;
-import net.minecraft.component.DataComponentTypes;
+import me.roundaround.inventorymanagement.registry.tag.InventoryManagementItemTags;
 import net.minecraft.item.ItemStack;
 
 import java.util.Comparator;
 
-public class ContainerFirstComparator extends CachingComparatorImpl<ItemStack, Integer> {
-  private static ContainerFirstComparator instance;
-
-  private ContainerFirstComparator() {
-    super(Comparator.naturalOrder());
-  }
-
-  public static ContainerFirstComparator getInstance() {
-    if (instance == null) {
-      instance = new ContainerFirstComparator();
-    }
-    return instance;
+public class ContainerFirstComparator extends CachingComparatorImpl<ItemStack, Boolean> {
+  public ContainerFirstComparator() {
+    super(Comparator.reverseOrder());
   }
 
   @Override
-  protected Integer mapValue(ItemStack stack) {
-    if (stack.get(DataComponentTypes.CONTAINER) != null) {
-      return 1;
-    }
-    if (stack.get(DataComponentTypes.BUNDLE_CONTENTS) != null) {
-      return 2;
-    }
-    return 10;
+  protected Boolean mapValue(ItemStack stack) {
+    return stack.isIn(InventoryManagementItemTags.HAS_INVENTORY);
   }
 }

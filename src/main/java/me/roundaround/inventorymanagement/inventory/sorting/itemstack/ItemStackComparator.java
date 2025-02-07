@@ -28,7 +28,7 @@ public class ItemStackComparator implements SerialComparator<ItemStack> {
     ArrayList<Comparator<ItemStack>> delegates = new ArrayList<>();
 
     if (parameters.alphabetical() && parameters.containersFirst()) {
-      delegates.add(ContainerFirstComparator.getInstance());
+      delegates.add(new ContainerFirstComparator());
     }
     if (!parameters.alphabetical()) {
       delegates.add(CreativeIndexComparator.getInstance());
@@ -37,7 +37,7 @@ public class ItemStackComparator implements SerialComparator<ItemStack> {
     delegates.add(new ItemNameComparator(parameters));
     delegates.add(ItemMetadataComparator.getInstance());
     delegates.add(RegistryBackedComparator.getInstance());
-    delegates.add(ContainerContentsComparator.getInstance());
+    delegates.add(new ContainerContentsComparator());
 
     ItemStackComparator comparator = new ItemStackComparator(player, delegates);
     COMPARATORS.put(player, comparator);

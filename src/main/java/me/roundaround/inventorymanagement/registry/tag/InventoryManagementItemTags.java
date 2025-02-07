@@ -6,13 +6,17 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
-public class InventoryManagementItemTags {
-  public static final TagKey<Item> CONCRETE_POWDERS = TagKey.of(
-      RegistryKeys.ITEM, Identifier.of(InventoryManagementMod.MOD_ID, "concrete_powders"));
-  public static final TagKey<Item> CONCRETES = TagKey.of(
-      RegistryKeys.ITEM, Identifier.of(InventoryManagementMod.MOD_ID, "concretes"));
-  public static final TagKey<Item> GLASSES = TagKey.of(
-      RegistryKeys.ITEM, Identifier.of(InventoryManagementMod.MOD_ID, "glasses"));
-  public static final TagKey<Item> GLAZED_TERRACOTTAS = TagKey.of(
-      RegistryKeys.ITEM, Identifier.of(InventoryManagementMod.MOD_ID, "glazed_terracottas"));
+public final class InventoryManagementItemTags {
+  public static final TagKey<Item> CONCRETE_POWDERS = of("concrete_powders");
+  public static final TagKey<Item> CONCRETES = of("concretes");
+  public static final TagKey<Item> GLASSES = of("glasses");
+  public static final TagKey<Item> GLAZED_TERRACOTTAS = of("glazed_terracottas");
+  public static final TagKey<Item> HAS_INVENTORY = of("has_inventory");
+
+  private InventoryManagementItemTags() {
+  }
+
+  private static TagKey<Item> of(String id) {
+    return TagKey.of(RegistryKeys.ITEM, new Identifier(InventoryManagementMod.MOD_ID, id));
+  }
 }

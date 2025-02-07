@@ -11,6 +11,7 @@ import net.minecraft.text.Text;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class DecoratedPotComparatorTest extends BaseMinecraftTest {
   @Test
-  void ignoresActualItem() {
+  void ignoresItemsWithoutComponent() {
     //@formatter:off
     ArrayList<ItemStack> samples = Lists.newArrayList(
         createEmpty(Items.NETHERITE_CHESTPLATE),
@@ -69,6 +70,7 @@ public class DecoratedPotComparatorTest extends BaseMinecraftTest {
     );
     //@formatter:on
 
+    Collections.shuffle(actual);
     actual.sort(new DecoratedPotComparator());
 
     assertIterableEquals(List.of("2", "3", "1"), selectNames(actual));
@@ -97,6 +99,7 @@ public class DecoratedPotComparatorTest extends BaseMinecraftTest {
     );
     //@formatter:on
 
+    Collections.shuffle(actual);
     actual.sort(new DecoratedPotComparator());
 
     assertIterableEquals(List.of("2", "4", "3", "1"), selectNames(actual));
@@ -134,6 +137,7 @@ public class DecoratedPotComparatorTest extends BaseMinecraftTest {
     );
     //@formatter:on
 
+    Collections.shuffle(actual);
     actual.sort(new DecoratedPotComparator());
 
     assertIterableEquals(List.of("3", "5", "2", "4", "1"), selectNames(actual));
@@ -158,6 +162,7 @@ public class DecoratedPotComparatorTest extends BaseMinecraftTest {
     );
     //@formatter:on
 
+    Collections.shuffle(actual);
     actual.sort(new DecoratedPotComparator());
 
     assertIterableEquals(List.of("2", "3", "1"), selectNames(actual));

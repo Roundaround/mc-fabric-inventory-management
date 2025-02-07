@@ -2,6 +2,7 @@ package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.inventory.sorting.CachingComparatorImpl;
 import me.roundaround.inventorymanagement.inventory.sorting.LexicographicalListComparator;
+import me.roundaround.inventorymanagement.inventory.sorting.PredicatedComparator;
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BannerPatternsComponent;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class BannerComparator extends CachingComparatorImpl<ItemStack, BannerComparator.BannerSummary> {
   public BannerComparator() {
-    super(Comparator.naturalOrder());
+    super(PredicatedComparator.ignoreNullsNaturalOrder());
   }
 
   @Override
@@ -28,8 +29,8 @@ public class BannerComparator extends CachingComparatorImpl<ItemStack, BannerCom
 
     public static BannerSummary of(ItemStack stack) {
       BannerPatternsComponent component = stack.get(DataComponentTypes.BANNER_PATTERNS);
-      if (component == null || component.layers().isEmpty()) {
-        return new BannerSummary(0, List.of());
+      if (component == null) {
+        return null;
       }
 
       int count = component.layers().size();

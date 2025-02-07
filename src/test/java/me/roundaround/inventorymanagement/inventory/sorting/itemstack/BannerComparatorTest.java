@@ -18,53 +18,70 @@ import net.minecraft.util.DyeColor;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
-import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.assertIterableMatches;
 import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.selectNames;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class BannerComparatorTest extends BaseMinecraftTest {
   @Test
-  void ignoresActualItem() {
+  void ignoresItemsWithoutComponent() {
     //@formatter:off
-    ArrayList<ItemStack> actual = Lists.newArrayList(
-        new ItemStack(Items.NETHERITE_CHESTPLATE),
-        new ItemStack(Items.RED_BANNER),
-        new ItemStack(Items.DIAMOND_CHESTPLATE),
-        new ItemStack(Items.FIRE_CHARGE),
-        new ItemStack(Items.BLUE_BANNER),
-        new ItemStack(Items.BAMBOO)
+    ArrayList<ItemStack> samples = Lists.newArrayList(
+        createEmpty(Items.NETHERITE_CHESTPLATE),
+        createEmpty(Items.RED_BANNER),
+        createEmpty(Items.DIAMOND_CHESTPLATE),
+        createEmpty(Items.FIRE_CHARGE),
+        createEmpty(Items.WHITE_BANNER),
+        createEmpty(Items.BLUE_BANNER),
+        createEmpty(Items.BAMBOO)
     );
     //@formatter:on
 
-    List<ItemStack> expected = List.copyOf(actual);
-    actual.sort(new BannerComparator());
+    BannerComparator comparator = new BannerComparator();
+    for (ItemStack a : samples) {
+      for (ItemStack b : samples) {
+        assertEquals(0, comparator.compare(a, b));
+      }
+    }
+  }
 
-    assertIterableEquals(expected, actual);
+  @Test
+  void ignoresActualItem() {
+    //@formatter:off
+    ArrayList<ItemStack> samples = Lists.newArrayList(
+        createStack(Items.WHITE_BANNER, createLayer()),
+        createStack(Items.BLUE_BANNER, createLayer()),
+        createStack(Items.ORANGE_BANNER, createLayer()),
+        createStack(Items.GREEN_BANNER, createLayer())
+    );
+    //@formatter:on
+
+    BannerComparator comparator = new BannerComparator();
+    for (ItemStack a : samples) {
+      for (ItemStack b : samples) {
+        assertEquals(0, comparator.compare(a, b));
+      }
+    }
   }
 
   @Test
   void sortsNumberOfLayersAsc() {
     //@formatter:off
     ArrayList<ItemStack> actual = Lists.newArrayList(
-        createStack(createLayer()),
-        createStack(createLayer(), createLayer(), createLayer()),
-        createStack(),
-        createStack(createLayer(), createLayer())
+        createStack("1", createLayer()),
+        createStack("2", createLayer(), createLayer(), createLayer()),
+        createStack("3"),
+        createStack("4", createLayer(), createLayer())
     );
     //@formatter:on
 
+    Collections.shuffle(actual);
     actual.sort(new BannerComparator());
 
-    assertIterableMatches(List.of(0, 1, 2, 3), actual, Function.identity(), (stack) -> {
-      BannerPatternsComponent component = stack.get(DataComponentTypes.BANNER_PATTERNS);
-      if (component == null) {
-        return 0;
-      }
-      return component.layers().size();
-    });
+    assertIterableEquals(List.of("3", "1", "4", "2"), selectNames(actual));
   }
 
   @Test
@@ -86,6 +103,7 @@ public class BannerComparatorTest extends BaseMinecraftTest {
     );
     //@formatter:on
 
+    Collections.shuffle(actual);
     actual.sort(new BannerComparator());
 
     assertIterableEquals(List.of("2", "3", "1"), selectNames(actual));
@@ -110,9 +128,16 @@ public class BannerComparatorTest extends BaseMinecraftTest {
     );
     //@formatter:on
 
+    Collections.shuffle(actual);
     actual.sort(new BannerComparator());
 
     assertIterableEquals(List.of("2", "3", "1"), selectNames(actual));
+  }
+
+  private static ItemStack createEmpty(Item item) {
+    ItemStack stack = new ItemStack(item);
+    stack.remove(DataComponentTypes.BANNER_PATTERNS);
+    return stack;
   }
 
   private static RegistryEntry<BannerPattern> getPattern(RegistryKey<BannerPattern> key) {
