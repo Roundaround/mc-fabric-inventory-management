@@ -29,7 +29,7 @@ public class BannerComparator extends CachingComparatorImpl<ItemStack, BannerCom
     public static BannerSummary of(ItemStack stack) {
       BannerPatternsComponent component = stack.get(DataComponentTypes.BANNER_PATTERNS);
       if (component == null || component.layers().isEmpty()) {
-        return new BannerSummary(0, List.of(""));
+        return new BannerSummary(0, List.of());
       }
 
       int count = component.layers().size();
