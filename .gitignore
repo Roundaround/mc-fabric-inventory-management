@@ -33,4 +33,5 @@ bin/
 # fabric
 
 run/
+logs/
 **/generated/.cache/
