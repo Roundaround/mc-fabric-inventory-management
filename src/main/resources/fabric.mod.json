@@ -24,9 +24,6 @@
     ],
     "modmenu": [
       "me.roundaround.inventorymanagement.compat.modmenu.ModMenuImpl"
-    ],
-    "fabric-gametest": [
-      "me.roundaround.inventorymanagement.test.DummyTest"
     ]
   },
   "mixins": [

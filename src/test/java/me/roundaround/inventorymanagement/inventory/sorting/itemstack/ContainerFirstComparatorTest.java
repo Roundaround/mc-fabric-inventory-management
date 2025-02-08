@@ -2,7 +2,7 @@ package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 
 import me.roundaround.inventorymanagement.registry.tag.InventoryManagementItemTags;
 import me.roundaround.inventorymanagement.testing.BaseMinecraftTest;
-import me.roundaround.inventorymanagement.testing.TestServerManager;
+import me.roundaround.inventorymanagement.testing.SimpleTestServer;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
 import net.minecraft.item.Item;
@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ContainerFirstComparatorTest extends BaseMinecraftTest {
   @BeforeAll
   static void beforeAll() {
-    TestServerManager.initialize();
+    SimpleTestServer.create();
   }
 
   @AfterAll
   static void afterAll() {
-    TestServerManager.close();
+    SimpleTestServer.cleanup();
   }
 
   @ParameterizedTest
