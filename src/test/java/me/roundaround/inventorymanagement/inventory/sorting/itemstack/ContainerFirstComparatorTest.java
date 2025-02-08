@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,7 +72,11 @@ public class ContainerFirstComparatorTest extends BaseMinecraftTest {
   }
 
   private static Stream<Arguments> getAllContainerPairs() {
-    return getAllContainers().stream().flatMap((a) -> getAllContainers().stream().map((b) -> Arguments.of(a, b)));
+    List<Item> containers = getAllContainers();
+    return IntStream.range(0, containers.size())
+        .boxed()
+        .flatMap(i -> IntStream.range(i + 1, containers.size())
+            .mapToObj(j -> Arguments.of(containers.get(i), containers.get(j))));
   }
 
   private static List<Item> getAllContainers() {

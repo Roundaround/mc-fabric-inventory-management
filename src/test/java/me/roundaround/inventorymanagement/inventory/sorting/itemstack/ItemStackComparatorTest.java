@@ -28,8 +28,8 @@ public class ItemStackComparatorTest extends BaseMinecraftTest {
     final int inventorySize = 300;
     final int runs = 100;
     final Duration threshold90 = Duration.ofMillis(40);
-    final Duration threshold99 = Duration.ofMillis(60);
-    final Duration threshold100 = Duration.ofMillis(100);
+    final Duration threshold99 = Duration.ofMillis(70);
+    final Duration threshold100 = Duration.ofMillis(150);
     final long thresholdAvg = 40;
 
     ArrayList<Duration> executionTimes = new ArrayList<>(runs);

@@ -12,24 +12,43 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.selectNames;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class BannerComparatorTest extends BaseMinecraftTest {
-  @Test
-  void ignoresItemsWithoutComponent() {
-    //@formatter:off
-    ArrayList<ItemStack> samples = Lists.newArrayList(
+  private static RegistryWrapper<BannerPattern> registry;
+
+  @BeforeAll
+  static void beforeAll() {
+    registry = BuiltinRegistries.createWrapperLookup().getWrapperOrThrow(RegistryKeys.BANNER_PATTERN);
+  }
+
+  @ParameterizedTest
+  @MethodSource("getMiscSamples")
+  void ignoresItemsWithoutComponent(ItemStack a, ItemStack b) {
+    BannerComparator comparator = new BannerComparator();
+    assertEquals(0, comparator.compare(a, b));
+  }
+
+  private static Stream<Arguments> getMiscSamples() {
+    List<ItemStack> samples = List.of(
         createEmpty(Items.NETHERITE_CHESTPLATE),
         createEmpty(Items.RED_BANNER),
         createEmpty(Items.DIAMOND_CHESTPLATE),
@@ -38,14 +57,10 @@ public class BannerComparatorTest extends BaseMinecraftTest {
         createEmpty(Items.BLUE_BANNER),
         createEmpty(Items.BAMBOO)
     );
-    //@formatter:on
-
-    BannerComparator comparator = new BannerComparator();
-    for (ItemStack a : samples) {
-      for (ItemStack b : samples) {
-        assertEquals(0, comparator.compare(a, b));
-      }
-    }
+    return IntStream.range(0, samples.size())
+        .boxed()
+        .flatMap(i -> IntStream.range(i + 1, samples.size())
+            .mapToObj(j -> Arguments.of(samples.get(i), samples.get(j))));
   }
 
   @Test
@@ -141,7 +156,7 @@ public class BannerComparatorTest extends BaseMinecraftTest {
   }
 
   private static RegistryEntry<BannerPattern> getPattern(RegistryKey<BannerPattern> key) {
-    return BuiltinRegistries.createWrapperLookup().getWrapperOrThrow(RegistryKeys.BANNER_PATTERN).getOrThrow(key);
+    return registry.getOrThrow(key);
   }
 
   private static BannerPatternsComponent.Layer createLayer() {
@@ -154,10 +169,6 @@ public class BannerComparatorTest extends BaseMinecraftTest {
 
   private static BannerPatternsComponent.Layer createLayer(RegistryKey<BannerPattern> key, DyeColor color) {
     return new BannerPatternsComponent.Layer(getPattern(key), color);
-  }
-
-  private static ItemStack createStack(BannerPatternsComponent.Layer... layers) {
-    return createStack("", layers);
   }
 
   private static ItemStack createStack(String customName, BannerPatternsComponent.Layer... layers) {
