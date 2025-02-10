@@ -62,7 +62,8 @@ public class FireworkAndRocketComparator extends CachingComparatorImpl<ItemStack
 
     private static Comparator<FireworkSummary> getComparator() {
       if (comparator == null) {
-        comparator = SerialComparator.comparing(Comparator.comparingInt(FireworkSummary::rocketDuration),
+        comparator = SerialComparator.comparing(
+            Comparator.comparingInt(FireworkSummary::rocketDuration),
             Comparator.comparing(FireworkSummary::explosions, LexicographicalListComparator.naturalOrder())
         );
       }
@@ -70,7 +71,8 @@ public class FireworkAndRocketComparator extends CachingComparatorImpl<ItemStack
     }
   }
 
-  protected record ExplosionSummary(int index, int effects,
+  protected record ExplosionSummary(int index,
+                                    int effects,
                                     List<Integer> colors) implements Comparable<ExplosionSummary> {
     private static Comparator<ExplosionSummary> comparator;
 
@@ -99,7 +101,8 @@ public class FireworkAndRocketComparator extends CachingComparatorImpl<ItemStack
 
     private static Comparator<ExplosionSummary> getComparator() {
       if (comparator == null) {
-        comparator = SerialComparator.comparing(Comparator.comparingInt(ExplosionSummary::index),
+        comparator = SerialComparator.comparing(
+            Comparator.comparingInt(ExplosionSummary::index),
             Comparator.comparingInt(ExplosionSummary::effects),
             Comparator.comparing(ExplosionSummary::colors, LexicographicalListComparator.naturalOrder())
         );
