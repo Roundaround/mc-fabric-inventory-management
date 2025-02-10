@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.assertIterableMatches;
+import static me.roundaround.inventorymanagement.testing.IterableMatchHelpers.assertIterableMatches;
 
 public class PaintingComparatorTest extends BaseMinecraftTest {
   @Test
@@ -27,8 +27,11 @@ public class PaintingComparatorTest extends BaseMinecraftTest {
     ArrayList<ItemStack> actual = getRandomizedPaintingList();
     actual.sort(new PaintingComparator());
 
-    assertIterableMatches(
-        expected, actual, ItemStack::areItemsAndComponentsEqual, PaintingComparatorTest::getStackVariantId);
+    assertIterableMatches(expected,
+        actual,
+        ItemStack::areItemsAndComponentsEqual,
+        PaintingComparatorTest::getStackVariantId
+    );
   }
 
   @Test
@@ -44,19 +47,44 @@ public class PaintingComparatorTest extends BaseMinecraftTest {
     );
     actual.sort(new PaintingComparator());
 
-    assertIterableMatches(
-        expected, actual, ItemStack::areItemsAndComponentsEqual, PaintingComparatorTest::getStackVariantId);
+    assertIterableMatches(expected,
+        actual,
+        ItemStack::areItemsAndComponentsEqual,
+        PaintingComparatorTest::getStackVariantId
+    );
   }
 
   private static ArrayList<ItemStack> getSortedPaintingList() {
-    return Lists.newArrayList(PaintingVariants.ALBAN, PaintingVariants.AZTEC, PaintingVariants.AZTEC2,
-            PaintingVariants.BOMB, PaintingVariants.KEBAB, PaintingVariants.PLANT, PaintingVariants.WASTELAND,
-            PaintingVariants.GRAHAM, PaintingVariants.WANDERER, PaintingVariants.COURBET, PaintingVariants.CREEBET,
-            PaintingVariants.POOL, PaintingVariants.SEA, PaintingVariants.SUNSET, PaintingVariants.BUST,
-            PaintingVariants.EARTH, PaintingVariants.FIRE, PaintingVariants.MATCH, PaintingVariants.SKULL_AND_ROSES,
-            PaintingVariants.STAGE, PaintingVariants.VOID, PaintingVariants.WATER, PaintingVariants.WIND,
-            PaintingVariants.WITHER, PaintingVariants.FIGHTERS, PaintingVariants.DONKEY_KONG, PaintingVariants.SKELETON,
-            PaintingVariants.BURNING_SKULL, PaintingVariants.PIGSCENE, PaintingVariants.POINTER
+    return Lists.newArrayList(PaintingVariants.ALBAN,
+            PaintingVariants.AZTEC,
+            PaintingVariants.AZTEC2,
+            PaintingVariants.BOMB,
+            PaintingVariants.KEBAB,
+            PaintingVariants.PLANT,
+            PaintingVariants.WASTELAND,
+            PaintingVariants.GRAHAM,
+            PaintingVariants.WANDERER,
+            PaintingVariants.COURBET,
+            PaintingVariants.CREEBET,
+            PaintingVariants.POOL,
+            PaintingVariants.SEA,
+            PaintingVariants.SUNSET,
+            PaintingVariants.BUST,
+            PaintingVariants.EARTH,
+            PaintingVariants.FIRE,
+            PaintingVariants.MATCH,
+            PaintingVariants.SKULL_AND_ROSES,
+            PaintingVariants.STAGE,
+            PaintingVariants.VOID,
+            PaintingVariants.WATER,
+            PaintingVariants.WIND,
+            PaintingVariants.WITHER,
+            PaintingVariants.FIGHTERS,
+            PaintingVariants.DONKEY_KONG,
+            PaintingVariants.SKELETON,
+            PaintingVariants.BURNING_SKULL,
+            PaintingVariants.PIGSCENE,
+            PaintingVariants.POINTER
         )
         .stream()
         .map(Registries.PAINTING_VARIANT::getEntry)

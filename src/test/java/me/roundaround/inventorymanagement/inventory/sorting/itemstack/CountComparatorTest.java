@@ -4,16 +4,23 @@ import com.google.common.collect.Lists;
 import me.roundaround.inventorymanagement.testing.BaseMinecraftTest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
-import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.assertIterableMatches;
+import static me.roundaround.inventorymanagement.testing.IterableMatchHelpers.selectCounts;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class CountComparatorTest extends BaseMinecraftTest {
+  private static CountComparator comparator;
+
+  @BeforeAll
+  static void beforeAll() {
+    comparator = new CountComparator();
+  }
+
   @Test
   void ignoresActualItem() {
     //@formatter:off
@@ -28,7 +35,7 @@ public class CountComparatorTest extends BaseMinecraftTest {
     //@formatter:on
 
     List<ItemStack> expected = List.copyOf(actual);
-    actual.sort(new CountComparator());
+    actual.sort(comparator);
 
     assertIterableEquals(expected, actual);
   }
@@ -38,14 +45,14 @@ public class CountComparatorTest extends BaseMinecraftTest {
     //@formatter:off
     ArrayList<ItemStack> actual = Lists.newArrayList(
         new ItemStack(Items.DIAMOND, 16),
-        new ItemStack(Items.DIAMOND, 64),
-        new ItemStack(Items.DIAMOND, 48)
+        new ItemStack(Items.DIAMOND, 48),
+        new ItemStack(Items.DIAMOND, 64)
     );
     //@formatter:on
 
-    actual.sort(new CountComparator());
+    actual.sort(comparator);
 
-    assertIterableMatches(List.of(64, 48, 16), actual, Function.identity(), ItemStack::getCount);
+    assertIterableEquals(List.of(64, 48, 16), selectCounts(actual));
   }
 
   @Test
@@ -53,13 +60,13 @@ public class CountComparatorTest extends BaseMinecraftTest {
     //@formatter:off
     ArrayList<ItemStack> actual = Lists.newArrayList(
         new ItemStack(Items.DIAMOND_SWORD, 16),
-        new ItemStack(Items.DIAMOND, 64),
-        new ItemStack(Items.SNOWBALL, 48)
+        new ItemStack(Items.SNOWBALL, 48),
+        new ItemStack(Items.DIAMOND, 64)
     );
     //@formatter:on
 
-    actual.sort(new CountComparator());
+    actual.sort(comparator);
 
-    assertIterableMatches(List.of(64, 48, 16), actual, Function.identity(), ItemStack::getCount);
+    assertIterableEquals(List.of(64, 48, 16), selectCounts(actual));
   }
 }

@@ -3,29 +3,30 @@ package me.roundaround.inventorymanagement.inventory.sorting.itemstack;
 import me.roundaround.inventorymanagement.registry.tag.InventoryManagementItemTags;
 import me.roundaround.inventorymanagement.testing.BaseMinecraftTest;
 import me.roundaround.inventorymanagement.testing.SimpleTestServer;
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.fabricmc.fabric.api.tag.convention.v2.TagUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.tag.ItemTags;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static me.roundaround.inventorymanagement.testing.DataGen.getAllPairs;
+import static me.roundaround.inventorymanagement.testing.DataGen.getUniquePairs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContainerFirstComparatorTest extends BaseMinecraftTest {
+  private static ContainerFirstComparator comparator;
+
   @BeforeAll
   static void beforeAll() {
+    comparator = new ContainerFirstComparator();
     SimpleTestServer.create();
   }
 
@@ -37,13 +38,13 @@ public class ContainerFirstComparatorTest extends BaseMinecraftTest {
   @ParameterizedTest
   @MethodSource("getAllItemPairs")
   void putsContainersFirst(Item container, Item other) {
-    assertEquals(-1, new ContainerFirstComparator().compare(new ItemStack(container), new ItemStack(other)));
+    assertEquals(-1, comparator.compare(new ItemStack(container), new ItemStack(other)));
   }
 
   @ParameterizedTest
   @MethodSource("getAllContainerPairs")
   void treatsAllContainersAsEqual(Item a, Item b) {
-    assertEquals(0, new ContainerFirstComparator().compare(new ItemStack(a), new ItemStack(b)));
+    assertEquals(0, comparator.compare(new ItemStack(a), new ItemStack(b)));
   }
 
   @ParameterizedTest
@@ -52,31 +53,12 @@ public class ContainerFirstComparatorTest extends BaseMinecraftTest {
     assertTrue(TagUtil.isIn(InventoryManagementItemTags.HAS_INVENTORY, item));
   }
 
-  @Test
-  void testGlassesTag() {
-    assertTrue(TagUtil.isIn(InventoryManagementItemTags.GLASSES, Items.RED_STAINED_GLASS));
-  }
-
-  @Test
-  void testShulkersTag() {
-    assertTrue(TagUtil.isIn(ConventionalItemTags.SHULKER_BOXES, Items.SHULKER_BOX));
-  }
-
-  @Test
-  void testFlowersTag() {
-    assertTrue(TagUtil.isIn(ItemTags.FLOWERS, Items.ALLIUM));
-  }
-
   private static Stream<Arguments> getAllItemPairs() {
-    return getAllContainers().stream().flatMap((a) -> getSomeNonContainers().stream().map((b) -> Arguments.of(a, b)));
+    return getAllPairs(getAllContainers(), getSomeNonContainers());
   }
 
   private static Stream<Arguments> getAllContainerPairs() {
-    List<Item> containers = getAllContainers();
-    return IntStream.range(0, containers.size())
-        .boxed()
-        .flatMap(i -> IntStream.range(i + 1, containers.size())
-            .mapToObj(j -> Arguments.of(containers.get(i), containers.get(j))));
+    return getUniquePairs(getAllContainers());
   }
 
   private static List<Item> getAllContainers() {

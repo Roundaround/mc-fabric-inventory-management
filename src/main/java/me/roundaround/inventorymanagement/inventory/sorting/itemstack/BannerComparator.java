@@ -38,8 +38,8 @@ public class BannerComparator extends CachingComparatorImpl<ItemStack, BannerCom
 
       Language language = Language.getInstance();
       for (var layer : component.layers()) {
-        translated.add(language.get(layer.pattern().value().translationKey()));
-        translated.add(language.get("color.minecraft." + layer.color().getName()));
+        String i18nKey = layer.pattern().value().translationKey() + "." + layer.color().getName();
+        translated.add(language.get(i18nKey));
       }
 
       return new BannerSummary(count, translated);

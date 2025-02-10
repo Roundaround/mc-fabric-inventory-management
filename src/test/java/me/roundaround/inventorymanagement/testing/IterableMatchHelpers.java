@@ -1,18 +1,20 @@
 package me.roundaround.inventorymanagement.testing;
 
+import com.google.common.collect.Lists;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
+import static me.roundaround.inventorymanagement.testing.DataGen.nameStacks;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class AssertIterableMatches {
-  private AssertIterableMatches() {
+public final class IterableMatchHelpers {
+  private IterableMatchHelpers() {
   }
 
   public static <T> void assertIterableMatches(
@@ -41,8 +43,14 @@ public class AssertIterableMatches {
       Function<E, String> expectedToString,
       Function<A, String> actualToString
   ) {
-    assertIterableMatches(
-        expected, actual, Objects::equals, expectedSelector, actualSelector, expectedToString, actualToString);
+    assertIterableMatches(expected,
+        actual,
+        Objects::equals,
+        expectedSelector,
+        actualSelector,
+        expectedToString,
+        actualToString
+    );
   }
 
   public static <E, A, T> void assertIterableMatches(
@@ -67,8 +75,10 @@ public class AssertIterableMatches {
 
       if (!predicate.test(expectedSelected, actualSelected)) {
         fail(String.format(
-            "Elements at index %d are not equal according to the provided predicate: expected=%s, actual=%s", index,
-            expectedToString.apply(expectedElement), actualToString.apply(actualElement)
+            "Elements at index %d are not equal according to the provided predicate: expected=%s, actual=%s",
+            index,
+            expectedToString.apply(expectedElement),
+            actualToString.apply(actualElement)
         ));
       }
       index++;
@@ -79,11 +89,31 @@ public class AssertIterableMatches {
     }
   }
 
+  public static void assertNamesInOrder(List<ItemStack> stacks) {
+    List<String> expected = IntStream.range(1, stacks.size() + 1).boxed().map((id) -> Integer.toString(id)).toList();
+    assertIterableEquals(expected, selectNames(stacks));
+  }
+
+  public static void assertPreservesOrder(Comparator<ItemStack> comparator, ArrayList<ItemStack> stacks) {
+    List<ItemStack> actual = nameStacks(ensureMutable(stacks));
+    Collections.shuffle(actual);
+    actual.sort(comparator);
+    assertNamesInOrder(actual);
+  }
+
   public static <T, U> List<U> select(List<T> source, Function<T, U> map) {
     return source.stream().map(map).toList();
   }
 
   public static List<String> selectNames(List<ItemStack> source) {
     return select(source, (stack) -> Objects.requireNonNull(stack.get(DataComponentTypes.CUSTOM_NAME)).getString());
+  }
+
+  public static List<Integer> selectCounts(List<ItemStack> source) {
+    return select(source, ItemStack::getCount);
+  }
+
+  private static <T> ArrayList<T> ensureMutable(List<T> input) {
+    return input instanceof ArrayList<T> mutable ? mutable : Lists.newArrayList(input);
   }
 }

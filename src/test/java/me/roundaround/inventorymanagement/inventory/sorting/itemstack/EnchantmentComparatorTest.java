@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.assertIterableMatches;
-import static me.roundaround.inventorymanagement.testing.AssertIterableMatches.selectNames;
+import static me.roundaround.inventorymanagement.testing.IterableMatchHelpers.assertIterableMatches;
+import static me.roundaround.inventorymanagement.testing.IterableMatchHelpers.selectNames;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class EnchantmentComparatorTest {
@@ -62,8 +62,11 @@ public class EnchantmentComparatorTest {
 
       items.sort(new EnchantmentComparator(DataComponentTypes.ENCHANTMENTS));
 
-      assertIterableMatches(
-          List.of(3, 2, 1, 0), items, Function.identity(), (stack) -> getSize(stack, DataComponentTypes.ENCHANTMENTS));
+      assertIterableMatches(List.of(3, 2, 1, 0),
+          items,
+          Function.identity(),
+          (stack) -> getSize(stack, DataComponentTypes.ENCHANTMENTS)
+      );
     }
 
     @Test
@@ -182,7 +185,9 @@ public class EnchantmentComparatorTest {
 
       items.sort(new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS));
 
-      assertIterableMatches(List.of(3, 2, 1, 0), items, Function.identity(),
+      assertIterableMatches(List.of(3, 2, 1, 0),
+          items,
+          Function.identity(),
           (stack) -> getSize(stack, DataComponentTypes.STORED_ENCHANTMENTS)
       );
     }
@@ -308,8 +313,8 @@ public class EnchantmentComparatorTest {
       return stack;
     }
 
-    ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(
-        ItemEnchantmentsComponent.DEFAULT);
+    ItemEnchantmentsComponent.Builder builder =
+        new ItemEnchantmentsComponent.Builder(ItemEnchantmentsComponent.DEFAULT);
     enchantments.forEach(builder::set);
     stack.set(dataComponentType, builder.build());
 
