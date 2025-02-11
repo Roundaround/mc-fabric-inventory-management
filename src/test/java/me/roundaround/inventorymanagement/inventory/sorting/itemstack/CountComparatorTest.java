@@ -6,11 +6,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
+import static me.roundaround.inventorymanagement.testing.DataGen.getUniquePairs;
 import static me.roundaround.inventorymanagement.testing.IterableMatchHelpers.selectCounts;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class CountComparatorTest extends BaseMinecraftTest {
@@ -21,23 +27,21 @@ public class CountComparatorTest extends BaseMinecraftTest {
     comparator = new CountComparator();
   }
 
-  @Test
-  void ignoresActualItem() {
-    //@formatter:off
-    ArrayList<ItemStack> actual = Lists.newArrayList(
+  @ParameterizedTest
+  @MethodSource("getMiscSamples")
+  void ignoresActualItem(ItemStack a, ItemStack b) {
+    assertEquals(0, comparator.compare(a, b));
+  }
+
+  private static Stream<Arguments> getMiscSamples() {
+    return getUniquePairs(List.of(
         new ItemStack(Items.NETHERITE_CHESTPLATE),
         new ItemStack(Items.RED_BANNER),
         new ItemStack(Items.DIAMOND_CHESTPLATE),
         new ItemStack(Items.FIRE_CHARGE),
         new ItemStack(Items.BLUE_BANNER),
         new ItemStack(Items.BAMBOO)
-    );
-    //@formatter:on
-
-    List<ItemStack> expected = List.copyOf(actual);
-    actual.sort(comparator);
-
-    assertIterableEquals(expected, actual);
+    ));
   }
 
   @Test
