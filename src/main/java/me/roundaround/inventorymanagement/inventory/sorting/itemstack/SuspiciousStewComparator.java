@@ -6,22 +6,15 @@ import me.roundaround.inventorymanagement.inventory.sorting.PredicatedComparator
 import me.roundaround.inventorymanagement.inventory.sorting.SerialComparator;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.SuspiciousStewEffectsComponent;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.BuiltinRegistries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.util.Language;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SuspiciousStewComparator extends CachingComparatorImpl<ItemStack,
     List<SuspiciousStewComparator.EffectSummary>> {
-  private static HashMap<RegistryEntry<StatusEffect>, Integer> indices;
-
   public SuspiciousStewComparator() {
     //@formatter:off
     super(PredicatedComparator.ignoreNulls(
@@ -46,30 +39,13 @@ public class SuspiciousStewComparator extends CachingComparatorImpl<ItemStack,
         .toList();
   }
 
-  private static HashMap<RegistryEntry<StatusEffect>, Integer> getEffectIndices() {
-    if (indices != null) {
-      return indices;
-    }
-
-    indices = new HashMap<>();
-    AtomicInteger index = new AtomicInteger(0);
-    BuiltinRegistries.createWrapperLookup()
-        .getWrapperOrThrow(RegistryKeys.STATUS_EFFECT)
-        .streamEntries()
-        .forEachOrdered((entry) -> indices.put(entry, index.getAndIncrement()));
-    return indices;
-  }
-
-  protected record EffectSummary(int index, int duration) implements Comparable<EffectSummary> {
+  protected record EffectSummary(String translated, int duration) implements Comparable<EffectSummary> {
     private static Comparator<EffectSummary> comparator;
 
     public static EffectSummary of(SuspiciousStewEffectsComponent.StewEffect effect) {
-      HashMap<RegistryEntry<StatusEffect>, Integer> effectIndices = getEffectIndices();
-      Integer index = effectIndices.get(effect.effect());
-      if (index == null) {
-        return null;
-      }
-      return new EffectSummary(index, effect.duration());
+      return new EffectSummary(Language.getInstance().get(effect.createStatusEffectInstance().getTranslationKey()),
+          effect.duration()
+      );
     }
 
     @Override
@@ -81,7 +57,7 @@ public class SuspiciousStewComparator extends CachingComparatorImpl<ItemStack,
       if (comparator == null) {
         //@formatter:off
         comparator = SerialComparator.comparing(
-            Comparator.comparingInt(EffectSummary::index),
+            Comparator.comparing(EffectSummary::translated, Comparator.naturalOrder()),
             Comparator.comparingInt(EffectSummary::duration).reversed()
         );
         //@formatter:on
