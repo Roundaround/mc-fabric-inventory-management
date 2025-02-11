@@ -2,14 +2,17 @@ package me.roundaround.inventorymanagement.client.option;
 
 import me.roundaround.inventorymanagement.client.ButtonManager;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
+import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.roundalib.client.event.ScreenInputEvent;
 import me.roundaround.inventorymanagement.roundalib.client.gui.GuiUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.player.PlayerEntity;
 
 @Environment(EnvType.CLIENT)
 public class KeyBindings {
@@ -32,50 +35,64 @@ public class KeyBindings {
       return;
     }
 
-    CONFIGURE = KeyBindingHelper.registerKeyBinding(
-        new KeyBinding("inventorymanagement.keybind.configure", InputUtil.Type.KEYSYM, InputUtil.UNKNOWN_KEY.getCode(),
-            "inventorymanagement.keybind.category"
-        ));
+    CONFIGURE = KeyBindingHelper.registerKeyBinding(new KeyBinding("inventorymanagement.keybind.configure",
+        InputUtil.Type.KEYSYM,
+        InputUtil.UNKNOWN_KEY.getCode(),
+        "inventorymanagement.keybind.category"
+    ));
 
-    SORT_CONTAINER = KeyBindingHelper.registerKeyBinding(
-        new KeyBinding("inventorymanagement.keybind.sortContainer", InputUtil.Type.KEYSYM,
-            InputUtil.UNKNOWN_KEY.getCode(), "inventorymanagement.keybind.category"
-        ));
+    SORT_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding("inventorymanagement.keybind.sortContainer",
+        InputUtil.Type.KEYSYM,
+        InputUtil.UNKNOWN_KEY.getCode(),
+        "inventorymanagement.keybind.category"
+    ));
 
-    SORT_PLAYER = KeyBindingHelper.registerKeyBinding(
-        new KeyBinding("inventorymanagement.keybind.sortPlayer", InputUtil.Type.KEYSYM, InputUtil.UNKNOWN_KEY.getCode(),
-            "inventorymanagement.keybind.category"
-        ));
+    SORT_PLAYER = KeyBindingHelper.registerKeyBinding(new KeyBinding("inventorymanagement.keybind.sortPlayer",
+        InputUtil.Type.KEYSYM,
+        InputUtil.UNKNOWN_KEY.getCode(),
+        "inventorymanagement.keybind.category"
+    ));
 
-    SORT_ALL = KeyBindingHelper.registerKeyBinding(
-        new KeyBinding("inventorymanagement.keybind.sortAll", InputUtil.Type.KEYSYM, InputUtil.UNKNOWN_KEY.getCode(),
-            "inventorymanagement.keybind.category"
-        ));
+    SORT_ALL = KeyBindingHelper.registerKeyBinding(new KeyBinding("inventorymanagement.keybind.sortAll",
+        InputUtil.Type.KEYSYM,
+        InputUtil.UNKNOWN_KEY.getCode(),
+        "inventorymanagement.keybind.category"
+    ));
 
-    STACK_FROM_CONTAINER = KeyBindingHelper.registerKeyBinding(
-        new KeyBinding("inventorymanagement.keybind.stackFromContainer", InputUtil.Type.KEYSYM,
-            InputUtil.UNKNOWN_KEY.getCode(), "inventorymanagement.keybind.category"
-        ));
+    STACK_FROM_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "inventorymanagement.keybind.stackFromContainer",
+        InputUtil.Type.KEYSYM,
+        InputUtil.UNKNOWN_KEY.getCode(),
+        "inventorymanagement.keybind.category"
+    ));
 
-    STACK_INTO_CONTAINER = KeyBindingHelper.registerKeyBinding(
-        new KeyBinding("inventorymanagement.keybind.stackIntoContainer", InputUtil.Type.KEYSYM,
-            InputUtil.UNKNOWN_KEY.getCode(), "inventorymanagement.keybind.category"
-        ));
+    STACK_INTO_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "inventorymanagement.keybind.stackIntoContainer",
+        InputUtil.Type.KEYSYM,
+        InputUtil.UNKNOWN_KEY.getCode(),
+        "inventorymanagement.keybind.category"
+    ));
 
-    TRANSFER_FROM_CONTAINER = KeyBindingHelper.registerKeyBinding(
-        new KeyBinding("inventorymanagement.keybind.transferFromContainer", InputUtil.Type.KEYSYM,
-            InputUtil.UNKNOWN_KEY.getCode(), "inventorymanagement.keybind.category"
-        ));
+    TRANSFER_FROM_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "inventorymanagement.keybind.transferFromContainer",
+        InputUtil.Type.KEYSYM,
+        InputUtil.UNKNOWN_KEY.getCode(),
+        "inventorymanagement.keybind.category"
+    ));
 
-    TRANSFER_INTO_CONTAINER = KeyBindingHelper.registerKeyBinding(
-        new KeyBinding("inventorymanagement.keybind.transferIntoContainer", InputUtil.Type.KEYSYM,
-            InputUtil.UNKNOWN_KEY.getCode(), "inventorymanagement.keybind.category"
-        ));
+    TRANSFER_INTO_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "inventorymanagement.keybind.transferIntoContainer",
+        InputUtil.Type.KEYSYM,
+        InputUtil.UNKNOWN_KEY.getCode(),
+        "inventorymanagement.keybind.category"
+    ));
 
     ScreenInputEvent.EVENT.register((screen, keyCode, scanCode, modifiers) -> {
       if (!(screen instanceof HandledScreen)) {
         return false;
       }
+
+      PlayerEntity player = MinecraftClient.getInstance().player;
 
       if (CONFIGURE.matchesKey(keyCode, scanCode)) {
         //        GuiUtil.setScreen(new PerScreenConfigScreen(screen, InventoryManagementConfig.getInstance()
@@ -85,28 +102,30 @@ public class KeyBindings {
 
       if (ButtonManager.getInstance().hasContainerSideSort() && SORT_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendServerSortContainerPacket();
+        ClientNetworking.sendSortContainerPacket(InventoryHelper.calculateSort(player, false));
         return true;
       }
 
       if (ButtonManager.getInstance().hasPlayerSideSort() && SORT_PLAYER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendServerSortInventoryPacket();
+        ClientNetworking.sendSortContainerPacket(InventoryHelper.calculateSort(player, true));
         return true;
       }
 
       if (SORT_ALL.matchesKey(keyCode, scanCode)) {
         if (ButtonManager.getInstance().hasContainerSideSort() && ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendServerSortAllPacket();
+          ClientNetworking.sendSortAllPacket(InventoryHelper.calculateSort(player, true),
+              InventoryHelper.calculateSort(player, false)
+          );
           return true;
         } else if (ButtonManager.getInstance().hasContainerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendServerSortContainerPacket();
+          ClientNetworking.sendSortContainerPacket(InventoryHelper.calculateSort(player, false));
           return true;
         } else if (ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendServerSortInventoryPacket();
+          ClientNetworking.sendSortContainerPacket(InventoryHelper.calculateSort(player, true));
           return true;
         }
       }

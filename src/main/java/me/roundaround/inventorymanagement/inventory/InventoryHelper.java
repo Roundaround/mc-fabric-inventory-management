@@ -107,65 +107,6 @@ public class InventoryHelper {
     }
   }
 
-  public static void sortInventory(PlayerEntity player, boolean isPlayerInventory) {
-    Inventory containerInventory = getContainerInventory(player);
-    Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
-
-    SlotRange slotRange = isPlayerInventory ?
-        SlotRangeRegistry.getPlayerSide(player, inventory) :
-        SlotRangeRegistry.getContainerSide(player, inventory);
-    sortInventory(player, inventory, slotRange);
-  }
-
-  public static void sortAll(PlayerEntity player) {
-    sortInventory(player, true);
-    sortInventory(player, false);
-  }
-
-  public static void sortInventory(PlayerEntity player, Inventory inventory) {
-    sortInventory(player, inventory, 0, inventory.size());
-  }
-
-  public static void sortInventory(PlayerEntity player, Inventory inventory, int start, int end) {
-    sortInventory(player, inventory, new SlotRange(start, end));
-  }
-
-  public static void sortInventory(PlayerEntity player, Inventory inventory, SlotRange slotRange) {
-    List<ItemStack> stacks = new ArrayList<>(slotRange.size());
-
-    for (int i = slotRange.min(); i < slotRange.max(); i++) {
-      stacks.add(inventory.getStack(i).copy());
-    }
-
-    stacks = stacks.stream().filter((stack) -> !stack.isEmpty()).toList();
-
-    for (int i = 0; i < stacks.size(); i++) {
-      for (int j = i + 1; j < stacks.size(); j++) {
-        ItemStack a = stacks.get(i);
-        ItemStack b = stacks.get(j);
-
-        if (canStacksBeMerged(a, b)) {
-          int itemsToShift = Math.min(a.getMaxCount() - a.getCount(), b.getCount());
-          if (itemsToShift > 0) {
-            a.increment(itemsToShift);
-            b.decrement(itemsToShift);
-          }
-        }
-      }
-    }
-
-    stacks = stacks.stream()
-        .filter((stack) -> !stack.isEmpty())
-        .sorted(ItemStackComparator.create(player.getUuid()))
-        .toList();
-
-    for (int slotIndex = slotRange.min(); slotIndex < slotRange.max(); slotIndex++) {
-      int stacksIndex = slotIndex - slotRange.min();
-      ItemStack stack = stacksIndex < stacks.size() ? stacks.get(stacksIndex) : ItemStack.EMPTY;
-      inventory.setStack(slotIndex, stack);
-    }
-  }
-
   public static void autoStack(PlayerEntity player, boolean fromPlayerInventory) {
     Inventory containerInventory = getContainerInventory(player);
     if (containerInventory == null) {

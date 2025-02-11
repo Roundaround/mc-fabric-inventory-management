@@ -36,16 +36,8 @@ public final class ClientNetworking {
     ClientPlayNetworking.send(new Networking.SortC2S(isPlayerInventory, sorted));
   }
 
-  public static void sendServerSortContainerPacket() {
-    ClientPlayNetworking.send(new Networking.ServerSortC2S(false, getItemNames()));
-  }
-
-  public static void sendServerSortInventoryPacket() {
-    ClientPlayNetworking.send(new Networking.ServerSortC2S(true, getItemNames()));
-  }
-
-  public static void sendServerSortAllPacket() {
-    ClientPlayNetworking.send(new Networking.ServerSortAllC2S(getItemNames()));
+  public static void sendSortAllPacket(List<Integer> player, List<Integer> container) {
+    ClientPlayNetworking.send(new Networking.SortAllC2S(player, container));
   }
 
   public static void sendTransferFromContainerPacket() {
@@ -54,13 +46,6 @@ public final class ClientNetworking {
 
   public static void sendTransferIntoContainerPacket() {
     ClientPlayNetworking.send(new Networking.TransferC2S(true));
-  }
-
-  public static void trySendRecalculatePacket() {
-    if (!ClientPlayNetworking.canSend(Networking.RECALCULATE_C2S)) {
-      return;
-    }
-    ClientPlayNetworking.send(new Networking.RecalculateC2S());
   }
 
   private static HashMap<String, String> getItemNames() {
