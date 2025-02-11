@@ -28,7 +28,7 @@ public class InventoryHelper {
   }
 
   public static ArrayList<Integer> tempSortInventory(PlayerEntity player, Inventory inventory, SlotRange slotRange) {
-    return new SortableInventory(inventory).sort(slotRange, ItemStackComparator.get(player.getUuid()));
+    return new SortableInventory(inventory).sort(slotRange, ItemStackComparator.create(player.getUuid()));
   }
 
   public static void applySort(PlayerEntity player, boolean isPlayerInventory, List<Integer> sorted) {
@@ -156,7 +156,7 @@ public class InventoryHelper {
 
     stacks = stacks.stream()
         .filter((stack) -> !stack.isEmpty())
-        .sorted(ItemStackComparator.get(player.getUuid()))
+        .sorted(ItemStackComparator.create(player.getUuid()))
         .toList();
 
     for (int slotIndex = slotRange.min(); slotIndex < slotRange.max(); slotIndex++) {

@@ -33,46 +33,51 @@ public class ItemStackComparatorTest extends BaseMinecraftTest {
     final long thresholdAvg = 40;
 
     ArrayList<Duration> executionTimes = new ArrayList<>(runs);
+    ItemStackComparator comparator = ItemStackComparator.create(PLAYER_UUID);
 
     // Warm up pass to get i18n initialized
     ArrayList<ItemStack> warmup = genRandomLargeInventory(inventorySize);
-    warmup.sort(ItemStackComparator.get(PLAYER_UUID));
+    warmup.sort(comparator);
 
     for (int i = 0; i < runs; i++) {
       ArrayList<ItemStack> actual = genRandomLargeInventory(inventorySize);
       long startTime = System.nanoTime();
-      actual.sort(ItemStackComparator.get(PLAYER_UUID));
+      actual.sort(comparator);
       long endTime = System.nanoTime();
 
       Duration duration = Duration.ofNanos(endTime - startTime);
-      assertTrue(duration.compareTo(threshold100) <= 0,
-          String.format("Execution %d exceeded the maximum allowed duration of %d ms (actual: %d ms)", i + 1,
-              threshold100.toMillis(), duration.toMillis()
-          )
-      );
+      assertTrue(duration.compareTo(threshold100) <= 0, String.format(
+          "Execution %d exceeded the maximum allowed duration of %d ms (actual: %d ms)",
+          i + 1,
+          threshold100.toMillis(),
+          duration.toMillis()
+      ));
 
       executionTimes.add(duration);
     }
 
     long within90 = executionTimes.stream().filter((duration) -> duration.compareTo(threshold90) <= 0).count();
 
-    assertTrue(within90 >= runs * 0.9,
-        String.format("Only %d out of %d executions completed within the desired 90%% of %d ms", within90, runs,
-            threshold90.toMillis()
-        )
-    );
+    assertTrue(within90 >= runs * 0.9, String.format(
+        "Only %d out of %d executions completed within the desired 90%% of %d ms",
+        within90,
+        runs,
+        threshold90.toMillis()
+    ));
 
     long within99 = executionTimes.stream().filter((duration) -> duration.compareTo(threshold99) <= 0).count();
 
-    assertTrue(within99 >= runs * 0.99,
-        String.format("Only %d out of %d executions completed within the desired 99%% of %d ms", within99, runs,
-            threshold99.toMillis()
-        )
-    );
+    assertTrue(within99 >= runs * 0.99, String.format(
+        "Only %d out of %d executions completed within the desired 99%% of %d ms",
+        within99,
+        runs,
+        threshold99.toMillis()
+    ));
 
     long avg = Math.round(executionTimes.stream().mapToLong(Duration::toMillis).average().orElse(1000.0));
 
-    assertTrue(avg <= thresholdAvg,
+    assertTrue(
+        avg <= thresholdAvg,
         String.format("Average execution too high: expected=%dms, actual=%dms", thresholdAvg, avg)
     );
   }
