@@ -8,57 +8,38 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.registry.BuiltinRegistries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PotionComparator extends CachingComparatorImpl<ItemStack, PotionComparator.PotionSummary> {
-  private static HashMap<RegistryEntry<Potion>, Integer> indices;
-
   public PotionComparator() {
     super(PredicatedComparator.ignoreNullsNaturalOrder());
   }
 
   @Override
   protected PotionSummary mapValue(ItemStack stack) {
-    PotionContentsComponent component = stack.get(DataComponentTypes.POTION_CONTENTS);
-    if (component == null) {
-      return null;
-    }
-    return PotionSummary.of(component);
+    return PotionSummary.of(stack);
   }
 
-  private static HashMap<RegistryEntry<Potion>, Integer> getPotionIndices() {
-    if (indices != null) {
-      return indices;
-    }
-
-    indices = new HashMap<>();
-    AtomicInteger index = new AtomicInteger(0);
-    BuiltinRegistries.createWrapperLookup()
-        .getWrapperOrThrow(RegistryKeys.POTION)
-        .streamEntries()
-        .forEachOrdered((entry) -> indices.put(entry, index.getAndIncrement()));
-    return indices;
-  }
-
-  protected record PotionSummary(Integer index, List<StatusEffectInstance> customEffects,
+  protected record PotionSummary(String translated,
+                                 List<StatusEffectInstance> customEffects,
                                  Integer customColor) implements Comparable<PotionSummary> {
     private static Comparator<PotionSummary> comparator;
 
-    public static PotionSummary of(PotionContentsComponent component) {
-      Integer index = getPotionIndices().get(component.potion().orElse(null));
+    public static PotionSummary of(ItemStack stack) {
+      PotionContentsComponent component = stack.get(DataComponentTypes.POTION_CONTENTS);
+      if (component == null) {
+        return null;
+      }
+
+      String translated = Items.POTION.getTranslationKey(stack);
       List<StatusEffectInstance> customEffects = List.copyOf(component.customEffects());
       Integer customColor = component.customColor().orElse(null);
 
-      return new PotionSummary(index, customEffects, customColor);
+      return new PotionSummary(translated, customEffects, customColor);
     }
 
     @Override
@@ -70,7 +51,7 @@ public class PotionComparator extends CachingComparatorImpl<ItemStack, PotionCom
       if (comparator == null) {
         //@formatter:off
         comparator = SerialComparator.comparing(
-            Comparator.comparing(PotionSummary::index, Comparator.nullsLast(Comparator.naturalOrder())),
+            Comparator.comparing(PotionSummary::translated, Comparator.nullsLast(Comparator.naturalOrder())),
             Comparator.comparing((summary) -> summary.customEffects().size(), Comparator.reverseOrder()),
             Comparator.comparing(PotionSummary::customEffects, LexicographicalListComparator.naturalOrder()),
             Comparator.comparing(PotionSummary::customColor, Comparator.nullsLast(Comparator.naturalOrder()))
