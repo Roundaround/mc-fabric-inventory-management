@@ -17,7 +17,7 @@ public class ItemMetadataComparator extends WrapperComparatorImpl<ItemStack> {
         new EnchantmentComparator(DataComponentTypes.STORED_ENCHANTMENTS),
         new PaintingComparator(),
         new BannerComparator(),
-        new FireworkAndRocketComparator(),
+        new FireworkRocketComparator(),
         new InstrumentComparator(),
         new PotionComparator(),
         new SuspiciousStewComparator(),
