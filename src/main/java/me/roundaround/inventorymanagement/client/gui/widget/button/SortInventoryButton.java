@@ -25,8 +25,14 @@ public class SortInventoryButton<H extends ScreenHandler, S extends HandledScree
   public SortInventoryButton(
       Coords offset, PositioningFunction<H, S> positioningFunction, ButtonContext<H, S> context
   ) {
-    super(positioningFunction.apply(context), offset, positioningFunction, context,
-        getAction(context.isPlayerInventory()), getTooltip(context.isPlayerInventory()), ICON
+    super(
+        positioningFunction.apply(context),
+        offset,
+        positioningFunction,
+        context,
+        getAction(context.isPlayerInventory()),
+        getTooltip(context.isPlayerInventory()),
+        ICON
     );
   }
 
@@ -49,7 +55,7 @@ public class SortInventoryButton<H extends ScreenHandler, S extends HandledScree
     return (button) -> {
       MinecraftClient client = MinecraftClient.getInstance();
       PlayerEntity player = client.player;
-      ArrayList<Integer> sorted = InventoryHelper.tempSortInventory(player, isPlayerInventory);
+      ArrayList<Integer> sorted = InventoryHelper.calculateSort(player, isPlayerInventory);
       ClientNetworking.sendSortInventoryPacket(isPlayerInventory, sorted);
     };
   }

@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 
 public class InventoryHelper {
-  public static ArrayList<Integer> tempSortInventory(PlayerEntity player, boolean isPlayerInventory) {
+  public static ArrayList<Integer> calculateSort(PlayerEntity player, boolean isPlayerInventory) {
     Inventory containerInventory = getContainerInventory(player);
     Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
 
@@ -24,10 +24,10 @@ public class InventoryHelper {
         SlotRangeRegistry.getPlayerSide(player, inventory) :
         SlotRangeRegistry.getContainerSide(player, inventory);
 
-    return tempSortInventory(player, inventory, slotRange);
+    return calculateSort(player, inventory, slotRange);
   }
 
-  public static ArrayList<Integer> tempSortInventory(PlayerEntity player, Inventory inventory, SlotRange slotRange) {
+  public static ArrayList<Integer> calculateSort(PlayerEntity player, Inventory inventory, SlotRange slotRange) {
     return new SortableInventory(inventory).sort(slotRange, ItemStackComparator.create(player.getUuid()));
   }
 
@@ -197,12 +197,22 @@ public class InventoryHelper {
     }
 
     if (fromPlayerInventory) {
-      transferEntireInventory(playerInventory, containerInventory, playerSlotRange, containerSlotRange,
-          player.playerScreenHandler, player.currentScreenHandler, player
+      transferEntireInventory(playerInventory,
+          containerInventory,
+          playerSlotRange,
+          containerSlotRange,
+          player.playerScreenHandler,
+          player.currentScreenHandler,
+          player
       );
     } else {
-      transferEntireInventory(containerInventory, playerInventory, containerSlotRange, playerSlotRange,
-          player.currentScreenHandler, player.playerScreenHandler, player
+      transferEntireInventory(containerInventory,
+          playerInventory,
+          containerSlotRange,
+          playerSlotRange,
+          player.currentScreenHandler,
+          player.playerScreenHandler,
+          player
       );
     }
   }
@@ -239,8 +249,14 @@ public class InventoryHelper {
       ScreenHandler toScreenHandler,
       PlayerEntity player
   ) {
-    transferEntireInventory(from, to, fromRange, toRange, (fromStack, toStack) -> true, fromScreenHandler,
-        toScreenHandler, player
+    transferEntireInventory(from,
+        to,
+        fromRange,
+        toRange,
+        (fromStack, toStack) -> true,
+        fromScreenHandler,
+        toScreenHandler,
+        player
     );
   }
 
