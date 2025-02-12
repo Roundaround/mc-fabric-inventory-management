@@ -108,7 +108,7 @@ public class KeyBindings {
 
       if (ButtonManager.getInstance().hasPlayerSideSort() && SORT_PLAYER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendSortContainerPacket(InventoryHelper.calculateSort(player, true));
+        ClientNetworking.sendSortInventoryPacket(InventoryHelper.calculateSort(player, true));
         return true;
       }
 
@@ -125,7 +125,7 @@ public class KeyBindings {
           return true;
         } else if (ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendSortContainerPacket(InventoryHelper.calculateSort(player, true));
+          ClientNetworking.sendSortInventoryPacket(InventoryHelper.calculateSort(player, true));
           return true;
         }
       }

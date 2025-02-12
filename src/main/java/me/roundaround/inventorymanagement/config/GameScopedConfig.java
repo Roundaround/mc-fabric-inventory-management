@@ -11,9 +11,6 @@ import me.roundaround.inventorymanagement.roundalib.config.option.BooleanConfigO
 import me.roundaround.inventorymanagement.roundalib.config.option.PositionConfigOption;
 import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 import me.roundaround.inventorymanagement.roundalib.nightconfig.core.Config;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.MappingResolver;
-import net.minecraft.client.gui.screen.Screen;
 
 import java.util.HashMap;
 import java.util.List;
@@ -146,11 +143,5 @@ public class GameScopedConfig extends ModConfigImpl implements GameScopedFileSto
     modConfig.set("perScreenConfigs", PerScreenConfigOption.serialize(screenConfigs));
 
     return true;
-  }
-
-  public static String getScreenKey(Screen screen) {
-    MappingResolver mappingResolver = FabricLoader.getInstance().getMappingResolver();
-    String unmapped = mappingResolver.unmapClassName("named", screen.getClass().getName());
-    return unmapped.replaceAll("\\.", "-");
   }
 }

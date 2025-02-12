@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.config.option;
 
-import me.roundaround.inventorymanagement.config.GameScopedConfig;
+import me.roundaround.inventorymanagement.config.ConfigHelpers;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.inventorymanagement.config.value.PerScreenConfig;
 import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
@@ -20,7 +20,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
   }
 
   public void clear(Screen screen) {
-    this.setValue(this.getValue().clear(GameScopedConfig.getScreenKey(screen)));
+    this.setValue(this.getValue().clear(ConfigHelpers.getScreenKey(screen)));
   }
 
   public ButtonVisibility getSortVisibility(Screen screen, boolean isPlayerInventory) {
@@ -132,7 +132,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
       BiFunction<PerScreenConfig, String, T> getContainerSide
   ) {
     PerScreenConfig config = this.getValue();
-    String key = GameScopedConfig.getScreenKey(screen);
+    String key = ConfigHelpers.getScreenKey(screen);
     return isPlayerInventory ? getPlayerSide.apply(config, key) : getContainerSide.apply(config, key);
   }
 
@@ -144,7 +144,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
       T value
   ) {
     PerScreenConfig config = this.getValue();
-    String key = GameScopedConfig.getScreenKey(screen);
+    String key = ConfigHelpers.getScreenKey(screen);
     if (isPlayerInventory) {
       this.setValue(setPlayerSide.apply(config, key, value));
     } else {
@@ -159,7 +159,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
       BiFunction<PerScreenConfig, String, PerScreenConfig> clearContainerSide
   ) {
     PerScreenConfig config = this.getValue();
-    String key = GameScopedConfig.getScreenKey(screen);
+    String key = ConfigHelpers.getScreenKey(screen);
     if (isPlayerInventory) {
       this.setValue(clearPlayerSide.apply(config, key));
     } else {

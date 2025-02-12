@@ -1,7 +1,7 @@
 package me.roundaround.inventorymanagement.inventory;
 
 import me.roundaround.inventorymanagement.api.gui.SlotRangeRegistry;
-import me.roundaround.inventorymanagement.config.GameScopedConfig;
+import me.roundaround.inventorymanagement.config.ConfigHelpers;
 import me.roundaround.inventorymanagement.inventory.sorting.itemstack.ItemStackComparator;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,14 +21,10 @@ public class InventoryHelper {
     Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
 
     SlotRange slotRange = isPlayerInventory ?
-        SlotRangeRegistry.getPlayerSide(player, inventory).withExclusions(getLockedSlots()) :
+        SlotRangeRegistry.getPlayerSide(player, inventory).withExclusions(ConfigHelpers.getLockedSlots()) :
         SlotRangeRegistry.getContainerSide(player, inventory);
 
     return calculateSort(player, inventory, slotRange);
-  }
-
-  public static List<Integer> getLockedSlots() {
-    return List.copyOf(GameScopedConfig.getInstance().lockedInventorySlots.getValue());
   }
 
   private static List<Integer> calculateSort(PlayerEntity player, Inventory inventory, SlotRange slotRange) {
