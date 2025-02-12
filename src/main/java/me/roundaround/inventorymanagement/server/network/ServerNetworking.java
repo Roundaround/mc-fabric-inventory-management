@@ -4,6 +4,8 @@ import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.network.Networking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
+import java.util.List;
+
 public final class ServerNetworking {
   private ServerNetworking() {
   }
@@ -16,24 +18,31 @@ public final class ServerNetworking {
   }
 
   private static void handleStack(Networking.StackC2S payload, ServerPlayNetworking.Context context) {
-    context.player().server.execute(() -> InventoryHelper.autoStack(context.player(), payload.fromPlayerInventory()));
+    context.player().server.execute(() -> InventoryHelper.autoStack(context.player(),
+        payload.fromPlayerInventory(),
+        payload.locked()
+    ));
   }
 
   private static void handleSort(Networking.SortC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> InventoryHelper.applySort(context.player(),
         payload.isPlayerInventory(),
-        payload.sorted()
+        payload.sorted(),
+        payload.locked()
     ));
   }
 
   private static void handleSortAll(Networking.SortAllC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
-      InventoryHelper.applySort(context.player(), true, payload.player());
-      InventoryHelper.applySort(context.player(), false, payload.container());
+      InventoryHelper.applySort(context.player(), true, payload.player(), payload.locked());
+      InventoryHelper.applySort(context.player(), false, payload.container(), List.of());
     });
   }
 
   private static void handleTransfer(Networking.TransferC2S payload, ServerPlayNetworking.Context context) {
-    context.player().server.execute(() -> InventoryHelper.transferAll(context.player(), payload.fromPlayerInventory()));
+    context.player().server.execute(() -> InventoryHelper.transferAll(context.player(),
+        payload.fromPlayerInventory(),
+        payload.locked()
+    ));
   }
 }

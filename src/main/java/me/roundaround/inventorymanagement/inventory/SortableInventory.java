@@ -8,6 +8,7 @@ import net.minecraft.util.collection.DefaultedList;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class SortableInventory implements Inventory {
@@ -32,20 +33,23 @@ public class SortableInventory implements Inventory {
 
   @Override
   public ItemStack getStack(int slot) {
+    if (slot < 0 || slot >= this.stacks.size()) {
+      return ItemStack.EMPTY;
+    }
     return this.stacks.get(slot);
   }
 
   @Override
   public ItemStack removeStack(int slot, int amount) {
-    return this.stacks.get(slot).isEmpty() ? ItemStack.EMPTY : Inventories.splitStack(this.stacks, slot, amount);
+    return this.getStack(slot).isEmpty() ? ItemStack.EMPTY : Inventories.splitStack(this.stacks, slot, amount);
   }
 
   @Override
   public ItemStack removeStack(int slot) {
-    if (this.stacks.get(slot).isEmpty()) {
+    ItemStack stack = this.getStack(slot);
+    if (stack.isEmpty()) {
       return ItemStack.EMPTY;
     }
-    ItemStack stack = this.stacks.get(slot);
     this.stacks.set(slot, ItemStack.EMPTY);
     return stack;
   }
@@ -69,32 +73,24 @@ public class SortableInventory implements Inventory {
     this.stacks.clear();
   }
 
-  public ArrayList<Integer> sort(SlotRange slotRange, Comparator<ItemStack> comparator) {
+  public List<Integer> sort(SlotRange slotRange, Comparator<ItemStack> comparator) {
     StacksList stacks = this.getNonEmptyStacksInRange(slotRange)
         .stream()
         .filter((ref) -> !ref.stack().isEmpty())
         .sorted(Comparator.comparing(ItemStackRef::stack, comparator))
         .collect(Collectors.toCollection(StacksList::new));
 
-    ArrayList<Integer> sorted = new ArrayList<>(stacks.size());
-
-    for (int slot = slotRange.min(); slot < slotRange.max(); slot++) {
-      int stackIndex = slot - slotRange.min();
-      ItemStackRef ref = stacks.getOrEmpty(stackIndex);
-      sorted.add(ref.originalSlot());
-    }
-
-    return sorted;
+    return slotRange.project(stacks.stream().map(ItemStackRef::originalSlot).toList(), -1);
   }
 
   public StacksList getNonEmptyStacksInRange(SlotRange slotRange) {
     StacksList stacks = new StacksList(slotRange.size());
-    for (int i = slotRange.min(); i < slotRange.max(); i++) {
-      ItemStack stack = this.getStack(i);
+    for (int slot : slotRange.getSlots()) {
+      ItemStack stack = this.getStack(slot);
       if (stack.isEmpty()) {
         continue;
       }
-      stacks.add(new ItemStackRef(stack.copy(), i));
+      stacks.add(new ItemStackRef(stack.copy(), slot));
     }
     return stacks;
   }

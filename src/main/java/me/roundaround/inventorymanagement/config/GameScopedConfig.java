@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.config;
 
 import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.config.option.IntListConfigOption;
 import me.roundaround.inventorymanagement.config.option.PerScreenConfigOption;
 import me.roundaround.inventorymanagement.config.value.PerScreenConfig;
 import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
@@ -18,12 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
-public class InventoryManagementConfig extends ModConfigImpl implements GameScopedFileStore {
-  private static InventoryManagementConfig instance = null;
+public class GameScopedConfig extends ModConfigImpl implements GameScopedFileStore {
+  private static GameScopedConfig instance = null;
 
-  public static InventoryManagementConfig getInstance() {
+  public static GameScopedConfig getInstance() {
     if (instance == null) {
-      instance = new InventoryManagementConfig();
+      instance = new GameScopedConfig();
     }
     return instance;
   }
@@ -32,50 +33,52 @@ public class InventoryManagementConfig extends ModConfigImpl implements GameScop
   public BooleanConfigOption showSort;
   public BooleanConfigOption showTransfer;
   public BooleanConfigOption showStack;
+  public IntListConfigOption lockedInventorySlots;
   public PositionConfigOption defaultPosition;
   public PerScreenConfigOption perScreenConfigs;
 
-  public InventoryManagementConfig() {
+  public GameScopedConfig() {
     super(InventoryManagementMod.MOD_ID, 2);
   }
 
   @Override
   protected void registerOptions() {
-    modEnabled = this.register(BooleanConfigOption.builder(ConfigPath.of("modEnabled"))
+    this.modEnabled = this.register(BooleanConfigOption.builder(ConfigPath.of("modEnabled"))
         .setDefaultValue(true)
         .setComment("Simple toggle for the mod! Set to false to disable.")
         .build());
 
-    showSort = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showSort"))
+    this.showSort = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showSort"))
         .setDefaultValue(true)
         .setComment("Whether or not to show sort buttons in the UI.")
         .build());
 
-    showTransfer = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showTransfer"))
+    this.showTransfer = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showTransfer"))
         .setDefaultValue(true)
         .setComment("Whether or not to show transfer buttons in the UI.")
         .build());
 
-    showStack = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showStack"))
+    this.showStack = this.register(BooleanConfigOption.yesNoBuilder(ConfigPath.of("showStack"))
         .setDefaultValue(true)
         .setComment("Whether or not to show autostack buttons in the UI.")
         .build());
 
-    defaultPosition = this.buildRegistration(PositionConfigOption.builder(ConfigPath.of("defaultPosition"))
+    this.lockedInventorySlots = this.buildRegistration(IntListConfigOption.builder(ConfigPath.of(
+        "lockedInventorySlots"))
+        .setComment("Which slots in your inventory should be skipped when transferring or sorting items.")
+        .build()).noGuiControl().commit();
+
+    this.defaultPosition = this.buildRegistration(PositionConfigOption.builder(ConfigPath.of("defaultPosition"))
         .setDefaultValue(new Position(0, 0))
-        .onUpdate(
-            (option) -> option.setDisabled(!showSort.getValue() && !showTransfer.getValue() && !showStack.getValue()))
+        .onUpdate((option) -> option.setDisabled(
+            !this.showSort.getValue() && !this.showTransfer.getValue() && !this.showStack.getValue()))
         .setComment("Customize a default for button position.")
         .build()).noGuiControl().commit();
 
-    perScreenConfigs = this.buildRegistration(PerScreenConfigOption.builder(ConfigPath.of("perScreenConfigs"))
+    this.perScreenConfigs = this.buildRegistration(PerScreenConfigOption.builder(ConfigPath.of("perScreenConfigs"))
         .setDefaultValue(new PerScreenConfig())
         .setComment("Customize settings on a per-screen basis.")
         .build()).noGuiControl().commit();
-  }
-
-  private String i18n(String key) {
-    return this.getModId() + "." + key;
   }
 
   @Override
@@ -86,10 +89,11 @@ public class InventoryManagementConfig extends ModConfigImpl implements GameScop
     }
 
     if (versionSnapshot == 1) {
-      return runMigrations(modConfig, List.of(
-          InventoryManagementConfig::removeThemeFromV1Config,
-          InventoryManagementConfig::migrateV1ScreenPositionsToV2ScreenConfigs
-      ));
+      return runMigrations(modConfig,
+          List.of(GameScopedConfig::removeThemeFromV1Config,
+              GameScopedConfig::migrateV1ScreenPositionsToV2ScreenConfigs
+          )
+      );
     }
 
     return false;

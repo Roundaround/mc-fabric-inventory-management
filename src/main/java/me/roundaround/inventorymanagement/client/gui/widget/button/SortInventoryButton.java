@@ -17,7 +17,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SortInventoryButton<H extends ScreenHandler, S extends HandledScreen<H>> extends ButtonBase<H, S> {
   private static final Identifier ICON = new Identifier(InventoryManagementMod.MOD_ID, "icon/sort");
@@ -55,7 +55,7 @@ public class SortInventoryButton<H extends ScreenHandler, S extends HandledScree
     return (button) -> {
       MinecraftClient client = MinecraftClient.getInstance();
       PlayerEntity player = client.player;
-      ArrayList<Integer> sorted = InventoryHelper.calculateSort(player, isPlayerInventory);
+      List<Integer> sorted = InventoryHelper.calculateSort(player, isPlayerInventory);
       ClientNetworking.sendSortInventoryPacket(isPlayerInventory, sorted);
     };
   }

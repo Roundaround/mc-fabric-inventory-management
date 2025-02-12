@@ -8,7 +8,7 @@ import me.roundaround.inventorymanagement.client.gui.widget.button.AutoStackButt
 import me.roundaround.inventorymanagement.client.gui.widget.button.ButtonBase;
 import me.roundaround.inventorymanagement.client.gui.widget.button.SortInventoryButton;
 import me.roundaround.inventorymanagement.client.gui.widget.button.TransferAllButton;
-import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
+import me.roundaround.inventorymanagement.config.GameScopedConfig;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.inventorymanagement.event.BeforeCloseHandledScreen;
 import me.roundaround.inventorymanagement.roundalib.config.value.Position;
@@ -122,22 +122,28 @@ public class ButtonManager {
   }
 
   private void checkAndMarkSortVisibility(ButtonContext<?, ?> context) {
-    this.checkAndMarkVisibility(context, SORT_KEY, InventoryManagementConfig.getInstance().showSort::getValue,
-        InventoryManagementConfig.getInstance().perScreenConfigs::getSortVisibility,
+    this.checkAndMarkVisibility(context,
+        SORT_KEY,
+        GameScopedConfig.getInstance().showSort::getValue,
+        GameScopedConfig.getInstance().perScreenConfigs::getSortVisibility,
         ButtonRegistry.getInstance()::getSortButtonVisibility
     );
   }
 
   private void checkAndMarkStackVisibility(ButtonContext<?, ?> context) {
-    this.checkAndMarkVisibility(context, STACK_KEY, InventoryManagementConfig.getInstance().showStack::getValue,
-        InventoryManagementConfig.getInstance().perScreenConfigs::getStackVisibility,
+    this.checkAndMarkVisibility(context,
+        STACK_KEY,
+        GameScopedConfig.getInstance().showStack::getValue,
+        GameScopedConfig.getInstance().perScreenConfigs::getStackVisibility,
         ButtonRegistry.getInstance()::getTransferAndStackButtonVisibility
     );
   }
 
   private void checkAndMarkTransferVisibility(ButtonContext<?, ?> context) {
-    this.checkAndMarkVisibility(context, TRANSFER_KEY, InventoryManagementConfig.getInstance().showTransfer::getValue,
-        InventoryManagementConfig.getInstance().perScreenConfigs::getTransferVisibility,
+    this.checkAndMarkVisibility(context,
+        TRANSFER_KEY,
+        GameScopedConfig.getInstance().showTransfer::getValue,
+        GameScopedConfig.getInstance().perScreenConfigs::getTransferVisibility,
         ButtonRegistry.getInstance()::getTransferAndStackButtonVisibility
     );
   }
@@ -160,7 +166,7 @@ public class ButtonManager {
       BiFunction<Screen, Boolean, ButtonVisibility> perScreenVisibilityFunction,
       Function<ButtonContext<?, ?>, ButtonVisibility> registryVisibilityFunction
   ) {
-    if (!InventoryManagementConfig.getInstance().modEnabled.getValue()) {
+    if (!GameScopedConfig.getInstance().modEnabled.getValue()) {
       return false;
     }
 
@@ -221,11 +227,11 @@ public class ButtonManager {
   }
 
   private Position getButtonOffset(ButtonContext<?, ?> context, String buttonKey) {
-    Position offset = InventoryManagementConfig.getInstance().perScreenConfigs.getPosition(context.getScreen(),
+    Position offset = GameScopedConfig.getInstance().perScreenConfigs.getPosition(context.getScreen(),
         context.isPlayerInventory()
     );
     if (offset == null) {
-      offset = InventoryManagementConfig.getInstance().defaultPosition.getValue();
+      offset = GameScopedConfig.getInstance().defaultPosition.getValue();
     }
 
     return new Position(offset.x(),

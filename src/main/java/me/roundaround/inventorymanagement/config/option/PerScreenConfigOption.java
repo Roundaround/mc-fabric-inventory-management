@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.config.option;
 
-import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
+import me.roundaround.inventorymanagement.config.GameScopedConfig;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.inventorymanagement.config.value.PerScreenConfig;
 import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
@@ -20,79 +20,107 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
   }
 
   public void clear(Screen screen) {
-    this.setValue(this.getValue().clear(InventoryManagementConfig.getScreenKey(screen)));
+    this.setValue(this.getValue().clear(GameScopedConfig.getScreenKey(screen)));
   }
 
   public ButtonVisibility getSortVisibility(Screen screen, boolean isPlayerInventory) {
-    return this.getValue(screen, isPlayerInventory, PerScreenConfig::getPlayerSideSortVisibility,
+    return this.getValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::getPlayerSideSortVisibility,
         PerScreenConfig::getContainerSideSortVisibility
     );
   }
 
   public ButtonVisibility getTransferVisibility(Screen screen, boolean isPlayerInventory) {
-    return this.getValue(screen, isPlayerInventory, PerScreenConfig::getPlayerSideTransferVisibility,
+    return this.getValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::getPlayerSideTransferVisibility,
         PerScreenConfig::getContainerSideTransferVisibility
     );
   }
 
   public ButtonVisibility getStackVisibility(Screen screen, boolean isPlayerInventory) {
-    return this.getValue(screen, isPlayerInventory, PerScreenConfig::getPlayerSideStackVisibility,
+    return this.getValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::getPlayerSideStackVisibility,
         PerScreenConfig::getContainerSideStackVisibility
     );
   }
 
   public Position getPosition(Screen screen, boolean isPlayerInventory) {
-    return this.getValue(screen, isPlayerInventory, PerScreenConfig::getPlayerSideOffset,
+    return this.getValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::getPlayerSideOffset,
         PerScreenConfig::getContainerSideOffset
     );
   }
 
   public void setSortVisibility(Screen screen, boolean isPlayerInventory, ButtonVisibility value) {
-    this.setValue(screen, isPlayerInventory, PerScreenConfig::setPlayerSideSortVisibility,
-        PerScreenConfig::setContainerSideSortVisibility, value
+    this.setValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::setPlayerSideSortVisibility,
+        PerScreenConfig::setContainerSideSortVisibility,
+        value
     );
   }
 
   public void setTransferVisibility(
       Screen screen, boolean isPlayerInventory, ButtonVisibility value
   ) {
-    this.setValue(screen, isPlayerInventory, PerScreenConfig::setPlayerSideTransferVisibility,
-        PerScreenConfig::setContainerSideTransferVisibility, value
+    this.setValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::setPlayerSideTransferVisibility,
+        PerScreenConfig::setContainerSideTransferVisibility,
+        value
     );
   }
 
   public void setStackVisibility(Screen screen, boolean isPlayerInventory, ButtonVisibility value) {
-    this.setValue(screen, isPlayerInventory, PerScreenConfig::setPlayerSideStackVisibility,
-        PerScreenConfig::setContainerSideStackVisibility, value
+    this.setValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::setPlayerSideStackVisibility,
+        PerScreenConfig::setContainerSideStackVisibility,
+        value
     );
   }
 
   public void setPosition(Screen screen, boolean isPlayerInventory, Position value) {
-    this.setValue(screen, isPlayerInventory, PerScreenConfig::setPlayerSideOffset,
-        PerScreenConfig::setContainerSideOffset, value
+    this.setValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::setPlayerSideOffset,
+        PerScreenConfig::setContainerSideOffset,
+        value
     );
   }
 
   public void clearSortVisibility(Screen screen, boolean isPlayerInventory) {
-    this.clearValue(screen, isPlayerInventory, PerScreenConfig::clearPlayerSideSortVisibility,
+    this.clearValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::clearPlayerSideSortVisibility,
         PerScreenConfig::clearContainerSideSortVisibility
     );
   }
 
   public void clearTransferVisibility(Screen screen, boolean isPlayerInventory) {
-    this.clearValue(screen, isPlayerInventory, PerScreenConfig::clearPlayerSideTransferVisibility,
+    this.clearValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::clearPlayerSideTransferVisibility,
         PerScreenConfig::clearContainerSideTransferVisibility
     );
   }
 
   public void clearStackVisibility(Screen screen, boolean isPlayerInventory) {
-    this.clearValue(screen, isPlayerInventory, PerScreenConfig::clearPlayerSideStackVisibility,
+    this.clearValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::clearPlayerSideStackVisibility,
         PerScreenConfig::clearContainerSideStackVisibility
     );
   }
 
   public void clearPosition(Screen screen, boolean isPlayerInventory) {
-    this.clearValue(screen, isPlayerInventory, PerScreenConfig::clearPlayerSideOffset,
+    this.clearValue(screen,
+        isPlayerInventory,
+        PerScreenConfig::clearPlayerSideOffset,
         PerScreenConfig::clearContainerSideOffset
     );
   }
@@ -104,7 +132,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
       BiFunction<PerScreenConfig, String, T> getContainerSide
   ) {
     PerScreenConfig config = this.getValue();
-    String key = InventoryManagementConfig.getScreenKey(screen);
+    String key = GameScopedConfig.getScreenKey(screen);
     return isPlayerInventory ? getPlayerSide.apply(config, key) : getContainerSide.apply(config, key);
   }
 
@@ -116,7 +144,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
       T value
   ) {
     PerScreenConfig config = this.getValue();
-    String key = InventoryManagementConfig.getScreenKey(screen);
+    String key = GameScopedConfig.getScreenKey(screen);
     if (isPlayerInventory) {
       this.setValue(setPlayerSide.apply(config, key, value));
     } else {
@@ -131,7 +159,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
       BiFunction<PerScreenConfig, String, PerScreenConfig> clearContainerSide
   ) {
     PerScreenConfig config = this.getValue();
-    String key = InventoryManagementConfig.getScreenKey(screen);
+    String key = GameScopedConfig.getScreenKey(screen);
     if (isPlayerInventory) {
       this.setValue(clearPlayerSide.apply(config, key));
     } else {

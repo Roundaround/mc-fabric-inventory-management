@@ -1,13 +1,13 @@
 package me.roundaround.inventorymanagement.inventory;
 
 import me.roundaround.inventorymanagement.api.gui.SlotRangeRegistry;
+import me.roundaround.inventorymanagement.config.GameScopedConfig;
 import me.roundaround.inventorymanagement.inventory.sorting.itemstack.ItemStackComparator;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.HorseScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.collection.DefaultedList;
@@ -16,34 +16,40 @@ import java.util.*;
 import java.util.function.BiFunction;
 
 public class InventoryHelper {
-  public static ArrayList<Integer> calculateSort(PlayerEntity player, boolean isPlayerInventory) {
+  public static List<Integer> calculateSort(PlayerEntity player, boolean isPlayerInventory) {
     Inventory containerInventory = getContainerInventory(player);
     Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
 
     SlotRange slotRange = isPlayerInventory ?
-        SlotRangeRegistry.getPlayerSide(player, inventory) :
+        SlotRangeRegistry.getPlayerSide(player, inventory).withExclusions(getLockedSlots()) :
         SlotRangeRegistry.getContainerSide(player, inventory);
 
     return calculateSort(player, inventory, slotRange);
   }
 
-  public static ArrayList<Integer> calculateSort(PlayerEntity player, Inventory inventory, SlotRange slotRange) {
+  public static List<Integer> getLockedSlots() {
+    return List.copyOf(GameScopedConfig.getInstance().lockedInventorySlots.getValue());
+  }
+
+  private static List<Integer> calculateSort(PlayerEntity player, Inventory inventory, SlotRange slotRange) {
     return new SortableInventory(inventory).sort(slotRange, ItemStackComparator.create(player.getUuid()));
   }
 
-  public static void applySort(PlayerEntity player, boolean isPlayerInventory, List<Integer> sorted) {
+  public static void applySort(
+      PlayerEntity player, boolean isPlayerInventory, List<Integer> sorted, List<Integer> locked
+  ) {
     Inventory containerInventory = getContainerInventory(player);
     Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
 
     SlotRange slotRange = isPlayerInventory ?
-        SlotRangeRegistry.getPlayerSide(player, inventory) :
+        SlotRangeRegistry.getPlayerSide(player, inventory).withExclusions(locked) :
         SlotRangeRegistry.getContainerSide(player, inventory);
     applySort(player, inventory, slotRange, sorted);
   }
 
-  public static void applySort(PlayerEntity player, Inventory inventory, SlotRange slotRange, List<Integer> sorted) {
+  private static void applySort(PlayerEntity player, Inventory inventory, SlotRange slotRange, List<Integer> sorted) {
     HashSet<Integer> slotsWithItems = new HashSet<>();
-    for (int i = slotRange.min(); i < slotRange.max(); i++) {
+    for (int i : slotRange.getSlots()) {
       if (!inventory.getStack(i).isEmpty()) {
         slotsWithItems.add(i);
       }
@@ -95,7 +101,7 @@ public class InventoryHelper {
     }
 
     Iterator<ItemStack> merged = reconstructed.iterator();
-    for (int slotIndex = slotRange.min(); slotIndex < slotRange.max(); slotIndex++) {
+    for (int slotIndex : slotRange.getSlots()) {
       ItemStack stack = ItemStack.EMPTY;
       while (merged.hasNext()) {
         stack = merged.next();
@@ -107,40 +113,43 @@ public class InventoryHelper {
     }
   }
 
-  public static void autoStack(PlayerEntity player, boolean fromPlayerInventory) {
+  public static void autoStack(PlayerEntity player, boolean fromPlayerInventory, List<Integer> locked) {
     Inventory containerInventory = getContainerInventory(player);
     if (containerInventory == null) {
       return;
     }
 
     Inventory playerInventory = player.getInventory();
+    SlotRange playerSlotRange = SlotRangeRegistry.getPlayerSide(player, playerInventory).withExclusions(locked);
+    SlotRange containerSlotRange = SlotRangeRegistry.getContainerSide(player, containerInventory);
 
     if (fromPlayerInventory) {
-      autoStackInventories(playerInventory, containerInventory, player);
+      autoStackInventories(playerInventory, playerSlotRange, containerInventory, containerSlotRange, player);
     } else {
-      autoStackInventories(containerInventory, playerInventory, player);
+      autoStackInventories(containerInventory, containerSlotRange, playerInventory, playerSlotRange, player);
     }
   }
 
-  public static void transferAll(PlayerEntity player, boolean fromPlayerInventory) {
+  private static void autoStackInventories(
+      Inventory from, SlotRange fromRange, Inventory to, SlotRange toRange, PlayerEntity player
+  ) {
+    transferEntireInventory(from, fromRange, to, toRange, (fromStack, toStack) -> !toStack.isEmpty(), player);
+  }
+
+  public static void transferAll(PlayerEntity player, boolean fromPlayerInventory, List<Integer> locked) {
     Inventory containerInventory = getContainerInventory(player);
     if (containerInventory == null) {
       return;
     }
 
     Inventory playerInventory = player.getInventory();
-
-    SlotRange playerSlotRange = SlotRangeRegistry.getPlayerSide(player, playerInventory);
+    SlotRange playerSlotRange = SlotRangeRegistry.getPlayerSide(player, playerInventory).withExclusions(locked);
     SlotRange containerSlotRange = SlotRangeRegistry.getContainerSide(player, containerInventory);
-
-    if (player.currentScreenHandler instanceof HorseScreenHandler) {
-      containerSlotRange = SlotRange.horseMainRange(containerInventory);
-    }
 
     if (fromPlayerInventory) {
       transferEntireInventory(playerInventory,
-          containerInventory,
           playerSlotRange,
+          containerInventory,
           containerSlotRange,
           player.playerScreenHandler,
           player.currentScreenHandler,
@@ -148,8 +157,8 @@ public class InventoryHelper {
       );
     } else {
       transferEntireInventory(containerInventory,
-          playerInventory,
           containerSlotRange,
+          playerInventory,
           playerSlotRange,
           player.currentScreenHandler,
           player.playerScreenHandler,
@@ -158,41 +167,29 @@ public class InventoryHelper {
     }
   }
 
-  private static void autoStackInventories(
-      Inventory from, Inventory to, PlayerEntity player
-  ) {
-    autoStackInventories(from, to, SlotRange.fullRange(from), SlotRange.fullRange(to), player);
-  }
-
-  private static void autoStackInventories(
-      Inventory from, Inventory to, SlotRange fromRange, SlotRange toRange, PlayerEntity player
-  ) {
-    transferEntireInventory(from, to, fromRange, toRange, (fromStack, toStack) -> !toStack.isEmpty(), player);
-  }
-
   private static void transferEntireInventory(
       Inventory from,
-      Inventory to,
       SlotRange fromRange,
+      Inventory to,
       SlotRange toRange,
       BiFunction<ItemStack, ItemStack, Boolean> predicate,
       PlayerEntity player
   ) {
-    transferEntireInventory(from, to, fromRange, toRange, predicate, null, null, player);
+    transferEntireInventory(from, fromRange, to, toRange, predicate, null, null, player);
   }
 
   private static void transferEntireInventory(
       Inventory from,
-      Inventory to,
       SlotRange fromRange,
+      Inventory to,
       SlotRange toRange,
       ScreenHandler fromScreenHandler,
       ScreenHandler toScreenHandler,
       PlayerEntity player
   ) {
     transferEntireInventory(from,
-        to,
         fromRange,
+        to,
         toRange,
         (fromStack, toStack) -> true,
         fromScreenHandler,
@@ -203,16 +200,16 @@ public class InventoryHelper {
 
   private static void transferEntireInventory(
       Inventory from,
-      Inventory to,
       SlotRange fromRange,
+      Inventory to,
       SlotRange toRange,
       BiFunction<ItemStack, ItemStack, Boolean> predicate,
       ScreenHandler fromScreenHandler,
       ScreenHandler toScreenHandler,
       PlayerEntity player
   ) {
-    for (int toIdx = toRange.min(); toIdx < toRange.max(); toIdx++) {
-      for (int fromIdx = fromRange.min(); fromIdx < fromRange.max(); fromIdx++) {
+    for (int toIdx : toRange.getSlots()) {
+      for (int fromIdx : fromRange.getSlots()) {
         ItemStack fromStack = from.getStack(fromIdx).copy();
         ItemStack toStack = to.getStack(toIdx).copy();
 

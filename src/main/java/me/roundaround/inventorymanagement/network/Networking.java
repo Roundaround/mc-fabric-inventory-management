@@ -27,10 +27,13 @@ public final class Networking {
     PayloadTypeRegistry.playC2S().register(TransferC2S.ID, TransferC2S.CODEC);
   }
 
-  public record StackC2S(boolean fromPlayerInventory) implements CustomPayload {
+  public record StackC2S(boolean fromPlayerInventory, List<Integer> locked) implements CustomPayload {
     public static final CustomPayload.Id<StackC2S> ID = new CustomPayload.Id<>(STACK_C2S);
-    public static final PacketCodec<RegistryByteBuf, StackC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOL,
+    public static final PacketCodec<RegistryByteBuf, StackC2S> CODEC = PacketCodec.tuple(
+        PacketCodecs.BOOL,
         StackC2S::fromPlayerInventory,
+        CustomCodecs.forList(PacketCodecs.INTEGER),
+        StackC2S::locked,
         StackC2S::new
     );
 
@@ -40,12 +43,17 @@ public final class Networking {
     }
   }
 
-  public record SortC2S(boolean isPlayerInventory, List<Integer> sorted) implements CustomPayload {
+  public record SortC2S(boolean isPlayerInventory,
+                        List<Integer> sorted,
+                        List<Integer> locked) implements CustomPayload {
     public static final CustomPayload.Id<SortC2S> ID = new CustomPayload.Id<>(SORT_C2S);
-    public static final PacketCodec<RegistryByteBuf, SortC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOL,
+    public static final PacketCodec<RegistryByteBuf, SortC2S> CODEC = PacketCodec.tuple(
+        PacketCodecs.BOOL,
         SortC2S::isPlayerInventory,
         CustomCodecs.forList(PacketCodecs.INTEGER),
         SortC2S::sorted,
+        CustomCodecs.forList(PacketCodecs.INTEGER),
+        SortC2S::locked,
         SortC2S::new
     );
 
@@ -55,13 +63,17 @@ public final class Networking {
     }
   }
 
-  public record SortAllC2S(List<Integer> player, List<Integer> container) implements CustomPayload {
+  public record SortAllC2S(List<Integer> player,
+                           List<Integer> container,
+                           List<Integer> locked) implements CustomPayload {
     public static final CustomPayload.Id<SortAllC2S> ID = new CustomPayload.Id<>(SORT_ALL_C2S);
-    public static final PacketCodec<RegistryByteBuf, SortAllC2S> CODEC = PacketCodec.tuple(CustomCodecs.forList(
-            PacketCodecs.INTEGER),
+    public static final PacketCodec<RegistryByteBuf, SortAllC2S> CODEC = PacketCodec.tuple(
+        CustomCodecs.forList(PacketCodecs.INTEGER),
         SortAllC2S::player,
         CustomCodecs.forList(PacketCodecs.INTEGER),
         SortAllC2S::container,
+        CustomCodecs.forList(PacketCodecs.INTEGER),
+        SortAllC2S::locked,
         SortAllC2S::new
     );
 
@@ -71,10 +83,13 @@ public final class Networking {
     }
   }
 
-  public record TransferC2S(boolean fromPlayerInventory) implements CustomPayload {
+  public record TransferC2S(boolean fromPlayerInventory, List<Integer> locked) implements CustomPayload {
     public static final CustomPayload.Id<TransferC2S> ID = new CustomPayload.Id<>(TRANSFER_C2S);
-    public static final PacketCodec<RegistryByteBuf, TransferC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOL,
+    public static final PacketCodec<RegistryByteBuf, TransferC2S> CODEC = PacketCodec.tuple(
+        PacketCodecs.BOOL,
         TransferC2S::fromPlayerInventory,
+        CustomCodecs.forList(PacketCodecs.INTEGER),
+        TransferC2S::locked,
         TransferC2S::new
     );
 

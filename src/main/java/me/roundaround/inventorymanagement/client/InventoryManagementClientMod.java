@@ -34,22 +34,26 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     //    ConfigControlRegister.init();
     KeyBindings.init();
 
-    FabricLoader.getInstance()
-        .getModContainer(InventoryManagementMod.MOD_ID)
-        .ifPresent((container) -> ResourceManagerHelper.registerBuiltinResourcePack(
-            new Identifier(InventoryManagementMod.MOD_ID, "inventorymanagement-dark-ui"), container,
-            Text.translatable("inventorymanagement.resource.dark"), ResourcePackActivationType.NORMAL
-        ));
-
-    this.initButtonRegistry();
-    this.initItemVariantRegistry();
-
-    FabricLoader.getInstance()
-        .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
-        .forEach((entrypoint) -> entrypoint.getEntrypoint().onInventoryManagementInit());
+    registerDarkUiResourcePack();
+    initButtonRegistry();
+    initItemVariantRegistry();
+    executeCustomEntrypoints();
   }
 
-  private void initButtonRegistry() {
+  private static void registerDarkUiResourcePack() {
+    FabricLoader.getInstance()
+        .getModContainer(InventoryManagementMod.MOD_ID)
+        .ifPresent((container) -> ResourceManagerHelper.registerBuiltinResourcePack(new Identifier(
+                InventoryManagementMod.MOD_ID,
+                "inventorymanagement-dark-ui"
+            ),
+            container,
+            Text.translatable("inventorymanagement.resource.dark"),
+            ResourcePackActivationType.NORMAL
+        ));
+  }
+
+  private static void initButtonRegistry() {
     ButtonRegistry registry = ButtonRegistry.getInstance();
 
     registry.registerBothSides(ShulkerBoxScreenHandler.class);
@@ -97,8 +101,8 @@ public class InventoryManagementClientMod implements ClientModInitializer {
 
     // Creative screen dynamically needs to update its reference slot and thus position
     AtomicBoolean wasPreviouslyInventoryTab = new AtomicBoolean(false);
-    registry.<CreativeInventoryScreen.CreativeScreenHandler, CreativeInventoryScreen>registerPlayerSideOnly(
-        CreativeInventoryScreen.CreativeScreenHandler.class, (context) -> {
+    registry.<CreativeInventoryScreen.CreativeScreenHandler, CreativeInventoryScreen>registerPlayerSideOnly(CreativeInventoryScreen.CreativeScreenHandler.class,
+        (context) -> {
           boolean isInventoryTab = context.getScreen().isInventoryTabSelected();
           if (isInventoryTab != wasPreviouslyInventoryTab.get()) {
             context.setReferenceSlot(isInventoryTab ? context.getDefaultReferenceSlot() : null);
@@ -112,10 +116,11 @@ public class InventoryManagementClientMod implements ClientModInitializer {
           PositioningFunction<CreativeInventoryScreen.CreativeScreenHandler, CreativeInventoryScreen> base =
               PositioningFunction.refSlotYAndBgRight();
           return base.apply(context);
-        });
+        }
+    );
   }
 
-  private void initItemVariantRegistry() {
+  private static void initItemVariantRegistry() {
     // TODO: Find a way to translate these groups into consistent i18n key format i.e. "inventorymanagement.sort.foo"
 
     ItemVariantRegistry registry = ItemVariantRegistry.COLOR;
@@ -136,5 +141,11 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     registry.register(VariantGroup.by(InventoryManagementItemTags.CONCRETES));
     // TODO: Replace with ConventionalItemTags.CONCRETE_POWDERS starting in 1.21
     registry.register(VariantGroup.by(InventoryManagementItemTags.CONCRETE_POWDERS));
+  }
+
+  private static void executeCustomEntrypoints() {
+    FabricLoader.getInstance()
+        .getEntrypointContainers("inventorymanagement", InventoryManagementEntrypointHandler.class)
+        .forEach((entrypoint) -> entrypoint.getEntrypoint().onInventoryManagementInit());
   }
 }
