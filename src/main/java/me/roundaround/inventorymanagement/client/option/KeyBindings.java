@@ -13,8 +13,6 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 
-import static me.roundaround.inventorymanagement.client.inventory.ClientInventoryHelper.calculateSort;
-
 @Environment(EnvType.CLIENT)
 public class KeyBindings {
   private KeyBindings() {
@@ -98,6 +96,9 @@ public class KeyBindings {
       }
 
       PlayerEntity player = MinecraftClient.getInstance().player;
+      if (player == null) {
+        return false;
+      }
 
       if (CONFIGURE.matchesKey(keyCode, scanCode)) {
         //        GuiUtil.setScreen(new PerScreenConfigScreen(screen, InventoryManagementConfig.getInstance()
@@ -107,48 +108,48 @@ public class KeyBindings {
 
       if (ButtonManager.getInstance().hasContainerSideSort() && SORT_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendSortContainerPacket(calculateSort(player, false));
+        ClientNetworking.sendSortContainer(player);
         return true;
       }
 
       if (ButtonManager.getInstance().hasPlayerSideSort() && SORT_PLAYER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendSortInventoryPacket(calculateSort(player, true));
+        ClientNetworking.sendSortPlayer(player);
         return true;
       }
 
       if (SORT_ALL.matchesKey(keyCode, scanCode)) {
         if (ButtonManager.getInstance().hasContainerSideSort() && ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendSortAllPacket(calculateSort(player, true), calculateSort(player, false));
+          ClientNetworking.sendSortAll(player);
           return true;
         } else if (ButtonManager.getInstance().hasContainerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendSortContainerPacket(calculateSort(player, false));
+          ClientNetworking.sendSortContainer(player);
           return true;
         } else if (ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendSortInventoryPacket(calculateSort(player, true));
+          ClientNetworking.sendSortPlayer(player);
           return true;
         }
       }
 
       if (ButtonManager.getInstance().hasContainerSideStack() && STACK_FROM_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendStackFromContainerPacket();
+        ClientNetworking.sendStackFromContainer();
         return true;
       }
 
       if (ButtonManager.getInstance().hasPlayerSideStack() && STACK_INTO_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendStackIntoContainerPacket();
+        ClientNetworking.sendStackIntoContainer();
         return true;
       }
 
       if (ButtonManager.getInstance().hasContainerSideTransfer() &&
           TRANSFER_FROM_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendTransferFromContainerPacket();
+        ClientNetworking.sendTransferFromContainer();
         return true;
       }
 

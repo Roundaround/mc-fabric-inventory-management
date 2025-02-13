@@ -2,6 +2,7 @@ package me.roundaround.inventorymanagement.server.network;
 
 import me.roundaround.inventorymanagement.network.Networking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.List;
 
@@ -16,6 +17,14 @@ public final class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(Networking.SortC2S.ID, ServerNetworking::handleSort);
     ServerPlayNetworking.registerGlobalReceiver(Networking.SortAllC2S.ID, ServerNetworking::handleSortAll);
     ServerPlayNetworking.registerGlobalReceiver(Networking.TransferC2S.ID, ServerNetworking::handleTransfer);
+  }
+
+  public static void sendErrorAlert(PlayerEntity player, String message) {
+    // TODO: Implement
+  }
+
+  public static void sendCheaterAlert(PlayerEntity player, String message) {
+    // TODO: Implement
   }
 
   private static void handleStack(Networking.StackC2S payload, ServerPlayNetworking.Context context) {

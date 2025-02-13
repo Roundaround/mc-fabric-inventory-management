@@ -21,8 +21,13 @@ public class AutoStackButton<H extends ScreenHandler, S extends HandledScreen<H>
   public AutoStackButton(
       Coords offset, PositioningFunction<H, S> positioningFunction, ButtonContext<H, S> context
   ) {
-    super(positioningFunction.apply(context), offset, positioningFunction, context,
-        getAction(context.isPlayerInventory()), getTooltip(context.isPlayerInventory()),
+    super(
+        positioningFunction.apply(context),
+        offset,
+        positioningFunction,
+        context,
+        getAction(context.isPlayerInventory()),
+        getTooltip(context.isPlayerInventory()),
         getIcon(context.isPlayerInventory())
     );
   }
@@ -41,8 +46,8 @@ public class AutoStackButton<H extends ScreenHandler, S extends HandledScreen<H>
 
   private static PressAction getAction(boolean isPlayerInventory) {
     return isPlayerInventory ?
-        (button) -> ClientNetworking.sendStackIntoContainerPacket() :
-        (button) -> ClientNetworking.sendStackFromContainerPacket();
+        (button) -> ClientNetworking.sendStackIntoContainer() :
+        (button) -> ClientNetworking.sendStackFromContainer();
   }
 
   private static Identifier getIcon(boolean isPlayerInventory) {

@@ -63,6 +63,11 @@ public class InventoryHelper {
     }
   }
 
+  public static Inventory getContainerInventoryOrElse(PlayerEntity player, Inventory fallback) {
+    Inventory containerInventory = getContainerInventory(player);
+    return containerInventory == null ? fallback : containerInventory;
+  }
+
   public static boolean canStacksBeMerged(ItemStack toStack, ItemStack fromStack) {
     return !toStack.isEmpty() && ItemStack.areItemsAndComponentsEqual(toStack, fromStack) && toStack.isStackable() &&
            toStack.getCount() < toStack.getMaxCount();

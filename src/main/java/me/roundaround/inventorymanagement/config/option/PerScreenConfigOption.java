@@ -1,12 +1,13 @@
 package me.roundaround.inventorymanagement.config.option;
 
-import me.roundaround.inventorymanagement.config.ConfigHelpers;
 import me.roundaround.inventorymanagement.config.value.ButtonVisibility;
 import me.roundaround.inventorymanagement.config.value.PerScreenConfig;
 import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
 import me.roundaround.inventorymanagement.roundalib.config.option.ConfigOption;
 import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 import me.roundaround.inventorymanagement.roundalib.nightconfig.core.Config;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.client.gui.screen.Screen;
 
 import java.util.HashMap;
@@ -20,7 +21,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
   }
 
   public void clear(Screen screen) {
-    this.setValue(this.getValue().clear(ConfigHelpers.getScreenKey(screen)));
+    this.setValue(this.getValue().clear(getScreenKey(screen)));
   }
 
   public ButtonVisibility getSortVisibility(Screen screen, boolean isPlayerInventory) {
@@ -132,7 +133,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
       BiFunction<PerScreenConfig, String, T> getContainerSide
   ) {
     PerScreenConfig config = this.getValue();
-    String key = ConfigHelpers.getScreenKey(screen);
+    String key = getScreenKey(screen);
     return isPlayerInventory ? getPlayerSide.apply(config, key) : getContainerSide.apply(config, key);
   }
 
@@ -144,7 +145,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
       T value
   ) {
     PerScreenConfig config = this.getValue();
-    String key = ConfigHelpers.getScreenKey(screen);
+    String key = getScreenKey(screen);
     if (isPlayerInventory) {
       this.setValue(setPlayerSide.apply(config, key, value));
     } else {
@@ -159,7 +160,7 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
       BiFunction<PerScreenConfig, String, PerScreenConfig> clearContainerSide
   ) {
     PerScreenConfig config = this.getValue();
-    String key = ConfigHelpers.getScreenKey(screen);
+    String key = getScreenKey(screen);
     if (isPlayerInventory) {
       this.setValue(clearPlayerSide.apply(config, key));
     } else {
@@ -169,12 +170,12 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
 
   @Override
   public void deserialize(Object data) {
-    setValue(PerScreenConfigOption.deserialize(data, this.getDefaultValue()));
+    this.setValue(PerScreenConfigOption.deserialize(data, this.getDefaultValue()));
   }
 
   @Override
   public Object serialize() {
-    return PerScreenConfigOption.serialize(getValue());
+    return PerScreenConfigOption.serialize(this.getValue());
   }
 
   public static PerScreenConfig deserialize(Object data, PerScreenConfig defaultValue) {
@@ -218,6 +219,12 @@ public class PerScreenConfigOption extends ConfigOption<PerScreenConfig> {
 
   public static Builder builder(ConfigPath path) {
     return new Builder(path);
+  }
+
+  private static String getScreenKey(Screen screen) {
+    MappingResolver mappingResolver = FabricLoader.getInstance().getMappingResolver();
+    String unmapped = mappingResolver.unmapClassName("named", screen.getClass().getName());
+    return unmapped.replaceAll("\\.", "-");
   }
 
   public static class Builder extends ConfigOption.AbstractBuilder<PerScreenConfig, PerScreenConfigOption, Builder> {

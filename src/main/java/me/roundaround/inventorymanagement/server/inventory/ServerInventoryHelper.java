@@ -2,6 +2,7 @@ package me.roundaround.inventorymanagement.server.inventory;
 
 import me.roundaround.inventorymanagement.api.gui.SlotRangeRegistry;
 import me.roundaround.inventorymanagement.inventory.SlotRange;
+import me.roundaround.inventorymanagement.server.network.ServerNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -22,12 +23,27 @@ public final class ServerInventoryHelper {
   public static void applySort(
       PlayerEntity player, boolean isPlayerInventory, List<Integer> sorted, List<Integer> locked
   ) {
-    Inventory containerInventory = getContainerInventory(player);
-    Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
+    if (isPlayerInventory) {
+      applyPlayerSort(player, sorted, locked);
+    } else {
+      applyContainerSort(player, sorted);
+    }
+  }
 
-    SlotRange slotRange = isPlayerInventory ?
-        SlotRangeRegistry.getPlayerSide(player, inventory).withExclusions(locked) :
-        SlotRangeRegistry.getContainerSide(player, inventory);
+  public static void applyPlayerSort(PlayerEntity player, List<Integer> sorted, List<Integer> locked) {
+    Inventory inventory = player.getInventory();
+    SlotRange slotRange = SlotRangeRegistry.getPlayerSide(player, inventory).withExclusions(locked);
+    applySort(player, inventory, slotRange, sorted);
+  }
+
+  public static void applyContainerSort(PlayerEntity player, List<Integer> sorted) {
+    Inventory inventory = getContainerInventory(player);
+    if (inventory == null) {
+      ServerNetworking.sendErrorAlert(player, "No sortable container found!");
+      return;
+    }
+
+    SlotRange slotRange = SlotRangeRegistry.getContainerSide(player, inventory);
     applySort(player, inventory, slotRange, sorted);
   }
 
@@ -46,13 +62,13 @@ public final class ServerInventoryHelper {
       reconstructed.set(destIndex, stack);
 
       if (srcIndex > -1 && !slotsWithItems.remove(srcIndex)) {
-        // TODO: CHEATER (Specified an invalid source inventory slot index)
+        ServerNetworking.sendCheaterAlert(player, "Specified an invalid source inventory slot index");
         return;
       }
     }
 
     if (!slotsWithItems.isEmpty()) {
-      // TODO: CHEATER (Missing destination index for at least one slot)
+      ServerNetworking.sendCheaterAlert(player, "Missing destination index for at least one slot");
       // TODO: This one could also just be resolved by tossing any non-specified slots at the end if there's room
       return;
     }

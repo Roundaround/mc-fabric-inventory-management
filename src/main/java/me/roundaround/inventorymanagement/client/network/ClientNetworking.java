@@ -2,41 +2,53 @@ package me.roundaround.inventorymanagement.client.network;
 
 import me.roundaround.inventorymanagement.network.Networking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.List;
 
-import static me.roundaround.inventorymanagement.config.ConfigHelpers.getLockedSlots;
+import static me.roundaround.inventorymanagement.client.inventory.ClientInventoryHelper.*;
 
 public final class ClientNetworking {
   private ClientNetworking() {
   }
 
-  public static void sendStackFromContainerPacket() {
+  public static void sendStackFromContainer() {
     ClientPlayNetworking.send(new Networking.StackC2S(false, getLockedSlots()));
   }
 
-  public static void sendStackIntoContainerPacket() {
+  public static void sendStackIntoContainer() {
     ClientPlayNetworking.send(new Networking.StackC2S(true, getLockedSlots()));
   }
 
-  public static void sendSortContainerPacket(List<Integer> sorted) {
-    sendSortInventoryPacket(false, sorted);
+  public static void sendSortInventory(PlayerEntity player, boolean isPlayerInventory) {
+    if (isPlayerInventory) {
+      sendSortPlayer(player);
+    } else {
+      sendSortContainer(player);
+    }
   }
 
-  public static void sendSortInventoryPacket(List<Integer> sorted) {
-    sendSortInventoryPacket(true, sorted);
+  public static void sendSortContainer(PlayerEntity player) {
+    sendSortInventory(false, calculateContainerSort(player));
   }
 
-  public static void sendSortInventoryPacket(boolean isPlayerInventory, List<Integer> sorted) {
+  public static void sendSortPlayer(PlayerEntity player) {
+    sendSortInventory(true, calculatePlayerSort(player));
+  }
+
+  public static void sendSortInventory(boolean isPlayerInventory, List<Integer> sorted) {
     List<Integer> locked = isPlayerInventory ? getLockedSlots() : List.of();
     ClientPlayNetworking.send(new Networking.SortC2S(isPlayerInventory, sorted, locked));
   }
 
-  public static void sendSortAllPacket(List<Integer> player, List<Integer> container) {
-    ClientPlayNetworking.send(new Networking.SortAllC2S(player, container, getLockedSlots()));
+  public static void sendSortAll(PlayerEntity player) {
+    ClientPlayNetworking.send(new Networking.SortAllC2S(calculatePlayerSort(player),
+        calculateContainerSort(player),
+        getLockedSlots()
+    ));
   }
 
-  public static void sendTransferFromContainerPacket() {
+  public static void sendTransferFromContainer() {
     ClientPlayNetworking.send(new Networking.TransferC2S(false, getLockedSlots()));
   }
 

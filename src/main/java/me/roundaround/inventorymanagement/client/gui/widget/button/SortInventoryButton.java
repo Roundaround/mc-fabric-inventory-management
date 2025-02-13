@@ -4,20 +4,16 @@ import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.api.gui.ButtonContext;
 import me.roundaround.inventorymanagement.api.gui.positioning.Coords;
 import me.roundaround.inventorymanagement.api.gui.positioning.PositioningFunction;
-import me.roundaround.inventorymanagement.client.inventory.ClientInventoryHelper;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-
-import java.util.List;
 
 public class SortInventoryButton<H extends ScreenHandler, S extends HandledScreen<H>> extends ButtonBase<H, S> {
   private static final Identifier ICON = new Identifier(InventoryManagementMod.MOD_ID, "icon/sort");
@@ -52,11 +48,6 @@ public class SortInventoryButton<H extends ScreenHandler, S extends HandledScree
   }
 
   private static PressAction getAction(boolean isPlayerInventory) {
-    return (button) -> {
-      MinecraftClient client = MinecraftClient.getInstance();
-      PlayerEntity player = client.player;
-      List<Integer> sorted = ClientInventoryHelper.calculateSort(player, isPlayerInventory);
-      ClientNetworking.sendSortInventoryPacket(isPlayerInventory, sorted);
-    };
+    return (button) -> ClientNetworking.sendSortInventory(MinecraftClient.getInstance().player, isPlayerInventory);
   }
 }

@@ -21,8 +21,13 @@ public class TransferAllButton<H extends ScreenHandler, S extends HandledScreen<
   public TransferAllButton(
       Coords offset, PositioningFunction<H, S> positioningFunction, ButtonContext<H, S> context
   ) {
-    super(positioningFunction.apply(context), offset, positioningFunction, context,
-        getAction(context.isPlayerInventory()), getTooltip(context.isPlayerInventory()),
+    super(
+        positioningFunction.apply(context),
+        offset,
+        positioningFunction,
+        context,
+        getAction(context.isPlayerInventory()),
+        getTooltip(context.isPlayerInventory()),
         getIcon(context.isPlayerInventory())
     );
   }
@@ -44,7 +49,7 @@ public class TransferAllButton<H extends ScreenHandler, S extends HandledScreen<
   private static PressAction getAction(boolean isPlayerInventory) {
     return isPlayerInventory ?
         (button) -> ClientNetworking.sendTransferIntoContainerPacket() :
-        (button) -> ClientNetworking.sendTransferFromContainerPacket();
+        (button) -> ClientNetworking.sendTransferFromContainer();
   }
 
   private static Identifier getIcon(boolean isPlayerInventory) {
