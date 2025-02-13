@@ -36,16 +36,26 @@ public final class ClientNetworking {
     sendSortInventory(true, calculatePlayerSort(player));
   }
 
-  public static void sendSortInventory(boolean isPlayerInventory, List<Integer> sorted) {
-    List<Integer> locked = isPlayerInventory ? getLockedSlots() : List.of();
-    ClientPlayNetworking.send(new Networking.SortC2S(isPlayerInventory, sorted, locked));
+  public static void sendSortAll(PlayerEntity player) {
+    List<Integer> sortedPlayer = calculatePlayerSort(player);
+    List<Integer> sortedContainer = calculateContainerSort(player);
+
+    if (sortedContainer.isEmpty()) {
+      sendSortInventory(true, sortedPlayer);
+      return;
+    }
+
+    ClientPlayNetworking.send(new Networking.SortAllC2S(sortedPlayer, sortedContainer, getLockedSlots()));
   }
 
-  public static void sendSortAll(PlayerEntity player) {
-    ClientPlayNetworking.send(new Networking.SortAllC2S(calculatePlayerSort(player),
-        calculateContainerSort(player),
-        getLockedSlots()
-    ));
+  private static void sendSortInventory(boolean isPlayerInventory, List<Integer> sorted) {
+    if (sorted.isEmpty()) {
+      // TODO: Show oops message to player
+      return;
+    }
+
+    List<Integer> locked = isPlayerInventory ? getLockedSlots() : List.of();
+    ClientPlayNetworking.send(new Networking.SortC2S(isPlayerInventory, sorted, locked));
   }
 
   public static void sendTransferFromContainer() {

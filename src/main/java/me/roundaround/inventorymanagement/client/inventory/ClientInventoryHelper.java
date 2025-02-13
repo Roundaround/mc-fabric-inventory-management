@@ -15,14 +15,18 @@ public final class ClientInventoryHelper {
   private ClientInventoryHelper() {
   }
 
-  public static List<Integer> calculateContainerSort(PlayerEntity player) {
+  public static List<Integer> calculatePlayerSort(PlayerEntity player) {
     Inventory inventory = player.getInventory();
     SlotRange slotRange = SlotRangeRegistry.getPlayerSide(player, inventory).withExclusions(getLockedSlots());
     return calculateSort(player, inventory, slotRange);
   }
 
-  public static List<Integer> calculatePlayerSort(PlayerEntity player) {
-    Inventory inventory = InventoryHelper.getContainerInventoryOrElse(player, player.getInventory());
+  public static List<Integer> calculateContainerSort(PlayerEntity player) {
+    Inventory inventory = InventoryHelper.getContainerInventory(player);
+    if (inventory == null) {
+      return List.of();
+    }
+
     SlotRange slotRange = SlotRangeRegistry.getContainerSide(player, inventory);
     return calculateSort(player, inventory, slotRange);
   }
