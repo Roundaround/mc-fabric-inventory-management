@@ -1,10 +1,11 @@
 package me.roundaround.inventorymanagement.server.network;
 
-import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.network.Networking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 import java.util.List;
+
+import static me.roundaround.inventorymanagement.server.inventory.ServerInventoryHelper.*;
 
 public final class ServerNetworking {
   private ServerNetworking() {
@@ -18,14 +19,11 @@ public final class ServerNetworking {
   }
 
   private static void handleStack(Networking.StackC2S payload, ServerPlayNetworking.Context context) {
-    context.player().server.execute(() -> InventoryHelper.autoStack(context.player(),
-        payload.fromPlayerInventory(),
-        payload.locked()
-    ));
+    context.player().server.execute(() -> autoStack(context.player(), payload.fromPlayerInventory(), payload.locked()));
   }
 
   private static void handleSort(Networking.SortC2S payload, ServerPlayNetworking.Context context) {
-    context.player().server.execute(() -> InventoryHelper.applySort(context.player(),
+    context.player().server.execute(() -> applySort(context.player(),
         payload.isPlayerInventory(),
         payload.sorted(),
         payload.locked()
@@ -34,13 +32,13 @@ public final class ServerNetworking {
 
   private static void handleSortAll(Networking.SortAllC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
-      InventoryHelper.applySort(context.player(), true, payload.player(), payload.locked());
-      InventoryHelper.applySort(context.player(), false, payload.container(), List.of());
+      applySort(context.player(), true, payload.player(), payload.locked());
+      applySort(context.player(), false, payload.container(), List.of());
     });
   }
 
   private static void handleTransfer(Networking.TransferC2S payload, ServerPlayNetworking.Context context) {
-    context.player().server.execute(() -> InventoryHelper.transferAll(context.player(),
+    context.player().server.execute(() -> transferAll(context.player(),
         payload.fromPlayerInventory(),
         payload.locked()
     ));

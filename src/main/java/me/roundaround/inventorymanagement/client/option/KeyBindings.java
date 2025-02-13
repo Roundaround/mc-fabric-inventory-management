@@ -2,7 +2,6 @@ package me.roundaround.inventorymanagement.client.option;
 
 import me.roundaround.inventorymanagement.client.ButtonManager;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
-import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.roundalib.client.event.ScreenInputEvent;
 import me.roundaround.inventorymanagement.roundalib.client.gui.GuiUtil;
 import net.fabricmc.api.EnvType;
@@ -13,6 +12,8 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
+
+import static me.roundaround.inventorymanagement.client.inventory.ClientInventoryHelper.calculateSort;
 
 @Environment(EnvType.CLIENT)
 public class KeyBindings {
@@ -35,25 +36,29 @@ public class KeyBindings {
       return;
     }
 
-    CONFIGURE = KeyBindingHelper.registerKeyBinding(new KeyBinding("inventorymanagement.keybind.configure",
+    CONFIGURE = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "inventorymanagement.keybind.configure",
         InputUtil.Type.KEYSYM,
         InputUtil.UNKNOWN_KEY.getCode(),
         "inventorymanagement.keybind.category"
     ));
 
-    SORT_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding("inventorymanagement.keybind.sortContainer",
+    SORT_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "inventorymanagement.keybind.sortContainer",
         InputUtil.Type.KEYSYM,
         InputUtil.UNKNOWN_KEY.getCode(),
         "inventorymanagement.keybind.category"
     ));
 
-    SORT_PLAYER = KeyBindingHelper.registerKeyBinding(new KeyBinding("inventorymanagement.keybind.sortPlayer",
+    SORT_PLAYER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "inventorymanagement.keybind.sortPlayer",
         InputUtil.Type.KEYSYM,
         InputUtil.UNKNOWN_KEY.getCode(),
         "inventorymanagement.keybind.category"
     ));
 
-    SORT_ALL = KeyBindingHelper.registerKeyBinding(new KeyBinding("inventorymanagement.keybind.sortAll",
+    SORT_ALL = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        "inventorymanagement.keybind.sortAll",
         InputUtil.Type.KEYSYM,
         InputUtil.UNKNOWN_KEY.getCode(),
         "inventorymanagement.keybind.category"
@@ -102,30 +107,28 @@ public class KeyBindings {
 
       if (ButtonManager.getInstance().hasContainerSideSort() && SORT_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendSortContainerPacket(InventoryHelper.calculateSort(player, false));
+        ClientNetworking.sendSortContainerPacket(calculateSort(player, false));
         return true;
       }
 
       if (ButtonManager.getInstance().hasPlayerSideSort() && SORT_PLAYER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendSortInventoryPacket(InventoryHelper.calculateSort(player, true));
+        ClientNetworking.sendSortInventoryPacket(calculateSort(player, true));
         return true;
       }
 
       if (SORT_ALL.matchesKey(keyCode, scanCode)) {
         if (ButtonManager.getInstance().hasContainerSideSort() && ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendSortAllPacket(InventoryHelper.calculateSort(player, true),
-              InventoryHelper.calculateSort(player, false)
-          );
+          ClientNetworking.sendSortAllPacket(calculateSort(player, true), calculateSort(player, false));
           return true;
         } else if (ButtonManager.getInstance().hasContainerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendSortContainerPacket(InventoryHelper.calculateSort(player, false));
+          ClientNetworking.sendSortContainerPacket(calculateSort(player, false));
           return true;
         } else if (ButtonManager.getInstance().hasPlayerSideSort()) {
           GuiUtil.playClickSound();
-          ClientNetworking.sendSortInventoryPacket(InventoryHelper.calculateSort(player, true));
+          ClientNetworking.sendSortInventoryPacket(calculateSort(player, true));
           return true;
         }
       }

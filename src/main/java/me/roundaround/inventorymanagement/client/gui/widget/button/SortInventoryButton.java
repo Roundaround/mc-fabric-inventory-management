@@ -4,9 +4,9 @@ import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.api.gui.ButtonContext;
 import me.roundaround.inventorymanagement.api.gui.positioning.Coords;
 import me.roundaround.inventorymanagement.api.gui.positioning.PositioningFunction;
+import me.roundaround.inventorymanagement.client.inventory.ClientInventoryHelper;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
 import me.roundaround.inventorymanagement.client.option.KeyBindings;
-import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.option.KeyBinding;
@@ -55,7 +55,7 @@ public class SortInventoryButton<H extends ScreenHandler, S extends HandledScree
     return (button) -> {
       MinecraftClient client = MinecraftClient.getInstance();
       PlayerEntity player = client.player;
-      List<Integer> sorted = InventoryHelper.calculateSort(player, isPlayerInventory);
+      List<Integer> sorted = ClientInventoryHelper.calculateSort(player, isPlayerInventory);
       ClientNetworking.sendSortInventoryPacket(isPlayerInventory, sorted);
     };
   }

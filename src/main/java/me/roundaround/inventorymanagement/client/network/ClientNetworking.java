@@ -1,21 +1,22 @@
 package me.roundaround.inventorymanagement.client.network;
 
-import me.roundaround.inventorymanagement.config.ConfigHelpers;
 import me.roundaround.inventorymanagement.network.Networking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 import java.util.List;
+
+import static me.roundaround.inventorymanagement.config.ConfigHelpers.getLockedSlots;
 
 public final class ClientNetworking {
   private ClientNetworking() {
   }
 
   public static void sendStackFromContainerPacket() {
-    ClientPlayNetworking.send(new Networking.StackC2S(false, ConfigHelpers.getLockedSlots()));
+    ClientPlayNetworking.send(new Networking.StackC2S(false, getLockedSlots()));
   }
 
   public static void sendStackIntoContainerPacket() {
-    ClientPlayNetworking.send(new Networking.StackC2S(true, ConfigHelpers.getLockedSlots()));
+    ClientPlayNetworking.send(new Networking.StackC2S(true, getLockedSlots()));
   }
 
   public static void sendSortContainerPacket(List<Integer> sorted) {
@@ -27,19 +28,19 @@ public final class ClientNetworking {
   }
 
   public static void sendSortInventoryPacket(boolean isPlayerInventory, List<Integer> sorted) {
-    List<Integer> locked = isPlayerInventory ? ConfigHelpers.getLockedSlots() : List.of();
+    List<Integer> locked = isPlayerInventory ? getLockedSlots() : List.of();
     ClientPlayNetworking.send(new Networking.SortC2S(isPlayerInventory, sorted, locked));
   }
 
   public static void sendSortAllPacket(List<Integer> player, List<Integer> container) {
-    ClientPlayNetworking.send(new Networking.SortAllC2S(player, container, ConfigHelpers.getLockedSlots()));
+    ClientPlayNetworking.send(new Networking.SortAllC2S(player, container, getLockedSlots()));
   }
 
   public static void sendTransferFromContainerPacket() {
-    ClientPlayNetworking.send(new Networking.TransferC2S(false, ConfigHelpers.getLockedSlots()));
+    ClientPlayNetworking.send(new Networking.TransferC2S(false, getLockedSlots()));
   }
 
   public static void sendTransferIntoContainerPacket() {
-    ClientPlayNetworking.send(new Networking.TransferC2S(true, ConfigHelpers.getLockedSlots()));
+    ClientPlayNetworking.send(new Networking.TransferC2S(true, getLockedSlots()));
   }
 }
