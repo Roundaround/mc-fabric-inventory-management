@@ -48,7 +48,7 @@ public class TransferAllButton<H extends ScreenHandler, S extends HandledScreen<
 
   private static PressAction getAction(boolean isPlayerInventory) {
     return isPlayerInventory ?
-        (button) -> ClientNetworking.sendTransferIntoContainerPacket() :
+        (button) -> ClientNetworking.sendTransferIntoContainer() :
         (button) -> ClientNetworking.sendTransferFromContainer();
   }
 

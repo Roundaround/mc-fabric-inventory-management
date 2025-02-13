@@ -52,7 +52,7 @@ public final class ClientNetworking {
     ClientPlayNetworking.send(new Networking.TransferC2S(false, getLockedSlots()));
   }
 
-  public static void sendTransferIntoContainerPacket() {
+  public static void sendTransferIntoContainer() {
     ClientPlayNetworking.send(new Networking.TransferC2S(true, getLockedSlots()));
   }
 }

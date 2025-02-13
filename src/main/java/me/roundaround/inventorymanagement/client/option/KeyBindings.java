@@ -13,19 +13,31 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
 @Environment(EnvType.CLIENT)
-public class KeyBindings {
+public final class KeyBindings {
   private KeyBindings() {
   }
 
-  public static KeyBinding CONFIGURE;
-  public static KeyBinding SORT_CONTAINER;
-  public static KeyBinding SORT_PLAYER;
-  public static KeyBinding SORT_ALL;
-  public static KeyBinding STACK_FROM_CONTAINER;
-  public static KeyBinding STACK_INTO_CONTAINER;
-  public static KeyBinding TRANSFER_FROM_CONTAINER;
-  public static KeyBinding TRANSFER_INTO_CONTAINER;
+  private static final ArrayList<KeyBinding> ALL_KEY_BINDINGS = new ArrayList<>();
+  public static final KeyBinding CONFIGURE = register("configure");
+  public static final KeyBinding SORT_CONTAINER = register("sortContainer");
+  public static final KeyBinding SORT_PLAYER = register("sortPlayer");
+  public static final KeyBinding SORT_ALL = register("sortAll");
+  public static final KeyBinding STACK_FROM_CONTAINER = register("stackFromContainer");
+  public static final KeyBinding STACK_INTO_CONTAINER = register("stackIntoContainer");
+  public static final KeyBinding TRANSFER_FROM_CONTAINER = register("transferFromContainer");
+  public static final KeyBinding TRANSFER_INTO_CONTAINER = register("transferIntoContainer");
+
+  private static final Consumer<PlayerEntity> SEND_SORT_CONTAINER = ClientNetworking::sendSortContainer;
+  private static final Consumer<PlayerEntity> SEND_SORT_PLAYER = ClientNetworking::sendSortPlayer;
+  private static final Consumer<PlayerEntity> SEND_SORT_ALL = ClientNetworking::sendSortAll;
+  private static final Consumer<PlayerEntity> SEND_STACK_FROM = (p) -> ClientNetworking.sendStackFromContainer();
+  private static final Consumer<PlayerEntity> SEND_STACK_INTO = (p) -> ClientNetworking.sendStackIntoContainer();
+  private static final Consumer<PlayerEntity> SEND_TRANSFER_FROM = (p) -> ClientNetworking.sendTransferFromContainer();
+  private static final Consumer<PlayerEntity> SEND_TRANSFER_INTO = (p) -> ClientNetworking.sendTransferIntoContainer();
 
   private static boolean initialized = false;
 
@@ -34,69 +46,10 @@ public class KeyBindings {
       return;
     }
 
-    CONFIGURE = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-        "inventorymanagement.keybind.configure",
-        InputUtil.Type.KEYSYM,
-        InputUtil.UNKNOWN_KEY.getCode(),
-        "inventorymanagement.keybind.category"
-    ));
-
-    SORT_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-        "inventorymanagement.keybind.sortContainer",
-        InputUtil.Type.KEYSYM,
-        InputUtil.UNKNOWN_KEY.getCode(),
-        "inventorymanagement.keybind.category"
-    ));
-
-    SORT_PLAYER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-        "inventorymanagement.keybind.sortPlayer",
-        InputUtil.Type.KEYSYM,
-        InputUtil.UNKNOWN_KEY.getCode(),
-        "inventorymanagement.keybind.category"
-    ));
-
-    SORT_ALL = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-        "inventorymanagement.keybind.sortAll",
-        InputUtil.Type.KEYSYM,
-        InputUtil.UNKNOWN_KEY.getCode(),
-        "inventorymanagement.keybind.category"
-    ));
-
-    STACK_FROM_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-        "inventorymanagement.keybind.stackFromContainer",
-        InputUtil.Type.KEYSYM,
-        InputUtil.UNKNOWN_KEY.getCode(),
-        "inventorymanagement.keybind.category"
-    ));
-
-    STACK_INTO_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-        "inventorymanagement.keybind.stackIntoContainer",
-        InputUtil.Type.KEYSYM,
-        InputUtil.UNKNOWN_KEY.getCode(),
-        "inventorymanagement.keybind.category"
-    ));
-
-    TRANSFER_FROM_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-        "inventorymanagement.keybind.transferFromContainer",
-        InputUtil.Type.KEYSYM,
-        InputUtil.UNKNOWN_KEY.getCode(),
-        "inventorymanagement.keybind.category"
-    ));
-
-    TRANSFER_INTO_CONTAINER = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-        "inventorymanagement.keybind.transferIntoContainer",
-        InputUtil.Type.KEYSYM,
-        InputUtil.UNKNOWN_KEY.getCode(),
-        "inventorymanagement.keybind.category"
-    ));
+    ALL_KEY_BINDINGS.forEach(KeyBindingHelper::registerKeyBinding);
 
     ScreenInputEvent.EVENT.register((screen, keyCode, scanCode, modifiers) -> {
       if (!(screen instanceof HandledScreen)) {
-        return false;
-      }
-
-      PlayerEntity player = MinecraftClient.getInstance().player;
-      if (player == null) {
         return false;
       }
 
@@ -106,57 +59,15 @@ public class KeyBindings {
         return true;
       }
 
-      if (ButtonManager.getInstance().hasContainerSideSort() && SORT_CONTAINER.matchesKey(keyCode, scanCode)) {
-        GuiUtil.playClickSound();
-        ClientNetworking.sendSortContainer(player);
-        return true;
-      }
-
-      if (ButtonManager.getInstance().hasPlayerSideSort() && SORT_PLAYER.matchesKey(keyCode, scanCode)) {
-        GuiUtil.playClickSound();
-        ClientNetworking.sendSortPlayer(player);
-        return true;
-      }
-
-      if (SORT_ALL.matchesKey(keyCode, scanCode)) {
-        if (ButtonManager.getInstance().hasContainerSideSort() && ButtonManager.getInstance().hasPlayerSideSort()) {
-          GuiUtil.playClickSound();
-          ClientNetworking.sendSortAll(player);
-          return true;
-        } else if (ButtonManager.getInstance().hasContainerSideSort()) {
-          GuiUtil.playClickSound();
-          ClientNetworking.sendSortContainer(player);
-          return true;
-        } else if (ButtonManager.getInstance().hasPlayerSideSort()) {
-          GuiUtil.playClickSound();
-          ClientNetworking.sendSortPlayer(player);
-          return true;
+      Consumer<PlayerEntity> handler = getButtonMappedHandler(keyCode, scanCode);
+      if (handler != null) {
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) {
+          return false;
         }
-      }
 
-      if (ButtonManager.getInstance().hasContainerSideStack() && STACK_FROM_CONTAINER.matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
-        ClientNetworking.sendStackFromContainer();
-        return true;
-      }
-
-      if (ButtonManager.getInstance().hasPlayerSideStack() && STACK_INTO_CONTAINER.matchesKey(keyCode, scanCode)) {
-        GuiUtil.playClickSound();
-        ClientNetworking.sendStackIntoContainer();
-        return true;
-      }
-
-      if (ButtonManager.getInstance().hasContainerSideTransfer() &&
-          TRANSFER_FROM_CONTAINER.matchesKey(keyCode, scanCode)) {
-        GuiUtil.playClickSound();
-        ClientNetworking.sendTransferFromContainer();
-        return true;
-      }
-
-      if (ButtonManager.getInstance().hasPlayerSideTransfer() &&
-          TRANSFER_INTO_CONTAINER.matchesKey(keyCode, scanCode)) {
-        GuiUtil.playClickSound();
-        ClientNetworking.sendTransferIntoContainerPacket();
+        handler.accept(player);
         return true;
       }
 
@@ -164,5 +75,79 @@ public class KeyBindings {
     });
 
     initialized = true;
+  }
+
+  private static KeyBinding register(String id) {
+    if (initialized) {
+      throw new IllegalStateException("Cannot register keybindings after initialization.");
+    }
+    KeyBinding keyBinding = new KeyBinding(
+        String.format("inventorymanagement.keybind.%s", id),
+        InputUtil.Type.KEYSYM,
+        InputUtil.UNKNOWN_KEY.getCode(),
+        "inventorymanagement.keybind.category"
+    );
+    ALL_KEY_BINDINGS.add(keyBinding);
+    return keyBinding;
+  }
+
+  private static Consumer<PlayerEntity> getButtonMappedHandler(int keyCode, int scanCode) {
+    if (SORT_CONTAINER.matchesKey(keyCode, scanCode)) {
+      return getSortContainerHandler();
+    } else if (SORT_PLAYER.matchesKey(keyCode, scanCode)) {
+      return getSortPlayerHandler();
+    } else if (SORT_ALL.matchesKey(keyCode, scanCode)) {
+      return getSortAllHandler();
+    } else if (STACK_FROM_CONTAINER.matchesKey(keyCode, scanCode)) {
+      return getStackFromHandler();
+    } else if (STACK_INTO_CONTAINER.matchesKey(keyCode, scanCode)) {
+      return getStackIntoHandler();
+    } else if (TRANSFER_FROM_CONTAINER.matchesKey(keyCode, scanCode)) {
+      return getTransferFromHandler();
+    } else if (TRANSFER_INTO_CONTAINER.matchesKey(keyCode, scanCode)) {
+      return getTransferIntoHandler();
+    }
+
+    return null;
+  }
+
+  private static Consumer<PlayerEntity> getSortContainerHandler() {
+    return ButtonManager.getInstance().hasContainerSideSort() ? SEND_SORT_CONTAINER : null;
+  }
+
+  private static Consumer<PlayerEntity> getSortPlayerHandler() {
+    return ButtonManager.getInstance().hasPlayerSideSort() ? SEND_SORT_PLAYER : null;
+  }
+
+  private static Consumer<PlayerEntity> getSortAllHandler() {
+    ButtonManager buttonManager = ButtonManager.getInstance();
+    boolean hasContainerSide = buttonManager.hasContainerSideSort();
+    boolean hasPlayerSide = buttonManager.hasPlayerSideSort();
+
+    if (hasContainerSide && hasPlayerSide) {
+      return SEND_SORT_ALL;
+    } else if (hasContainerSide) {
+      return SEND_SORT_CONTAINER;
+    } else if (hasPlayerSide) {
+      return SEND_SORT_PLAYER;
+    }
+
+    return null;
+  }
+
+  private static Consumer<PlayerEntity> getStackFromHandler() {
+    return ButtonManager.getInstance().hasContainerSideStack() ? SEND_STACK_FROM : null;
+  }
+
+  private static Consumer<PlayerEntity> getStackIntoHandler() {
+    return ButtonManager.getInstance().hasPlayerSideStack() ? SEND_STACK_INTO : null;
+  }
+
+  private static Consumer<PlayerEntity> getTransferFromHandler() {
+    return ButtonManager.getInstance().hasContainerSideTransfer() ? SEND_TRANSFER_FROM : null;
+  }
+
+  private static Consumer<PlayerEntity> getTransferIntoHandler() {
+    return ButtonManager.getInstance().hasPlayerSideTransfer() ? SEND_TRANSFER_INTO : null;
   }
 }
