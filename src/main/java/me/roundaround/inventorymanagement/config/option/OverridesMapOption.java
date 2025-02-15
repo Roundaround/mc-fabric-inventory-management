@@ -5,18 +5,31 @@ import me.roundaround.inventorymanagement.roundalib.client.gui.GuiUtil;
 import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
 import me.roundaround.inventorymanagement.roundalib.config.option.ConfigOption;
 import me.roundaround.inventorymanagement.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.roundalib.nightconfig.core.Config;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.screen.ScreenHandler;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class OverridesMapOption extends ConfigOption<Map<String, OverridesMapOption.Overrides>> {
+public class OverridesMapOption extends ConfigOption<OverridesMapOption.OverridesMap> {
   public OverridesMapOption(Builder builder) {
     super(builder);
+  }
+
+  @Override
+  public void deserialize(Object data) {
+    // TODO: Implement
+  }
+
+  @Override
+  public Object serialize() {
+    // TODO: Implement
+    return super.serialize();
   }
 
   public Optional<Overrides> get(ScreenHandler screenHandler) {
@@ -61,21 +74,24 @@ public class OverridesMapOption extends ConfigOption<Map<String, OverridesMapOpt
     return unmapped.replaceAll("\\.", "-");
   }
 
+  public static class OverridesMap extends HashMap<String, Overrides> {
+
+  }
+
   public static class Overrides {
-    private SidedOverrides player = new SidedOverrides();
-    private SidedOverrides container = new SidedOverrides();
+    private ButtonVisibility playerSort = ButtonVisibility.DEFAULT;
+    private ButtonVisibility playerStack = ButtonVisibility.DEFAULT;
+    private ButtonVisibility playerTransfer = ButtonVisibility.DEFAULT;
+    private Position playerOffset = new Position(0, 0);
+    private int playerSpacing = GuiUtil.PADDING;
+    private ButtonVisibility containerSort = ButtonVisibility.DEFAULT;
+    private ButtonVisibility containerStack = ButtonVisibility.DEFAULT;
+    private ButtonVisibility containerTransfer = ButtonVisibility.DEFAULT;
+    private Position containerOffset = new Position(0, 0);
+    private int containerSpacing = GuiUtil.PADDING;
   }
 
-  public static class SidedOverrides {
-    private ButtonVisibility sortVisibility = ButtonVisibility.DEFAULT;
-    private ButtonVisibility stackVisibility = ButtonVisibility.DEFAULT;
-    private ButtonVisibility transferVisibility = ButtonVisibility.DEFAULT;
-    private Position offset = new Position(0, 0);
-    private int spacing = GuiUtil.PADDING;
-  }
-
-  public static class Builder extends ConfigOption.AbstractBuilder<Map<String, Overrides>, OverridesMapOption,
-      Builder> {
+  public static class Builder extends ConfigOption.AbstractBuilder<OverridesMap, OverridesMapOption, Builder> {
     private Builder(ConfigPath path) {
       super(path);
     }
