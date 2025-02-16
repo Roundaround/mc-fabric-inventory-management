@@ -19,7 +19,13 @@ public class PerScreenPositionConfigOption extends ConfigOption<Map<String, Posi
   }
 
   public void set(Screen screen, boolean isPlayerInventory, Position value) {
-    this.update(screen, isPlayerInventory, (map, key) -> map.put(key, value));
+    this.update(screen, isPlayerInventory, (map, key) -> {
+      if (value.equals(InventoryManagementConfig.getInstance().defaultPosition.getPendingValue())) {
+        map.remove(key);
+      } else {
+        map.put(key, value);
+      }
+    });
   }
 
   public void remove(Screen screen, boolean isPlayerInventory) {
