@@ -12,11 +12,10 @@ import net.fabricmc.api.ModInitializer;
 public final class InventoryManagementMod implements ModInitializer {
   public static final String MOD_ID = "inventorymanagement";
   public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
-  public static final InventoryManagementConfig CONFIG = new InventoryManagementConfig();
 
   @Override
   public void onInitialize() {
-    CONFIG.init();
+    InventoryManagementConfig.getInstance().init();
 
     SortInventoryPacket.registerReceive();
     AutoStackPacket.registerReceive();

@@ -16,9 +16,7 @@ import java.util.stream.Collectors;
 public class InventoryHelper {
   public static void sortInventory(PlayerEntity player, boolean isPlayerInventory) {
     Inventory containerInventory = getContainerInventory(player);
-    Inventory inventory = isPlayerInventory || containerInventory == null
-        ? player.getInventory()
-        : containerInventory;
+    Inventory inventory = isPlayerInventory || containerInventory == null ? player.getInventory() : containerInventory;
 
     if (inventory instanceof PlayerInventory) {
       sortInventory(inventory, SlotRange.playerMainRange());
@@ -111,7 +109,8 @@ public class InventoryHelper {
           containerSlotRange,
           player.playerScreenHandler,
           player.currentScreenHandler,
-          player);
+          player
+      );
     } else {
       transferEntireInventory(containerInventory,
           playerInventory,
@@ -119,23 +118,21 @@ public class InventoryHelper {
           playerSlotRange,
           player.currentScreenHandler,
           player.playerScreenHandler,
-          player);
+          player
+      );
     }
   }
 
   private static void autoStackInventories(
-      Inventory from, Inventory to, PlayerEntity player) {
+      Inventory from, Inventory to, PlayerEntity player
+  ) {
     autoStackInventories(from, to, SlotRange.fullRange(from), SlotRange.fullRange(to), player);
   }
 
   private static void autoStackInventories(
-      Inventory from, Inventory to, SlotRange fromRange, SlotRange toRange, PlayerEntity player) {
-    transferEntireInventory(from,
-        to,
-        fromRange,
-        toRange,
-        (fromStack, toStack) -> !toStack.isEmpty(),
-        player);
+      Inventory from, Inventory to, SlotRange fromRange, SlotRange toRange, PlayerEntity player
+  ) {
+    transferEntireInventory(from, to, fromRange, toRange, (fromStack, toStack) -> !toStack.isEmpty(), player);
   }
 
   private static void transferEntireInventory(
@@ -144,7 +141,8 @@ public class InventoryHelper {
       SlotRange fromRange,
       SlotRange toRange,
       BiFunction<ItemStack, ItemStack, Boolean> predicate,
-      PlayerEntity player) {
+      PlayerEntity player
+  ) {
     transferEntireInventory(from, to, fromRange, toRange, predicate, null, null, player);
   }
 
@@ -155,7 +153,8 @@ public class InventoryHelper {
       SlotRange toRange,
       ScreenHandler fromScreenHandler,
       ScreenHandler toScreenHandler,
-      PlayerEntity player) {
+      PlayerEntity player
+  ) {
     transferEntireInventory(from,
         to,
         fromRange,
@@ -163,7 +162,8 @@ public class InventoryHelper {
         (fromStack, toStack) -> true,
         fromScreenHandler,
         toScreenHandler,
-        player);
+        player
+    );
   }
 
   private static void transferEntireInventory(
@@ -174,7 +174,8 @@ public class InventoryHelper {
       BiFunction<ItemStack, ItemStack, Boolean> predicate,
       ScreenHandler fromScreenHandler,
       ScreenHandler toScreenHandler,
-      PlayerEntity player) {
+      PlayerEntity player
+  ) {
     for (int toIdx = toRange.min; toIdx < toRange.max; toIdx++) {
       for (int fromIdx = fromRange.min; fromIdx < fromRange.max; fromIdx++) {
         ItemStack fromStack = from.getStack(fromIdx).copy();
@@ -215,7 +216,8 @@ public class InventoryHelper {
   }
 
   private static boolean canTakeItemFromSlot(
-      ScreenHandler screenHandler, int idx, PlayerEntity player) {
+      ScreenHandler screenHandler, int idx, PlayerEntity player
+  ) {
     if (screenHandler == null) {
       return true;
     }
@@ -227,7 +229,8 @@ public class InventoryHelper {
   }
 
   private static boolean canPlaceItemInSlot(
-      ScreenHandler screenHandler, int idx, ItemStack itemStack) {
+      ScreenHandler screenHandler, int idx, ItemStack itemStack
+  ) {
     if (screenHandler == null) {
       return true;
     }
@@ -252,7 +255,7 @@ public class InventoryHelper {
   }
 
   public static boolean areItemStacksMergeable(ItemStack a, ItemStack b) {
-    return !a.isEmpty() && !b.isEmpty() && ItemStack.canCombine(a, b);
+    return !a.isEmpty() && !b.isEmpty() && ItemStack.areItemsAndComponentsEqual(a, b);
   }
 
   static class SlotRange {

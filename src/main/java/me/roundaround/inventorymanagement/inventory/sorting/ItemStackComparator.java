@@ -1,35 +1,24 @@
 package me.roundaround.inventorymanagement.inventory.sorting;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowerBlock;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.DyedColorComponent;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.DyeableArmorItem;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.HorseArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.LingeringPotionItem;
-import net.minecraft.item.PotionItem;
-import net.minecraft.item.SpectralArrowItem;
-import net.minecraft.item.SplashPotionItem;
-import net.minecraft.item.TippedArrowItem;
-import net.minecraft.item.ToolItem;
-import net.minecraft.potion.PotionUtil;
+import net.minecraft.item.*;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Pair;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class ItemStackComparator implements Comparator<ItemStack> {
   // TODO: Create more sorting algorithms & options:
@@ -38,56 +27,84 @@ public class ItemStackComparator implements Comparator<ItemStack> {
   // Allow registering reserve slots
   // More advanced configurations?
 
-  private static final List<Comparator<ItemStack>> SUB_COMPARATORS = List.of(
-      Comparator.comparing(ItemStackComparator::getSortName),
-      ConditionalComparator.comparing(
-          s -> s.getItem() instanceof ToolItem,
-          SerialComparator.comparing(
-              Comparator.comparingInt(ItemStackComparator::getTieredItemDamage).reversed(),
-              Comparator.comparingInt(ItemStackComparator::getTieredItemSpeed).reversed())),
-      ConditionalComparator.comparing(
-          s -> s.getItem() instanceof ArmorItem,
-          SerialComparator.comparing(
-              Comparator.comparingInt(ItemStackComparator::getArmorSlot).reversed(),
-              Comparator.comparingInt(ItemStackComparator::getArmorValue).reversed())),
-      ConditionalComparator.comparing(
-          s -> s.getItem() instanceof HorseArmorItem,
-          Comparator.comparingInt(ItemStackComparator::getHorseArmorValue).reversed()),
-      ConditionalComparator.comparing(
-          s -> !PotionUtil.getPotionEffects(s).isEmpty(),
-          SerialComparator.comparing(
-              Comparator.comparing(ItemStackComparator::getPotionEffectName),
+  private static final List<Comparator<ItemStack>> SUB_COMPARATORS =
+      List.of(Comparator.comparing(ItemStackComparator::getSortName),
+      ConditionalComparator.comparing(s -> s.getItem() instanceof ToolItem,
+          SerialComparator.comparing(Comparator.comparingInt(ItemStackComparator::getTieredItemDamage).reversed(),
+              Comparator.comparingInt(ItemStackComparator::getTieredItemSpeed).reversed()
+          )
+      ),
+      ConditionalComparator.comparing(s -> s.getItem() instanceof ArmorItem,
+          SerialComparator.comparing(Comparator.comparingInt(ItemStackComparator::getArmorSlot).reversed(),
+              Comparator.comparingInt(ItemStackComparator::getArmorValue).reversed()
+          )
+      ),
+      ConditionalComparator.comparing(s -> s.getItem() instanceof AnimalArmorItem,
+          Comparator.comparingInt(ItemStackComparator::getHorseArmorValue).reversed()
+      ),
+      ConditionalComparator.comparing(ItemStackComparator::isPotion,
+          SerialComparator.comparing(Comparator.comparing(ItemStackComparator::getPotionEffectName),
               Comparator.comparingInt(ItemStackComparator::getPotionLevel).reversed(),
-              Comparator.comparingInt(ItemStackComparator::getPotionLength).reversed())),
+              Comparator.comparingInt(ItemStackComparator::getPotionLength).reversed()
+          )
+      ),
       Comparator.comparingInt(ItemStackComparator::getHasNameAsInt).reversed(),
-      ConditionalComparator.comparing(
-          ItemStack::hasCustomName,
-          Comparator.comparing(s -> s.getName().getString().toLowerCase(Locale.ROOT))),
+      ConditionalComparator.comparing(ItemStackComparator::hasCustomName,
+          Comparator.comparing(s -> s.getName().getString().toLowerCase(Locale.ROOT))
+      ),
       Comparator.comparingInt(ItemStackComparator::getIsEnchantedAsInt).reversed(),
-      ConditionalComparator.comparing(
-          ItemStackComparator::isEnchantedBookOrEnchantedItem,
-          Comparator.comparing(ItemStackComparator::getEnchantmentListAsString)),
+      ConditionalComparator.comparing(ItemStackComparator::isEnchantedBookOrEnchantedItem,
+          Comparator.comparing(ItemStackComparator::getEnchantmentListAsString)
+      ),
       Comparator.comparingInt(ItemStackComparator::getColor),
       Comparator.comparingInt(ItemStack::getCount).reversed(),
       Comparator.comparingInt(ItemStack::getDamage),
-      Comparator.comparing(s -> s.getName().getString().toLowerCase(Locale.ROOT)));
+      Comparator.comparing(s -> s.getName().getString().toLowerCase(Locale.ROOT))
+  );
 
-  private static final List<String> COMMON_SUFFIXES = List.of(
-      "log", "wood", "leaves", "planks", "sign", "pressure_plate", "button", "door",
-      "trapdoor", "fence", "fence_gate", "stairs", "ore", "boat", "spawn_egg", "soup",
-      "seeds", "banner_pattern", "book", "map", "golden_apple", "minecart", "rail",
-      "piston", "coral", "coral_wall_fan", "coral_block", "ice");
+  private static final List<String> COMMON_SUFFIXES = List.of("log",
+      "wood",
+      "leaves",
+      "planks",
+      "sign",
+      "pressure_plate",
+      "button",
+      "door",
+      "trapdoor",
+      "fence",
+      "fence_gate",
+      "stairs",
+      "ore",
+      "boat",
+      "spawn_egg",
+      "soup",
+      "seeds",
+      "banner_pattern",
+      "book",
+      "map",
+      "golden_apple",
+      "minecart",
+      "rail",
+      "piston",
+      "coral",
+      "coral_wall_fan",
+      "coral_block",
+      "ice"
+  );
   private static final List<String> COLOR_PREFIXES = Arrays.stream(DyeColor.values())
       .map(DyeColor::getName)
       .collect(Collectors.toList());
-  private static final List<Pair<String, String>> REGEX_REPLACERS = List.of(
-      new Pair<>("^stripped_(.+?)_(log|wood)$", "$2_stripped_$1"),
-      new Pair<>("(.+?)_vertical_slab$", "slab_vertical_$1"), // Roundaround's Vertical Slabs
+  private static final List<Pair<String, String>> REGEX_REPLACERS = List.of(new Pair<>("^stripped_(.+?)_(log|wood)$",
+          "$2_stripped_$1"
+      ),
+      new Pair<>("(.+?)_vertical_slab$", "slab_vertical_$1"),
+      // Roundaround's Vertical Slabs
       new Pair<>("(.+?)_slab$", "slab_horizontal_$1"),
       new Pair<>("^(.*?)concrete(?!_powder)(.*)$", "$1concrete_a$2"),
       new Pair<>("^cooked_(.+)$", "$1_cooked"),
       new Pair<>(String.format("^(.+?)_(%s)$", String.join("|", COMMON_SUFFIXES)), "$2_$1"),
-      new Pair<>(String.format("^(%s)_(.+)$", String.join("|", COLOR_PREFIXES)), "$2"));
+      new Pair<>(String.format("^(%s)_(.+)$", String.join("|", COLOR_PREFIXES)), "$2")
+  );
 
   private final SerialComparator<ItemStack> underlyingComparator;
 
@@ -97,7 +114,7 @@ public class ItemStackComparator implements Comparator<ItemStack> {
 
   @Override
   public int compare(ItemStack o1, ItemStack o2) {
-    return underlyingComparator.compare(o1, o2);
+    return this.underlyingComparator.compare(o1, o2);
   }
 
   private static String getSortName(ItemStack itemStack) {
@@ -141,14 +158,23 @@ public class ItemStackComparator implements Comparator<ItemStack> {
     return itemStack.hasEnchantments() ? 1 : 0;
   }
 
-  private static boolean isEnchantedBookOrEnchantedItem(ItemStack itemStack) {
-    return itemStack.getItem() instanceof EnchantedBookItem || itemStack.hasEnchantments();
+  private static boolean isEnchantedBookOrEnchantedItem(ItemStack stack) {
+    return stack.get(DataComponentTypes.ENCHANTMENTS) != null ||
+           stack.get(DataComponentTypes.STORED_ENCHANTMENTS) != null;
   }
 
   // Only call when ^isEnchantedBookOrEnchantedItem
-  private static String getEnchantmentListAsString(ItemStack itemStack) {
-    return EnchantmentHelper.get(itemStack).entrySet().stream()
-        .map(e -> e.getKey().getName(e.getValue()).getString())
+  private static String getEnchantmentListAsString(ItemStack stack) {
+    ItemEnchantmentsComponent component = Optional.ofNullable(stack.get(DataComponentTypes.ENCHANTMENTS))
+        .orElseGet(() -> stack.get(DataComponentTypes.STORED_ENCHANTMENTS));
+    if (component == null) {
+      return "";
+    }
+    return component.getEnchantments()
+        .stream()
+        .map(RegistryEntry::value)
+        .map((enchantment) -> enchantment.getName(component.getLevel(enchantment)))
+        .map(Text::getString)
         .collect(Collectors.joining(" "));
   }
 
@@ -174,14 +200,18 @@ public class ItemStackComparator implements Comparator<ItemStack> {
     return ((ArmorItem) itemStack.getItem()).getProtection();
   }
 
-  // Only call when item is HorseArmor.
+  // Only call when item is AnimalArmorItem.
   private static int getHorseArmorValue(ItemStack itemStack) {
-    return ((HorseArmorItem) itemStack.getItem()).getBonus();
+    return ((AnimalArmorItem) itemStack.getItem()).getProtection();
+  }
+
+  private static boolean isPotion(ItemStack stack) {
+    return stack.get(DataComponentTypes.POTION_CONTENTS) != null;
   }
 
   private static String getPotionEffectName(ItemStack itemStack) {
-    return PotionUtil.getPotionEffects(itemStack).stream()
-        .map(StatusEffectInstance::getEffectType)
+    return streamPotionStatusEffects(itemStack).map(StatusEffectInstance::getEffectType)
+        .map(RegistryEntry::value)
         .map(StatusEffect::getName)
         .map(Text::getString)
         .min(Comparator.naturalOrder())
@@ -189,24 +219,27 @@ public class ItemStackComparator implements Comparator<ItemStack> {
   }
 
   private static int getPotionLevel(ItemStack itemStack) {
-    return PotionUtil.getPotionEffects(itemStack).stream()
-        .mapToInt(StatusEffectInstance::getAmplifier)
-        .max()
-        .orElse(0);
+    return streamPotionStatusEffects(itemStack).mapToInt(StatusEffectInstance::getAmplifier).max().orElse(0);
   }
 
   private static int getPotionLength(ItemStack itemStack) {
-    return PotionUtil.getPotionEffects(itemStack).stream()
-        .mapToInt(StatusEffectInstance::getDuration)
-        .max()
-        .orElse(0);
+    return streamPotionStatusEffects(itemStack).mapToInt(StatusEffectInstance::getDuration).max().orElse(0);
+  }
+
+  private static Stream<StatusEffectInstance> streamPotionStatusEffects(ItemStack stack) {
+    return StreamSupport.stream(getPotionComponent(stack).getEffects().spliterator(), false);
+  }
+
+  private static PotionContentsComponent getPotionComponent(ItemStack stack) {
+    return Optional.ofNullable(stack.get(DataComponentTypes.POTION_CONTENTS)).orElse(PotionContentsComponent.DEFAULT);
   }
 
   private static int getColor(ItemStack itemStack) {
     Item item = itemStack.getItem();
 
-    if (item instanceof DyeableArmorItem) {
-      return ((DyeableArmorItem) item).getColor(itemStack);
+    DyedColorComponent component = itemStack.get(DataComponentTypes.DYED_COLOR);
+    if (component != null) {
+      return component.rgb();
     }
 
     String itemString = item.toString();
@@ -219,8 +252,12 @@ public class ItemStackComparator implements Comparator<ItemStack> {
         .orElse(0);
   }
 
-  private static int getHasNameAsInt(ItemStack itemStack) {
-    return itemStack.hasCustomName() ? 1 : 0;
+  private static boolean hasCustomName(ItemStack stack) {
+    return stack.get(DataComponentTypes.CUSTOM_NAME) != null;
+  }
+
+  private static int getHasNameAsInt(ItemStack stack) {
+    return hasCustomName(stack) ? 1 : 0;
   }
 
   public static ItemStackComparator comparator() {
