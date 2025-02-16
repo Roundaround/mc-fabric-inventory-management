@@ -24,7 +24,7 @@ import net.minecraft.util.Identifier;
 import java.util.LinkedList;
 
 public class DefaultPositionEditScreen extends PositionEditScreen implements HandledScreenAccessor {
-  private static final Identifier BACKGROUND_TEXTURE = new Identifier("textures/gui/container/generic_54.png");
+  private static final Identifier BACKGROUND_TEXTURE = Identifier.ofVanilla("textures/gui/container/generic_54.png");
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 114 + 3 * 18;
 

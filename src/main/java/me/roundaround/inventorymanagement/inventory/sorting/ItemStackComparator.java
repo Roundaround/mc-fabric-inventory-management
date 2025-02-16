@@ -6,6 +6,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.component.type.PotionContentsComponent;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -172,8 +173,7 @@ public class ItemStackComparator implements Comparator<ItemStack> {
     }
     return component.getEnchantments()
         .stream()
-        .map(RegistryEntry::value)
-        .map((enchantment) -> enchantment.getName(component.getLevel(enchantment)))
+        .map((enchantment) -> Enchantment.getName(enchantment, component.getLevel(enchantment)))
         .map(Text::getString)
         .collect(Collectors.joining(" "));
   }
@@ -191,7 +191,7 @@ public class ItemStackComparator implements Comparator<ItemStack> {
   // Only call when item is ArmorItem.
   private static int getArmorSlot(ItemStack itemStack) {
     EquipmentSlot slotType = ((ArmorItem) itemStack.getItem()).getSlotType();
-    int groupValue = slotType.getType() == EquipmentSlot.Type.ARMOR ? 10 : 0;
+    int groupValue = slotType.getType() == EquipmentSlot.Type.HUMANOID_ARMOR ? 10 : 0;
     return groupValue + slotType.getEntitySlotId();
   }
 

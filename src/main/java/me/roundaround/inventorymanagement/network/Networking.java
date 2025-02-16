@@ -12,9 +12,9 @@ public final class Networking {
   private Networking() {
   }
 
-  public static final Identifier STACK_C2S = new Identifier(InventoryManagementMod.MOD_ID, "stack_c2s");
-  public static final Identifier SORT_C2S = new Identifier(InventoryManagementMod.MOD_ID, "sort_c2s");
-  public static final Identifier TRANSFER_C2S = new Identifier(InventoryManagementMod.MOD_ID, "transfer_c2s");
+  public static final Identifier STACK_C2S = Identifier.of(InventoryManagementMod.MOD_ID, "stack_c2s");
+  public static final Identifier SORT_C2S = Identifier.of(InventoryManagementMod.MOD_ID, "sort_c2s");
+  public static final Identifier TRANSFER_C2S = Identifier.of(InventoryManagementMod.MOD_ID, "transfer_c2s");
 
   public static void registerC2SPayloads() {
     PayloadTypeRegistry.playC2S().register(StackC2S.ID, StackC2S.CODEC);

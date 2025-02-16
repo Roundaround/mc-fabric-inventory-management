@@ -13,8 +13,8 @@ import net.minecraft.util.Identifier;
 
 public class SortInventoryButton extends InventoryManagementButton {
   private static final ButtonTextures TEXTURES = new ButtonTextures(
-      new Identifier(InventoryManagementMod.MOD_ID, "sort"),
-      new Identifier(InventoryManagementMod.MOD_ID, "sort_highlighted")
+      Identifier.of(InventoryManagementMod.MOD_ID, "sort"),
+      Identifier.of(InventoryManagementMod.MOD_ID, "sort_highlighted")
   );
 
   public SortInventoryButton(

@@ -13,12 +13,12 @@ import net.minecraft.util.Identifier;
 
 public class TransferAllButton extends InventoryManagementButton {
   private static final ButtonTextures TEXTURES_FROM = new ButtonTextures(
-      new Identifier(InventoryManagementMod.MOD_ID, "transfer_from"),
-      new Identifier(InventoryManagementMod.MOD_ID, "transfer_from_highlighted")
+      Identifier.of(InventoryManagementMod.MOD_ID, "transfer_from"),
+      Identifier.of(InventoryManagementMod.MOD_ID, "transfer_from_highlighted")
   );
   private static final ButtonTextures TEXTURES_TO = new ButtonTextures(
-      new Identifier(InventoryManagementMod.MOD_ID, "transfer_to"),
-      new Identifier(InventoryManagementMod.MOD_ID, "transfer_to_highlighted")
+      Identifier.of(InventoryManagementMod.MOD_ID, "transfer_to"),
+      Identifier.of(InventoryManagementMod.MOD_ID, "transfer_to_highlighted")
   );
 
   public TransferAllButton(

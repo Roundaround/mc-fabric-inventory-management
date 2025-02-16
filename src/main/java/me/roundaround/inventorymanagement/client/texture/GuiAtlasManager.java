@@ -15,14 +15,16 @@ import java.util.Set;
 
 @Environment(value = EnvType.CLIENT)
 public class GuiAtlasManager extends SpriteAtlasHolder {
-  private static final Set<ResourceMetadataReader<?>> METADATA_READERS =
-      Set.of(AnimationResourceMetadata.READER, GuiResourceMetadata.SERIALIZER);
+  private static final Set<ResourceMetadataReader<?>> METADATA_READERS = Set.of(AnimationResourceMetadata.READER,
+      GuiResourceMetadata.SERIALIZER
+  );
 
   public GuiAtlasManager(TextureManager manager) {
     super(manager,
-        new Identifier(InventoryManagementMod.MOD_ID, "textures/atlas/gui.png"),
-        new Identifier(InventoryManagementMod.MOD_ID, "gui"),
-        METADATA_READERS);
+        Identifier.of(InventoryManagementMod.MOD_ID, "textures/atlas/gui.png"),
+        Identifier.of(InventoryManagementMod.MOD_ID, "gui"),
+        METADATA_READERS
+    );
   }
 
   @Override

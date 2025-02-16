@@ -48,12 +48,13 @@ public class InventoryManagementClientMod implements ClientModInitializer {
 
     FabricLoader.getInstance()
         .getModContainer(InventoryManagementMod.MOD_ID)
-        .ifPresent((container) -> ResourceManagerHelper.registerBuiltinResourcePack(new Identifier(
-                InventoryManagementMod.MOD_ID,
-                "inventorymanagement-dark-ui"),
+        .ifPresent((container) -> ResourceManagerHelper.registerBuiltinResourcePack(Identifier.of(InventoryManagementMod.MOD_ID,
+                "inventorymanagement-dark-ui"
+            ),
             container,
             Text.literal("Inventory Management Dark UI"),
-            ResourcePackActivationType.NORMAL));
+            ResourcePackActivationType.NORMAL
+        ));
   }
 
   private void initKeyBindings() {
@@ -61,18 +62,18 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         "inventorymanagement.keybind.position_edit.player",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_K,
-        "inventorymanagement.keybind.category"));
+        "inventorymanagement.keybind.category"
+    ));
 
     KeyBinding keybindingContainer = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "inventorymanagement.keybind.position_edit.container",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_L,
-        "inventorymanagement.keybind.category"));
+        "inventorymanagement.keybind.category"
+    ));
 
     HandleScreenInputCallback.EVENT.register((screen, keyCode, scanCode, modifiers) -> {
-      if (Screens.getButtons(screen)
-          .stream()
-          .noneMatch((button) -> button instanceof InventoryManagementButton)) {
+      if (Screens.getButtons(screen).stream().noneMatch((button) -> button instanceof InventoryManagementButton)) {
         return false;
       }
 
