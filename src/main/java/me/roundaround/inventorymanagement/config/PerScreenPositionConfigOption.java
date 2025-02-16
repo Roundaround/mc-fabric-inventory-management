@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screen.Screen;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 public class PerScreenPositionConfigOption extends ConfigOption<Map<String, Position>> {
 
@@ -17,17 +18,21 @@ public class PerScreenPositionConfigOption extends ConfigOption<Map<String, Posi
   }
 
   public void set(Screen screen, boolean isPlayerInventory, Position value) {
-    String key = getScreenKey(screen, isPlayerInventory);
-    this.getValue().put(key, value);
+    this.update(screen, isPlayerInventory, (map, key) -> map.put(key, value));
   }
 
   public void remove(Screen screen, boolean isPlayerInventory) {
-    String key = getScreenKey(screen, isPlayerInventory);
-    this.getValue().remove(key);
+    this.update(screen, isPlayerInventory, Map::remove);
+  }
+
+  private void update(Screen screen, boolean isPlayerInventory, BiConsumer<Map<String, Position>, String> updater) {
+    Map<String, Position> value = new HashMap<>(this.getPendingValue());
+    updater.accept(value, getScreenKey(screen, isPlayerInventory));
+    this.setValue(value);
   }
 
   public Optional<Position> get(Screen screen, boolean isPlayerInventory) {
-    Map<String, Position> value = this.getValue();
+    Map<String, Position> value = this.getPendingValue();
     String key = getScreenKey(screen, isPlayerInventory);
     if (value.containsKey(key)) {
       return Optional.of(value.get(key));

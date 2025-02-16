@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.client.gui.screen;
 
+import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
@@ -31,35 +32,40 @@ public class PerScreenPositionEditScreen extends AnywherePositionEditScreen {
       Screen parent, boolean isPlayerInventory
   ) {
     InventoryManagementConfig config = InventoryManagementConfig.getInstance();
-    Position currentValue = config.screenPositions.get(parent, isPlayerInventory)
-        .orElse(config.defaultPosition.getValue());
-    return PositionConfigOption.builder(config.screenPositions.getPath()).setDefaultValue(currentValue).build();
+    Position defaultValue = config.defaultPosition.getValue();
+    Position currentValue = config.screenPositions.get(parent, isPlayerInventory).orElse(defaultValue);
+
+    PositionConfigOption option = PositionConfigOption.builder(config.screenPositions.getPath())
+        .setDefaultValue(defaultValue)
+        .build();
+    option.setModId(InventoryManagementMod.MOD_ID);
+    option.setValue(currentValue);
+
+    return option;
   }
 
   @Override
   protected void init() {
     super.init();
 
+    this.subscriptions.add(this.getOption().pendingValue.subscribe((value) -> {
+      InventoryManagementConfig.getInstance().screenPositions.set(this.anywhereParent, this.isPlayerInventory, value);
+      this.refreshButtonPositions(value);
+    }));
+
     this.buttons.addAll(this.isPlayerInventory ?
         InventoryButtonsManager.INSTANCE.getPlayerButtons() :
         InventoryButtonsManager.INSTANCE.getContainerButtons());
 
-    Screens.getButtons(this.parent).removeIf((button) -> button instanceof InventoryManagementButton);
+    Screens.getButtons(this.anywhereParent).removeIf((button) -> button instanceof InventoryManagementButton);
 
-    for (int i = 0; i < this.buttons.size(); i++) {
-      this.buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, this.getValue()));
-    }
+    this.refreshButtonPositions(this.getValue());
   }
 
   @Override
-  protected void setValue(Position value) {
-    super.setValue(value);
-
-    InventoryManagementConfig.getInstance().screenPositions.set(this.anywhereParent, this.isPlayerInventory, value);
-
-    for (int i = 0; i < this.buttons.size(); i++) {
-      this.buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, this.getValue()));
-    }
+  public void close() {
+    super.close();
+    InventoryManagementConfig.getInstance().writeToStore();
   }
 
   @Override
@@ -67,7 +73,7 @@ public class PerScreenPositionEditScreen extends AnywherePositionEditScreen {
     MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(0, 0, -51);
-    this.parent.render(drawContext, mouseX, mouseY, partialTicks);
+    this.anywhereParent.render(drawContext, mouseX, mouseY, partialTicks);
     matrixStack.pop();
 
     super.render(drawContext, mouseX, mouseY, partialTicks);
@@ -79,5 +85,11 @@ public class PerScreenPositionEditScreen extends AnywherePositionEditScreen {
         4,
         GuiUtil.LABEL_COLOR
     );
+  }
+
+  private void refreshButtonPositions(Position value) {
+    for (int i = 0; i < this.buttons.size(); i++) {
+      this.buttons.get(i).setOffset(InventoryButtonsManager.INSTANCE.getButtonPosition(i, value));
+    }
   }
 }
