@@ -7,6 +7,7 @@ import me.roundaround.roundalib.nightconfig.core.Config;
 import net.minecraft.client.gui.screen.Screen;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -41,33 +42,33 @@ public class PerScreenPositionConfigOption extends ConfigOption<Map<String, Posi
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public void deserialize(Object data) {
-    Config deserialized = (Config) data;
-    Map<String, Object> deserializedMap = deserialized.valueMap();
+    Config config = (Config) data;
+    Map<String, Position> deserialized = new HashMap<>();
 
-    Map<String, Position> value = new HashMap<>();
-
-    for (String key : deserializedMap.keySet()) {
-      value.put(key, Position.fromString(deserialized.get(key)));
-    }
+    config.valueMap().forEach((key, value) -> {
+      if (value instanceof List<?> listValue) {
+        deserialized.put(key, Position.fromList((List<Integer>) listValue));
+      } else {
+        deserialized.put(key, Position.fromString((String) value));
+      }
+    });
 
     Map<String, Position> defaultValue = this.getDefaultValue();
     for (String key : defaultValue.keySet()) {
-      value.putIfAbsent(key, defaultValue.get(key));
+      deserialized.putIfAbsent(key, defaultValue.get(key));
     }
 
-    this.setValue(value);
+    this.setValue(deserialized);
   }
 
   @Override
   public Object serialize() {
     Config serialized = Config.inMemory();
-    Map<String, Position> value = this.getValue();
-
-    for (String key : value.keySet()) {
-      serialized.set(key, value.get(key).toString());
-    }
-
+    this.getPendingValue().forEach((key, value) -> {
+      serialized.set(key, List.of(value.x(), value.y()));
+    });
     return serialized;
   }
 
