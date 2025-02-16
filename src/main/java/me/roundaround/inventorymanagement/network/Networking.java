@@ -24,7 +24,7 @@ public final class Networking {
 
   public record StackC2S(boolean fromPlayerInventory) implements CustomPayload {
     public static final CustomPayload.Id<StackC2S> ID = new CustomPayload.Id<>(STACK_C2S);
-    public static final PacketCodec<RegistryByteBuf, StackC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOL,
+    public static final PacketCodec<RegistryByteBuf, StackC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN,
         StackC2S::fromPlayerInventory,
         StackC2S::new
     );
@@ -37,7 +37,7 @@ public final class Networking {
 
   public record SortC2S(boolean isPlayerInventory) implements CustomPayload {
     public static final CustomPayload.Id<SortC2S> ID = new CustomPayload.Id<>(SORT_C2S);
-    public static final PacketCodec<RegistryByteBuf, SortC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOL,
+    public static final PacketCodec<RegistryByteBuf, SortC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN,
         SortC2S::isPlayerInventory,
         SortC2S::new
     );
@@ -50,7 +50,7 @@ public final class Networking {
 
   public record TransferC2S(boolean fromPlayerInventory) implements CustomPayload {
     public static final CustomPayload.Id<TransferC2S> ID = new CustomPayload.Id<>(TRANSFER_C2S);
-    public static final PacketCodec<RegistryByteBuf, TransferC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOL,
+    public static final PacketCodec<RegistryByteBuf, TransferC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN,
         TransferC2S::fromPlayerInventory,
         TransferC2S::new
     );
