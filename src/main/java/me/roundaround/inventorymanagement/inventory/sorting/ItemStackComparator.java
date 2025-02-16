@@ -3,17 +3,18 @@ package me.roundaround.inventorymanagement.inventory.sorting;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowerBlock;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.DyedColorComponent;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
-import net.minecraft.component.type.PotionContentsComponent;
+import net.minecraft.component.type.*;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.*;
+import net.minecraft.item.equipment.EquipmentType;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
 import java.util.*;
@@ -30,9 +31,9 @@ public class ItemStackComparator implements Comparator<ItemStack> {
 
   private static final List<Comparator<ItemStack>> SUB_COMPARATORS =
       List.of(Comparator.comparing(ItemStackComparator::getSortName),
-      ConditionalComparator.comparing(s -> s.getItem() instanceof ToolItem,
-          SerialComparator.comparing(Comparator.comparingInt(ItemStackComparator::getTieredItemDamage).reversed(),
-              Comparator.comparingInt(ItemStackComparator::getTieredItemSpeed).reversed()
+      ConditionalComparator.comparing(s -> s.getItem() instanceof MiningToolItem,
+          SerialComparator.comparing(Comparator.comparingInt(ItemStackComparator::getMiningToolItemDamage).reversed(),
+              Comparator.comparingInt(ItemStackComparator::getMiningToolItemSpeed).reversed()
           )
       ),
       ConditionalComparator.comparing(s -> s.getItem() instanceof ArmorItem,
@@ -41,7 +42,7 @@ public class ItemStackComparator implements Comparator<ItemStack> {
           )
       ),
       ConditionalComparator.comparing(s -> s.getItem() instanceof AnimalArmorItem,
-          Comparator.comparingInt(ItemStackComparator::getHorseArmorValue).reversed()
+          Comparator.comparingInt(ItemStackComparator::getArmorValue).reversed()
       ),
       ConditionalComparator.comparing(ItemStackComparator::isPotion,
           SerialComparator.comparing(Comparator.comparing(ItemStackComparator::getPotionEffectName),
@@ -178,31 +179,50 @@ public class ItemStackComparator implements Comparator<ItemStack> {
         .collect(Collectors.joining(" "));
   }
 
-  // Only call when item is ToolItem.
-  private static int getTieredItemDamage(ItemStack itemStack) {
-    return (int) (((ToolItem) itemStack.getItem()).getMaterial().getAttackDamage() * 100f);
+  private static int getMiningToolItemDamage(ItemStack itemStack) {
+    return Optional.ofNullable(itemStack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS))
+        .orElse(AttributeModifiersComponent.DEFAULT)
+        .modifiers()
+        .stream()
+        .filter((modifier) -> modifier.matches(EntityAttributes.ATTACK_DAMAGE, Item.BASE_ATTACK_DAMAGE_MODIFIER_ID))
+        .findFirst()
+        .map((entry) -> entry.modifier().value() * 100f)
+        .orElse(1d)
+        .intValue();
   }
 
-  // Only call when item is TieredItem.
-  private static int getTieredItemSpeed(ItemStack itemStack) {
-    return (int) (((ToolItem) itemStack.getItem()).getMaterial().getMiningSpeedMultiplier() * 100f);
+  private static int getMiningToolItemSpeed(ItemStack itemStack) {
+    return Optional.ofNullable(itemStack.get(DataComponentTypes.TOOL))
+        .map((component) -> component.defaultMiningSpeed() * 100f)
+        .orElse(1f)
+        .intValue();
   }
 
   // Only call when item is ArmorItem.
   private static int getArmorSlot(ItemStack itemStack) {
-    EquipmentSlot slotType = ((ArmorItem) itemStack.getItem()).getSlotType();
-    int groupValue = slotType.getType() == EquipmentSlot.Type.HUMANOID_ARMOR ? 10 : 0;
-    return groupValue + slotType.getEntitySlotId();
+    return Optional.ofNullable(itemStack.get(DataComponentTypes.EQUIPPABLE))
+        .map(EquippableComponent::slot)
+        .map((slotType) -> {
+          int groupValue = slotType.getType() == EquipmentSlot.Type.HUMANOID_ARMOR ? 10 : 0;
+          return groupValue + slotType.getEntitySlotId();
+        })
+        .orElse(1);
   }
 
-  // Only call when item is ArmorItem.
+  // Only call when item is ArmorItem or AnimalArmorItem.
   private static int getArmorValue(ItemStack itemStack) {
-    return ((ArmorItem) itemStack.getItem()).getProtection();
-  }
-
-  // Only call when item is AnimalArmorItem.
-  private static int getHorseArmorValue(ItemStack itemStack) {
-    return ((AnimalArmorItem) itemStack.getItem()).getProtection();
+    return Optional.ofNullable(itemStack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS))
+        .orElse(AttributeModifiersComponent.DEFAULT)
+        .modifiers()
+        .stream()
+        .filter((modifier) -> {
+          Identifier identifier = Identifier.ofVanilla("armor." + EquipmentType.BODY.getName());
+          return modifier.matches(EntityAttributes.ARMOR, identifier);
+        })
+        .findFirst()
+        .map((entry) -> entry.modifier().value() + 100f)
+        .orElse(1d)
+        .intValue();
   }
 
   private static boolean isPotion(ItemStack stack) {

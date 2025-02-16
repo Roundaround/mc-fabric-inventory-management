@@ -1,7 +1,6 @@
 package me.roundaround.inventorymanagement.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import me.roundaround.inventorymanagement.client.InventoryManagementClientMod;
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.roundalib.client.gui.GuiUtil;
@@ -12,7 +11,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.screen.slot.Slot;
@@ -38,9 +37,10 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       boolean isPlayerInventory,
       PressAction onPress,
       Text tooltip,
-      ButtonTextures textures) {
-    super(((HandledScreenAccessor) parent).getX() +
-            ((HandledScreenAccessor) parent).getBackgroundWidth() + offset.x(),
+      ButtonTextures textures
+  ) {
+    super(
+        ((HandledScreenAccessor) parent).getX() + ((HandledScreenAccessor) parent).getBackgroundWidth() + offset.x(),
         ((HandledScreenAccessor) parent).getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
@@ -53,7 +53,8 @@ public abstract class InventoryManagementButton extends ButtonWidget {
 
           GuiUtil.setScreen(new PerScreenPositionEditScreen(parent, isPlayerInventory));
         },
-        DEFAULT_NARRATION_SUPPLIER);
+        DEFAULT_NARRATION_SUPPLIER
+    );
 
     this.parent = (HandledScreenAccessor) parent;
     this.referenceSlot = referenceSlot;
@@ -71,15 +72,18 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       boolean isPlayerInventory,
       PressAction onPress,
       Text tooltip,
-      ButtonTextures textures) {
-    super(parent.getX() + parent.getBackgroundWidth() + offset.x(),
+      ButtonTextures textures
+  ) {
+    super(
+        parent.getX() + parent.getBackgroundWidth() + offset.x(),
         parent.getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
         ScreenTexts.EMPTY,
         (button) -> {
         },
-        DEFAULT_NARRATION_SUPPLIER);
+        DEFAULT_NARRATION_SUPPLIER
+    );
 
     this.parent = parent;
     this.referenceSlot = referenceSlot;
@@ -94,16 +98,15 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   }
 
   @Override
-  public void renderWidget(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+  public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
     setX(this.parent.getX() + this.parent.getBackgroundWidth() + this.offset.x());
     setY(this.parent.getY() + this.referenceSlot.y + this.offset.y());
 
-    drawContext.setShaderColor(1, 1, 1, 1);
+    RenderSystem.setShaderColor(1, 1, 1, 1);
     RenderSystem.enableBlend();
     RenderSystem.enableDepthTest();
 
-    Identifier identifier = this.textures.get(this.isNarratable(), this.isSelected());
-    Sprite sprite = InventoryManagementClientMod.getGuiAtlasManager().getSprite(identifier);
-    drawContext.drawSprite(this.getX(), this.getY(), 0, this.width, this.height, sprite);
+    Identifier texture = this.textures.get(this.isNarratable(), this.isSelected());
+    context.drawGuiTexture(RenderLayer::getGuiTextured, texture, this.getX(), this.getY(), this.width, this.height);
   }
 }

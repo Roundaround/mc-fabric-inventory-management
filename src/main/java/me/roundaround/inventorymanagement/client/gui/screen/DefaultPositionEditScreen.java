@@ -15,6 +15,7 @@ import me.roundaround.roundalib.client.gui.widget.config.SubScreenControl;
 import me.roundaround.roundalib.config.option.PositionConfigOption;
 import me.roundaround.roundalib.config.value.Position;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.screen.slot.Slot;
@@ -152,8 +153,28 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
 
     int x = (this.width - BACKGROUND_WIDTH) / 2;
     int y = (this.height - BACKGROUND_HEIGHT) / 2;
-    context.drawTexture(BACKGROUND_TEXTURE, x, y, 0, 0, BACKGROUND_WIDTH, 3 * 18 + 17);
-    context.drawTexture(BACKGROUND_TEXTURE, x, y + 3 * 18 + 17, 0, 126, BACKGROUND_WIDTH, 96);
+    context.drawTexture(RenderLayer::getGuiTextured,
+        BACKGROUND_TEXTURE,
+        x,
+        y,
+        0,
+        0,
+        BACKGROUND_WIDTH,
+        3 * 18 + 17,
+        256,
+        256
+    );
+    context.drawTexture(RenderLayer::getGuiTextured,
+        BACKGROUND_TEXTURE,
+        x,
+        y + 3 * 18 + 17,
+        0,
+        126,
+        BACKGROUND_WIDTH,
+        96,
+        256,
+        256
+    );
 
     RenderSystem.disableDepthTest();
     context.getMatrices().push();
@@ -169,7 +190,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     context.getMatrices().pop();
     RenderSystem.enableDepthTest();
 
-    this.applyBlur(delta);
+    this.applyBlur();
     this.renderDarkening(context);
   }
 
