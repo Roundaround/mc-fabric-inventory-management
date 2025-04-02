@@ -13,7 +13,7 @@ public class SerialComparator<T> implements Comparator<T> {
 
   @Override
   public int compare(T o1, T o2) {
-    for (Comparator<T> comparator : subComparators) {
+    for (Comparator<T> comparator : this.subComparators) {
       int result = comparator.compare(o1, o2);
       if (result != 0) {
         return result;

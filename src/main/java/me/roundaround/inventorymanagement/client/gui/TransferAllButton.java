@@ -1,9 +1,9 @@
 package me.roundaround.inventorymanagement.client.gui;
 
-import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
+import me.roundaround.inventorymanagement.generated.Constants;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.inventory.Inventory;
@@ -13,16 +13,22 @@ import net.minecraft.util.Identifier;
 
 public class TransferAllButton extends InventoryManagementButton {
   private static final ButtonTextures TEXTURES_FROM = new ButtonTextures(
-      Identifier.of(InventoryManagementMod.MOD_ID, "transfer_from"),
-      Identifier.of(InventoryManagementMod.MOD_ID, "transfer_from_highlighted")
+      Identifier.of(
+          Constants.MOD_ID,
+          "transfer_from"
+  ), Identifier.of(Constants.MOD_ID, "transfer_from_highlighted")
   );
   private static final ButtonTextures TEXTURES_TO = new ButtonTextures(
-      Identifier.of(InventoryManagementMod.MOD_ID, "transfer_to"),
-      Identifier.of(InventoryManagementMod.MOD_ID, "transfer_to_highlighted")
+      Identifier.of(Constants.MOD_ID, "transfer_to"),
+      Identifier.of(Constants.MOD_ID, "transfer_to_highlighted")
   );
 
   public TransferAllButton(
-      HandledScreen<?> parent, Inventory inventory, Slot referenceSlot, Position offset, boolean fromPlayerInventory
+      HandledScreen<?> parent,
+      Inventory inventory,
+      Slot referenceSlot,
+      Position offset,
+      boolean fromPlayerInventory
   ) {
     super(
         parent,

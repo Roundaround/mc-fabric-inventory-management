@@ -2,10 +2,10 @@ package me.roundaround.inventorymanagement.compat.roundalib;
 
 import me.roundaround.inventorymanagement.client.gui.screen.DefaultPositionEditScreen;
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
-import me.roundaround.roundalib.client.gui.widget.config.ControlRegistry;
-import me.roundaround.roundalib.client.gui.widget.config.SubScreenControl;
-import me.roundaround.roundalib.config.option.PositionConfigOption;
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.roundalib.client.gui.widget.config.ControlRegistry;
+import me.roundaround.inventorymanagement.roundalib.client.gui.widget.config.SubScreenControl;
+import me.roundaround.inventorymanagement.roundalib.config.option.PositionConfigOption;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 import net.minecraft.client.MinecraftClient;
 
 public class ConfigControlRegister {
@@ -16,7 +16,8 @@ public class ConfigControlRegister {
 
   public static void init() {
     try {
-      ControlRegistry.register(InventoryManagementConfig.getInstance().defaultPosition.getId(),
+      ControlRegistry.register(
+          InventoryManagementConfig.getInstance().defaultPosition.getId(),
           ConfigControlRegister::getSubScreenControl
       );
     } catch (ControlRegistry.RegistrationException e) {
@@ -25,9 +26,13 @@ public class ConfigControlRegister {
   }
 
   private static SubScreenControl<Position, PositionConfigOption> getSubScreenControl(
-      MinecraftClient client, PositionConfigOption option, int width, int height
+      MinecraftClient client,
+      PositionConfigOption option,
+      int width,
+      int height
   ) {
-    return new SubScreenControl<>(client,
+    return new SubScreenControl<>(
+        client,
         option,
         width,
         height,

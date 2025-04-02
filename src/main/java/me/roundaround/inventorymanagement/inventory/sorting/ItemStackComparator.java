@@ -29,23 +29,23 @@ public class ItemStackComparator implements Comparator<ItemStack> {
   // Allow registering reserve slots
   // More advanced configurations?
 
-  private static final List<Comparator<ItemStack>> SUB_COMPARATORS =
-      List.of(Comparator.comparing(ItemStackComparator::getSortName),
-      ConditionalComparator.comparing(s -> s.getItem() instanceof MiningToolItem,
+  private static final List<Comparator<ItemStack>> SUB_COMPARATORS = List.of(
+      Comparator.comparing(ItemStackComparator::getSortName),
+      ConditionalComparator.comparing(
+          s -> s.get(DataComponentTypes.TOOL) != null,
           SerialComparator.comparing(Comparator.comparingInt(ItemStackComparator::getMiningToolItemDamage).reversed(),
               Comparator.comparingInt(ItemStackComparator::getMiningToolItemSpeed).reversed()
           )
       ),
-      ConditionalComparator.comparing(s -> s.getItem() instanceof ArmorItem,
+      ConditionalComparator.comparing(
+          s -> s.get(DataComponentTypes.EQUIPPABLE) != null,
           SerialComparator.comparing(Comparator.comparingInt(ItemStackComparator::getArmorSlot).reversed(),
               Comparator.comparingInt(ItemStackComparator::getArmorValue).reversed()
           )
       ),
-      ConditionalComparator.comparing(s -> s.getItem() instanceof AnimalArmorItem,
-          Comparator.comparingInt(ItemStackComparator::getArmorValue).reversed()
-      ),
-      ConditionalComparator.comparing(ItemStackComparator::isPotion,
-          SerialComparator.comparing(Comparator.comparing(ItemStackComparator::getPotionEffectName),
+      ConditionalComparator.comparing(
+          ItemStackComparator::isPotion, SerialComparator.comparing(
+              Comparator.comparing(ItemStackComparator::getPotionEffectName),
               Comparator.comparingInt(ItemStackComparator::getPotionLevel).reversed(),
               Comparator.comparingInt(ItemStackComparator::getPotionLength).reversed()
           )
@@ -64,7 +64,8 @@ public class ItemStackComparator implements Comparator<ItemStack> {
       Comparator.comparing(s -> s.getName().getString().toLowerCase(Locale.ROOT))
   );
 
-  private static final List<String> COMMON_SUFFIXES = List.of("log",
+  private static final List<String> COMMON_SUFFIXES = List.of(
+      "log",
       "wood",
       "leaves",
       "planks",
@@ -94,11 +95,10 @@ public class ItemStackComparator implements Comparator<ItemStack> {
       "ice"
   );
   private static final List<String> COLOR_PREFIXES = Arrays.stream(DyeColor.values())
-      .map(DyeColor::getName)
+      .map(DyeColor::getId)
       .collect(Collectors.toList());
-  private static final List<Pair<String, String>> REGEX_REPLACERS = List.of(new Pair<>("^stripped_(.+?)_(log|wood)$",
-          "$2_stripped_$1"
-      ),
+  private static final List<Pair<String, String>> REGEX_REPLACERS = List.of(
+      new Pair<>("^stripped_(.+?)_(log|wood)$", "$2_stripped_$1"),
       new Pair<>("(.+?)_vertical_slab$", "slab_vertical_$1"),
       // Roundaround's Vertical Slabs
       new Pair<>("(.+?)_slab$", "slab_horizontal_$1"),
@@ -179,6 +179,7 @@ public class ItemStackComparator implements Comparator<ItemStack> {
         .collect(Collectors.joining(" "));
   }
 
+  // Only call when item has the TOOL component.
   private static int getMiningToolItemDamage(ItemStack itemStack) {
     return Optional.ofNullable(itemStack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS))
         .orElse(AttributeModifiersComponent.DEFAULT)
@@ -191,6 +192,7 @@ public class ItemStackComparator implements Comparator<ItemStack> {
         .intValue();
   }
 
+  // Only call when item has the TOOL component.
   private static int getMiningToolItemSpeed(ItemStack itemStack) {
     return Optional.ofNullable(itemStack.get(DataComponentTypes.TOOL))
         .map((component) -> component.defaultMiningSpeed() * 100f)
@@ -198,7 +200,7 @@ public class ItemStackComparator implements Comparator<ItemStack> {
         .intValue();
   }
 
-  // Only call when item is ArmorItem.
+  // Only call when item has the EQUIPPABLE component.
   private static int getArmorSlot(ItemStack itemStack) {
     return Optional.ofNullable(itemStack.get(DataComponentTypes.EQUIPPABLE))
         .map(EquippableComponent::slot)
@@ -209,7 +211,7 @@ public class ItemStackComparator implements Comparator<ItemStack> {
         .orElse(1);
   }
 
-  // Only call when item is ArmorItem or AnimalArmorItem.
+  // Only call when item has the EQUIPPABLE component.
   private static int getArmorValue(ItemStack itemStack) {
     return Optional.ofNullable(itemStack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS))
         .orElse(AttributeModifiersComponent.DEFAULT)
@@ -265,8 +267,8 @@ public class ItemStackComparator implements Comparator<ItemStack> {
     String itemString = item.toString();
 
     return Arrays.stream(DyeColor.values())
-        .filter(dyeColor -> itemString.startsWith(dyeColor.getName()))
-        .mapToInt(DyeColor::getId)
+        .filter(dyeColor -> itemString.startsWith(dyeColor.getId()))
+        .mapToInt(DyeColor::getIndex)
         .map(i -> i + 1) // Colorless < all colors
         .findFirst()
         .orElse(0);

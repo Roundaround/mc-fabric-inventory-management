@@ -1,10 +1,9 @@
 package me.roundaround.inventorymanagement.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
-import me.roundaround.roundalib.client.gui.GuiUtil;
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.roundalib.client.gui.util.GuiUtil;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.Screen;
@@ -61,7 +60,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
     this.textures = textures;
     this.offset = offset;
 
-    setTooltip(Tooltip.of(tooltip));
+    this.setTooltip(Tooltip.of(tooltip));
   }
 
   protected InventoryManagementButton(
@@ -90,7 +89,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
     this.textures = textures;
     this.offset = offset;
 
-    setTooltip(Tooltip.of(tooltip));
+    this.setTooltip(Tooltip.of(tooltip));
   }
 
   public void setOffset(Position position) {
@@ -99,12 +98,8 @@ public abstract class InventoryManagementButton extends ButtonWidget {
 
   @Override
   public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-    setX(this.parent.getX() + this.parent.getBackgroundWidth() + this.offset.x());
-    setY(this.parent.getY() + this.referenceSlot.y + this.offset.y());
-
-    RenderSystem.setShaderColor(1, 1, 1, 1);
-    RenderSystem.enableBlend();
-    RenderSystem.enableDepthTest();
+    this.setX(this.parent.getX() + this.parent.getBackgroundWidth() + this.offset.x());
+    this.setY(this.parent.getY() + this.referenceSlot.y + this.offset.y());
 
     Identifier texture = this.textures.get(this.isNarratable(), this.isSelected());
     context.drawGuiTexture(RenderLayer::getGuiTextured, texture, this.getX(), this.getY(), this.width, this.height);

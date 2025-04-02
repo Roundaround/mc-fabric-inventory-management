@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.network;
 
-import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.generated.Constants;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -12,9 +12,9 @@ public final class Networking {
   private Networking() {
   }
 
-  public static final Identifier STACK_C2S = Identifier.of(InventoryManagementMod.MOD_ID, "stack_c2s");
-  public static final Identifier SORT_C2S = Identifier.of(InventoryManagementMod.MOD_ID, "sort_c2s");
-  public static final Identifier TRANSFER_C2S = Identifier.of(InventoryManagementMod.MOD_ID, "transfer_c2s");
+  public static final Identifier STACK_C2S = Identifier.of(Constants.MOD_ID, "stack_c2s");
+  public static final Identifier SORT_C2S = Identifier.of(Constants.MOD_ID, "sort_c2s");
+  public static final Identifier TRANSFER_C2S = Identifier.of(Constants.MOD_ID, "transfer_c2s");
 
   public static void registerC2SPayloads() {
     PayloadTypeRegistry.playC2S().register(StackC2S.ID, StackC2S.CODEC);
@@ -24,7 +24,8 @@ public final class Networking {
 
   public record StackC2S(boolean fromPlayerInventory) implements CustomPayload {
     public static final CustomPayload.Id<StackC2S> ID = new CustomPayload.Id<>(STACK_C2S);
-    public static final PacketCodec<RegistryByteBuf, StackC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN,
+    public static final PacketCodec<RegistryByteBuf, StackC2S> CODEC = PacketCodec.tuple(
+        PacketCodecs.BOOLEAN,
         StackC2S::fromPlayerInventory,
         StackC2S::new
     );
@@ -37,7 +38,8 @@ public final class Networking {
 
   public record SortC2S(boolean isPlayerInventory) implements CustomPayload {
     public static final CustomPayload.Id<SortC2S> ID = new CustomPayload.Id<>(SORT_C2S);
-    public static final PacketCodec<RegistryByteBuf, SortC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN,
+    public static final PacketCodec<RegistryByteBuf, SortC2S> CODEC = PacketCodec.tuple(
+        PacketCodecs.BOOLEAN,
         SortC2S::isPlayerInventory,
         SortC2S::new
     );
@@ -50,7 +52,8 @@ public final class Networking {
 
   public record TransferC2S(boolean fromPlayerInventory) implements CustomPayload {
     public static final CustomPayload.Id<TransferC2S> ID = new CustomPayload.Id<>(TRANSFER_C2S);
-    public static final PacketCodec<RegistryByteBuf, TransferC2S> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN,
+    public static final PacketCodec<RegistryByteBuf, TransferC2S> CODEC = PacketCodec.tuple(
+        PacketCodecs.BOOLEAN,
         TransferC2S::fromPlayerInventory,
         TransferC2S::new
     );

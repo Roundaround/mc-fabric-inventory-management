@@ -1,14 +1,14 @@
 package me.roundaround.inventorymanagement.client;
 
-import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
 import me.roundaround.inventorymanagement.client.texture.GuiAtlasManager;
 import me.roundaround.inventorymanagement.compat.roundalib.ConfigControlRegister;
 import me.roundaround.inventorymanagement.event.GuiAtlasManagerInitCallback;
 import me.roundaround.inventorymanagement.event.HandleScreenInputCallback;
-import me.roundaround.roundalib.client.gui.GuiUtil;
-import me.roundaround.roundalib.util.BuiltinResourcePack;
+import me.roundaround.inventorymanagement.generated.Constants;
+import me.roundaround.inventorymanagement.roundalib.client.gui.util.GuiUtil;
+import me.roundaround.inventorymanagement.roundalib.util.BuiltinResourcePack;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -44,13 +44,13 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     initKeyBindings();
 
     BuiltinResourcePack.register(
-        InventoryManagementMod.MOD_ID,
+        Constants.MOD_ID,
         "inventorymanagement-dark-ui",
         Text.translatable("inventorymanagement.resourcepack.dark")
     );
   }
 
-  private void initKeyBindings() {
+  private static void initKeyBindings() {
     KeyBinding keybindingPlayer = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "inventorymanagement.keybind.position_edit.player",
         InputUtil.Type.KEYSYM,

@@ -1,12 +1,12 @@
 package me.roundaround.inventorymanagement.config;
 
-import me.roundaround.inventorymanagement.InventoryManagementMod;
-import me.roundaround.roundalib.config.ConfigPath;
-import me.roundaround.roundalib.config.manage.ModConfigImpl;
-import me.roundaround.roundalib.config.manage.store.GameScopedFileStore;
-import me.roundaround.roundalib.config.option.BooleanConfigOption;
-import me.roundaround.roundalib.config.option.PositionConfigOption;
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.generated.Constants;
+import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
+import me.roundaround.inventorymanagement.roundalib.config.manage.ModConfigImpl;
+import me.roundaround.inventorymanagement.roundalib.config.manage.store.GameScopedFileStore;
+import me.roundaround.inventorymanagement.roundalib.config.option.BooleanConfigOption;
+import me.roundaround.inventorymanagement.roundalib.config.option.PositionConfigOption;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 
 public class InventoryManagementConfig extends ModConfigImpl implements GameScopedFileStore {
   private static InventoryManagementConfig instance;
@@ -19,7 +19,7 @@ public class InventoryManagementConfig extends ModConfigImpl implements GameScop
   public PerScreenPositionConfigOption screenPositions;
 
   public InventoryManagementConfig() {
-    super(InventoryManagementMod.MOD_ID);
+    super(Constants.MOD_ID);
   }
 
   public static InventoryManagementConfig getInstance() {

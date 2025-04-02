@@ -1,9 +1,9 @@
 package me.roundaround.inventorymanagement.client.gui;
 
-import me.roundaround.inventorymanagement.InventoryManagementMod;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
+import me.roundaround.inventorymanagement.generated.Constants;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.inventory.Inventory;
@@ -13,12 +13,16 @@ import net.minecraft.util.Identifier;
 
 public class SortInventoryButton extends InventoryManagementButton {
   private static final ButtonTextures TEXTURES = new ButtonTextures(
-      Identifier.of(InventoryManagementMod.MOD_ID, "sort"),
-      Identifier.of(InventoryManagementMod.MOD_ID, "sort_highlighted")
+      Identifier.of(Constants.MOD_ID, "sort"),
+      Identifier.of(Constants.MOD_ID, "sort_highlighted")
   );
 
   public SortInventoryButton(
-      HandledScreen<?> parent, Inventory inventory, Slot referenceSlot, Position offset, boolean isPlayerInventory
+      HandledScreen<?> parent,
+      Inventory inventory,
+      Slot referenceSlot,
+      Position offset,
+      boolean isPlayerInventory
   ) {
     super(
         parent,
@@ -33,7 +37,11 @@ public class SortInventoryButton extends InventoryManagementButton {
   }
 
   public SortInventoryButton(
-      HandledScreenAccessor parent, Inventory inventory, Slot referenceSlot, Position offset, boolean isPlayerInventory
+      HandledScreenAccessor parent,
+      Inventory inventory,
+      Slot referenceSlot,
+      Position offset,
+      boolean isPlayerInventory
   ) {
     super(
         parent,

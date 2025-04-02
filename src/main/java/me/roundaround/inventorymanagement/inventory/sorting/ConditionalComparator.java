@@ -14,10 +14,10 @@ public class ConditionalComparator<T> implements Comparator<T> {
 
   @Override
   public int compare(T o1, T o2) {
-    if (!condition.test(o1) || !condition.test(o2)) {
+    if (!this.condition.test(o1) || !this.condition.test(o2)) {
       return 0;
     }
-    return baseComparator.compare(o1, o2);
+    return this.baseComparator.compare(o1, o2);
   }
 
   public static <T> ConditionalComparator<T> comparing(Predicate<T> condition, Comparator<T> baseComparator) {

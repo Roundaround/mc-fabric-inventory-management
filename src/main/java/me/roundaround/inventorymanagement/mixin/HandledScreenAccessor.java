@@ -1,9 +1,8 @@
 package me.roundaround.inventorymanagement.mixin;
 
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
-
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
 
 @Mixin(HandledScreen.class)
 public interface HandledScreenAccessor {

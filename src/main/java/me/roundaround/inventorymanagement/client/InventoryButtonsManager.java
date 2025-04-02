@@ -6,7 +6,7 @@ import me.roundaround.inventorymanagement.client.gui.SortInventoryButton;
 import me.roundaround.inventorymanagement.client.gui.TransferAllButton;
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
-import me.roundaround.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -41,7 +41,7 @@ public class InventoryButtonsManager {
   private final LinkedHashSet<InventoryManagementButton> playerButtons = new LinkedHashSet<>();
   private final LinkedHashSet<InventoryManagementButton> containerButtons = new LinkedHashSet<>();
   private final HashSet<Class<? extends Inventory>> sortableInventories = new HashSet<>();
-  private final HashSet<Class<? extends Inventory>> transerableInventories = new HashSet<>();
+  private final HashSet<Class<? extends Inventory>> tranfserableInventories = new HashSet<>();
   private final HashSet<Class<? extends ScreenHandler>> sortableScreenHandlers = new HashSet<>();
   private final HashSet<Class<? extends ScreenHandler>> transferableScreenHandlers = new HashSet<>();
 
@@ -69,7 +69,7 @@ public class InventoryButtonsManager {
   }
 
   public void registerTransferableContainer(Class<? extends Inventory> clazz) {
-    this.transerableInventories.add(clazz);
+    this.tranfserableInventories.add(clazz);
   }
 
   public void registerSimpleInventorySortableHandler(Class<? extends ScreenHandler> clazz) {
@@ -84,9 +84,7 @@ public class InventoryButtonsManager {
     ScreenEvents.AFTER_INIT.register(this::onScreenAfterInit);
   }
 
-  private void onScreenAfterInit(
-      MinecraftClient client, Screen screen, float scaledWidth, float scaledHeight
-  ) {
+  private void onScreenAfterInit(MinecraftClient client, Screen screen, float scaledWidth, float scaledHeight) {
     if (!(screen instanceof HandledScreen<?> handledScreen)) {
       return;
     }
@@ -180,7 +178,7 @@ public class InventoryButtonsManager {
         return;
       }
     } else {
-      if (this.transerableInventories.stream().noneMatch(clazz -> clazz.isInstance(fromInventory))) {
+      if (this.tranfserableInventories.stream().noneMatch(clazz -> clazz.isInstance(fromInventory))) {
         return;
       }
     }
@@ -190,7 +188,7 @@ public class InventoryButtonsManager {
         return;
       }
     } else {
-      if (this.transerableInventories.stream().noneMatch(clazz -> clazz.isInstance(toInventory))) {
+      if (this.tranfserableInventories.stream().noneMatch(clazz -> clazz.isInstance(toInventory))) {
         return;
       }
     }
@@ -235,7 +233,7 @@ public class InventoryButtonsManager {
         return;
       }
     } else {
-      if (this.transerableInventories.stream().noneMatch(clazz -> clazz.isInstance(fromInventory))) {
+      if (this.tranfserableInventories.stream().noneMatch(clazz -> clazz.isInstance(fromInventory))) {
         return;
       }
     }
@@ -245,7 +243,7 @@ public class InventoryButtonsManager {
         return;
       }
     } else {
-      if (this.transerableInventories.stream().noneMatch(clazz -> clazz.isInstance(toInventory))) {
+      if (this.tranfserableInventories.stream().noneMatch(clazz -> clazz.isInstance(toInventory))) {
         return;
       }
     }
@@ -259,9 +257,7 @@ public class InventoryButtonsManager {
     this.addButton(screen, button, isPlayerInventory);
   }
 
-  private void addButton(
-      HandledScreen<?> screen, InventoryManagementButton button, boolean isPlayerInventory
-  ) {
+  private void addButton(HandledScreen<?> screen, InventoryManagementButton button, boolean isPlayerInventory) {
     Screens.getButtons(screen).add(button);
     (isPlayerInventory ? this.playerButtons : this.containerButtons).add(button);
   }

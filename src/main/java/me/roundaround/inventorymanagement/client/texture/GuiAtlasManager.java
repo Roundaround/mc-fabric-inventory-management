@@ -1,6 +1,6 @@
 package me.roundaround.inventorymanagement.client.texture;
 
-import me.roundaround.inventorymanagement.InventoryManagementMod;
+import me.roundaround.inventorymanagement.generated.Constants;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.resource.metadata.AnimationResourceMetadata;
@@ -15,15 +15,16 @@ import java.util.Set;
 
 @Environment(value = EnvType.CLIENT)
 public class GuiAtlasManager extends SpriteAtlasHolder {
-  private static final Set<ResourceMetadataSerializer<?>> METADATA_SERIALIZERS =
-      Set.of(AnimationResourceMetadata.SERIALIZER,
+  private static final Set<ResourceMetadataSerializer<?>> METADATA_SERIALIZERS = Set.of(
+      AnimationResourceMetadata.SERIALIZER,
       GuiResourceMetadata.SERIALIZER
   );
 
   public GuiAtlasManager(TextureManager manager) {
-    super(manager,
-        Identifier.of(InventoryManagementMod.MOD_ID, "textures/atlas/gui.png"),
-        Identifier.of(InventoryManagementMod.MOD_ID, "gui"),
+    super(
+        manager,
+        Identifier.of(Constants.MOD_ID, "textures/atlas/gui.png"),
+        Identifier.of(Constants.MOD_ID, "gui"),
         METADATA_SERIALIZERS
     );
   }

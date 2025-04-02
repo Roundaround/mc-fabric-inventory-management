@@ -1,9 +1,9 @@
 package me.roundaround.inventorymanagement.config;
 
-import me.roundaround.roundalib.config.ConfigPath;
-import me.roundaround.roundalib.config.option.ConfigOption;
-import me.roundaround.roundalib.config.value.Position;
-import me.roundaround.roundalib.nightconfig.core.Config;
+import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
+import me.roundaround.inventorymanagement.roundalib.config.option.ConfigOption;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
+import me.roundaround.inventorymanagement.roundalib.nightconfig.core.Config;
 import net.minecraft.client.gui.screen.Screen;
 
 import java.util.HashMap;
@@ -19,13 +19,15 @@ public class PerScreenPositionConfigOption extends ConfigOption<Map<String, Posi
   }
 
   public void set(Screen screen, boolean isPlayerInventory, Position value) {
-    this.update(screen, isPlayerInventory, (map, key) -> {
-      if (value.equals(InventoryManagementConfig.getInstance().defaultPosition.getPendingValue())) {
-        map.remove(key);
-      } else {
-        map.put(key, value);
-      }
-    });
+    this.update(
+        screen, isPlayerInventory, (map, key) -> {
+          if (value.equals(InventoryManagementConfig.getInstance().defaultPosition.getPendingValue())) {
+            map.remove(key);
+          } else {
+            map.put(key, value);
+          }
+        }
+    );
   }
 
   public void remove(Screen screen, boolean isPlayerInventory) {

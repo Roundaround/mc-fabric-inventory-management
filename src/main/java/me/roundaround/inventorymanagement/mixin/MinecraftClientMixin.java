@@ -12,8 +12,7 @@ public abstract class MinecraftClientMixin {
   @Inject(
       method = "<init>", at = @At(
       value = "INVOKE",
-      target = "Lnet/minecraft/client/texture/GuiAtlasManager;<init>(Lnet/minecraft/client/texture/TextureManager;)V",
-      shift = At.Shift.BEFORE
+      target = "Lnet/minecraft/client/texture/GuiAtlasManager;<init>(Lnet/minecraft/client/texture/TextureManager;)V"
   )
   )
   private void beforeVanillaGuiAtlasManagerInit(CallbackInfo ci) {

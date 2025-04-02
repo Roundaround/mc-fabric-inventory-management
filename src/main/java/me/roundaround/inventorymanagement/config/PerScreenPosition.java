@@ -1,8 +1,8 @@
 package me.roundaround.inventorymanagement.config;
 
-import java.util.HashMap;
+import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 
-import me.roundaround.roundalib.config.value.Position;
+import java.util.HashMap;
 
 public class PerScreenPosition extends HashMap<String, Position> {
 }
