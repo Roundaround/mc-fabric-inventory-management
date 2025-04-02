@@ -92,16 +92,16 @@ public class ItemStackComparator implements Comparator<ItemStack> {
       "coral",
       "coral_wall_fan",
       "coral_block",
-      "ice"
+      "ice",
+      "slab",
+      "wall",
+      "spawn_egg"
   );
   private static final List<String> COLOR_PREFIXES = Arrays.stream(DyeColor.values())
       .map(DyeColor::getId)
       .collect(Collectors.toList());
   private static final List<Pair<String, String>> REGEX_REPLACERS = List.of(
       new Pair<>("^stripped_(.+?)_(log|wood)$", "$2_stripped_$1"),
-      new Pair<>("(.+?)_vertical_slab$", "slab_vertical_$1"),
-      // Roundaround's Vertical Slabs
-      new Pair<>("(.+?)_slab$", "slab_horizontal_$1"),
       new Pair<>("^(.*?)concrete(?!_powder)(.*)$", "$1concrete_a$2"),
       new Pair<>("^cooked_(.+)$", "$1_cooked"),
       new Pair<>(String.format("^(.+?)_(%s)$", String.join("|", COMMON_SUFFIXES)), "$2_$1"),
