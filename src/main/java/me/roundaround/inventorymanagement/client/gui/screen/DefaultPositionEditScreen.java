@@ -159,6 +159,9 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
       this.renderPanoramaBackground(context, delta);
     }
 
+    this.applyBlur();
+    this.renderDarkening(context);
+
     int x = (this.width - BACKGROUND_WIDTH) / 2;
     int y = (this.height - BACKGROUND_HEIGHT) / 2;
     context.drawTexture(
@@ -198,9 +201,6 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
         false
     );
     context.getMatrices().pop();
-
-    this.applyBlur();
-    this.renderDarkening(context);
   }
 
   public int getX() {
