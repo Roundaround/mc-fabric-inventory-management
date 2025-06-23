@@ -8,18 +8,12 @@ import me.roundaround.inventorymanagement.roundalib.config.option.PositionConfig
 import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 import net.minecraft.client.MinecraftClient;
 
-public class ConfigControlRegister {
-  private static final MinecraftClient client = MinecraftClient.getInstance();
-
-  private ConfigControlRegister() {
-  }
-
+public final class ConfigControlRegister {
   public static void init() {
     try {
       ControlRegistry.register(
           InventoryManagementConfig.getInstance().defaultPosition.getId(),
-          ConfigControlRegister::getSubScreenControl
-      );
+          ConfigControlRegister::getSubScreenControl);
     } catch (ControlRegistry.RegistrationException e) {
       // Deal with this later xD
     }
@@ -29,15 +23,16 @@ public class ConfigControlRegister {
       MinecraftClient client,
       PositionConfigOption option,
       int width,
-      int height
-  ) {
+      int height) {
     return new SubScreenControl<>(
         client,
         option,
         width,
         height,
         SubScreenControl.getValueDisplayMessageFactory(),
-        DefaultPositionEditScreen.getSubScreenFactory()
-    );
+        DefaultPositionEditScreen.getSubScreenFactory());
+  }
+
+  private ConfigControlRegister() {
   }
 }

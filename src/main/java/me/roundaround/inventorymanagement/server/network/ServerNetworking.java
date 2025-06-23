@@ -3,6 +3,7 @@ package me.roundaround.inventorymanagement.server.network;
 import me.roundaround.inventorymanagement.inventory.InventoryHelper;
 import me.roundaround.inventorymanagement.network.Networking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public final class ServerNetworking {
   private ServerNetworking() {
@@ -15,14 +16,17 @@ public final class ServerNetworking {
   }
 
   private static void handleStack(Networking.StackC2S payload, ServerPlayNetworking.Context context) {
-    context.player().server.execute(() -> InventoryHelper.autoStack(context.player(), payload.fromPlayerInventory()));
+    final ServerPlayerEntity player = context.player();
+    context.server().execute(() -> InventoryHelper.autoStack(player, payload.fromPlayerInventory()));
   }
 
   private static void handleSort(Networking.SortC2S payload, ServerPlayNetworking.Context context) {
-    context.player().server.execute(() -> InventoryHelper.sortInventory(context.player(), payload.isPlayerInventory()));
+    final ServerPlayerEntity player = context.player();
+    context.server().execute(() -> InventoryHelper.sortInventory(player, payload.isPlayerInventory()));
   }
 
   private static void handleTransfer(Networking.TransferC2S payload, ServerPlayNetworking.Context context) {
-    context.player().server.execute(() -> InventoryHelper.transferAll(context.player(), payload.fromPlayerInventory()));
+    final ServerPlayerEntity player = context.player();
+    context.server().execute(() -> InventoryHelper.transferAll(player, payload.fromPlayerInventory()));
   }
 }

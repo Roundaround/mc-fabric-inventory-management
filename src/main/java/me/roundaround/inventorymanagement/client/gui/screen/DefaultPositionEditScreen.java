@@ -1,5 +1,9 @@
 package me.roundaround.inventorymanagement.client.gui.screen;
 
+import java.util.LinkedList;
+
+import org.joml.Matrix3x2fStack;
+
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.AutoStackButton;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
@@ -13,15 +17,13 @@ import me.roundaround.inventorymanagement.roundalib.client.gui.util.GuiUtil;
 import me.roundaround.inventorymanagement.roundalib.client.gui.widget.config.SubScreenControl;
 import me.roundaround.inventorymanagement.roundalib.config.option.PositionConfigOption;
 import me.roundaround.inventorymanagement.roundalib.config.value.Position;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-
-import java.util.LinkedList;
 
 public class DefaultPositionEditScreen extends PositionEditScreen implements HandledScreenAccessor {
   private static final Identifier BACKGROUND_TEXTURE = Identifier.ofVanilla("textures/gui/container/generic_54.png");
@@ -55,8 +57,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
         containerInventory,
         8,
         BACKGROUND_WIDTH - 16 - 4,
-        6 + this.textRenderer.fontHeight + 3
-    );
+        6 + this.textRenderer.fontHeight + 3);
     int index = 0;
 
     if (config.showSort.getValue()) {
@@ -65,8 +66,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
           containerInventory,
           containerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
-          true
-      ));
+          true));
     }
     if (config.showStack.getValue()) {
       this.containerButtons.add(new AutoStackButton(
@@ -74,8 +74,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
           containerInventory,
           containerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
-          true
-      ));
+          true));
     }
     if (config.showTransfer.getValue()) {
       this.containerButtons.add(new TransferAllButton(
@@ -83,8 +82,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
           containerInventory,
           containerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
-          true
-      ));
+          true));
     }
 
     Inventory playerInventory = new SimpleInventory(27);
@@ -92,8 +90,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
         playerInventory,
         8,
         BACKGROUND_WIDTH - 16 - 4,
-        BACKGROUND_HEIGHT - 94 + this.textRenderer.fontHeight + 2
-    );
+        BACKGROUND_HEIGHT - 94 + this.textRenderer.fontHeight + 2);
     index = 0;
 
     if (config.showSort.getValue()) {
@@ -102,8 +99,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
           playerInventory,
           playerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
-          true
-      ));
+          true));
     }
     if (config.showStack.getValue()) {
       this.playerButtons.add(new AutoStackButton(
@@ -111,8 +107,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
           playerInventory,
           playerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
-          true
-      ));
+          true));
     }
     if (config.showTransfer.getValue()) {
       this.playerButtons.add(new TransferAllButton(
@@ -120,8 +115,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
           playerInventory,
           playerSlot,
           InventoryButtonsManager.INSTANCE.getButtonPosition(index++, offset),
-          true
-      ));
+          true));
     }
   }
 
@@ -149,8 +143,7 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
         Text.literal(this.getValue().toString()),
         GuiUtil.PADDING,
         GuiUtil.PADDING,
-        GuiUtil.LABEL_COLOR
-    );
+        GuiUtil.LABEL_COLOR);
   }
 
   @Override
@@ -159,13 +152,13 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
       this.renderPanoramaBackground(context, delta);
     }
 
-    this.applyBlur();
+    this.applyBlur(context);
     this.renderDarkening(context);
 
     int x = (this.width - BACKGROUND_WIDTH) / 2;
     int y = (this.height - BACKGROUND_HEIGHT) / 2;
     context.drawTexture(
-        RenderLayer::getGuiTextured,
+        RenderPipelines.GUI_TEXTURED,
         BACKGROUND_TEXTURE,
         x,
         y,
@@ -174,10 +167,9 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
         BACKGROUND_WIDTH,
         3 * 18 + 17,
         256,
-        256
-    );
+        256);
     context.drawTexture(
-        RenderLayer::getGuiTextured,
+        RenderPipelines.GUI_TEXTURED,
         BACKGROUND_TEXTURE,
         x,
         y + 3 * 18 + 17,
@@ -186,11 +178,11 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
         BACKGROUND_WIDTH,
         96,
         256,
-        256
-    );
+        256);
 
-    context.getMatrices().push();
-    context.getMatrices().translate(x, y, 0);
+    Matrix3x2fStack matrices = context.getMatrices();
+    matrices.pushMatrix();
+    matrices.translate(x, y);
     context.drawText(this.textRenderer, Text.translatable("container.chest"), 8, 6, 0x404040, false);
     context.drawText(
         this.textRenderer,
@@ -198,9 +190,8 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
         8,
         BACKGROUND_HEIGHT - 94,
         0x404040,
-        false
-    );
-    context.getMatrices().pop();
+        false);
+    matrices.popMatrix();
   }
 
   public int getX() {

@@ -1,5 +1,8 @@
 package me.roundaround.inventorymanagement.client;
 
+import org.lwjgl.glfw.GLFW;
+
+import me.roundaround.gradle.api.annotation.Entrypoint;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
 import me.roundaround.inventorymanagement.client.texture.GuiAtlasManager;
@@ -18,8 +21,8 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.text.Text;
-import org.lwjgl.glfw.GLFW;
 
+@Entrypoint(Entrypoint.CLIENT)
 public class InventoryManagementClientMod implements ClientModInitializer {
   private static GuiAtlasManager guiAtlasManager = null;
 
@@ -46,8 +49,7 @@ public class InventoryManagementClientMod implements ClientModInitializer {
     BuiltinResourcePack.register(
         Constants.MOD_ID,
         "inventorymanagement-dark-ui",
-        Text.translatable("inventorymanagement.resourcepack.dark")
-    );
+        Text.translatable("inventorymanagement.resourcepack.dark"));
   }
 
   private static void initKeyBindings() {
@@ -55,15 +57,13 @@ public class InventoryManagementClientMod implements ClientModInitializer {
         "inventorymanagement.keybind.position_edit.player",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_K,
-        "inventorymanagement.keybind.category"
-    ));
+        "inventorymanagement.keybind.category"));
 
     KeyBinding keybindingContainer = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "inventorymanagement.keybind.position_edit.container",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_L,
-        "inventorymanagement.keybind.category"
-    ));
+        "inventorymanagement.keybind.category"));
 
     HandleScreenInputCallback.EVENT.register((screen, keyCode, scanCode, modifiers) -> {
       if (Screens.getButtons(screen).stream().noneMatch((button) -> button instanceof InventoryManagementButton)) {

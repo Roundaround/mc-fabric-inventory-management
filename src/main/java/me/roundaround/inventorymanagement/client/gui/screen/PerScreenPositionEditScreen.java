@@ -1,5 +1,7 @@
 package me.roundaround.inventorymanagement.client.gui.screen;
 
+import java.util.LinkedList;
+
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
@@ -10,10 +12,7 @@ import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-
-import java.util.LinkedList;
 
 public class PerScreenPositionEditScreen extends AnywherePositionEditScreen {
   private final LinkedList<InventoryManagementButton> buttons = new LinkedList<>();
@@ -24,8 +23,7 @@ public class PerScreenPositionEditScreen extends AnywherePositionEditScreen {
     super(
         Text.translatable("inventorymanagement.position_edit.title"),
         parent,
-        generateDummyConfigOption(parent, isPlayerInventory)
-    );
+        generateDummyConfigOption(parent, isPlayerInventory));
     this.isPlayerInventory = isPlayerInventory;
   }
 
@@ -52,9 +50,9 @@ public class PerScreenPositionEditScreen extends AnywherePositionEditScreen {
       this.refreshButtonPositions(value);
     }));
 
-    this.buttons.addAll(this.isPlayerInventory ?
-        InventoryButtonsManager.INSTANCE.getPlayerButtons() :
-        InventoryButtonsManager.INSTANCE.getContainerButtons());
+    this.buttons.addAll(this.isPlayerInventory
+        ? InventoryButtonsManager.INSTANCE.getPlayerButtons()
+        : InventoryButtonsManager.INSTANCE.getContainerButtons());
 
     Screens.getButtons(this.anywhereParent).removeIf((button) -> button instanceof InventoryManagementButton);
 
@@ -68,23 +66,25 @@ public class PerScreenPositionEditScreen extends AnywherePositionEditScreen {
   }
 
   @Override
-  public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks) {
-    MatrixStack matrixStack = drawContext.getMatrices();
-    matrixStack.push();
-    matrixStack.translate(0, 0, -51);
-    this.anywhereParent.render(drawContext, mouseX, mouseY, partialTicks);
-    matrixStack.pop();
+  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    context.createNewRootLayer();
+    this.anywhereParent.renderBackground(context, mouseX, mouseY, delta);
+    context.createNewRootLayer();
+    this.anywhereParent.render(context, mouseX, mouseY, delta);
+    context.createNewRootLayer();
 
-    super.render(drawContext, mouseX, mouseY, partialTicks);
+    super.render(context, mouseX, mouseY, delta);
 
-    this.buttons.forEach((button) -> button.render(drawContext, mouseX, mouseY, partialTicks));
-    drawContext.drawTextWithShadow(
+    this.buttons.forEach((button) -> {
+      button.clearSelected();
+      button.render(context, mouseX, mouseY, delta);
+    });
+    context.drawTextWithShadow(
         this.textRenderer,
         Text.literal(this.getValue().toString()),
-        4,
-        4,
-        GuiUtil.LABEL_COLOR
-    );
+        GuiUtil.PADDING,
+        GuiUtil.PADDING,
+        GuiUtil.LABEL_COLOR);
   }
 
   private void refreshButtonPositions(Position value) {
