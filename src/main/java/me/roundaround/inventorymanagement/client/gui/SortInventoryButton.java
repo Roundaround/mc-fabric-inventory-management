@@ -55,10 +55,10 @@ public class SortInventoryButton extends InventoryManagementButton {
     );
   }
 
-  private static Text getTooltip(boolean isPlayerInventory) {
+  private static net.minecraft.text.Text getTooltip(boolean isPlayerInventory) {
     String key = isPlayerInventory ?
         "inventorymanagement.button.sort_player" :
         "inventorymanagement.button.sort_container";
-    return Text.translatable(key);
+    return net.minecraft.text.Text.translatable(key);
   }
 }

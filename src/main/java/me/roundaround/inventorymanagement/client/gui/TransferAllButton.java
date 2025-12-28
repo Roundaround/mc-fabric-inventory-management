@@ -61,10 +61,10 @@ public class TransferAllButton extends InventoryManagementButton {
     );
   }
 
-  private static Text getTooltip(boolean fromPlayerInventory) {
+  private static net.minecraft.text.Text getTooltip(boolean fromPlayerInventory) {
     String key = fromPlayerInventory ?
         "inventorymanagement.button.transfer_place" :
         "inventorymanagement.button.transfer_take";
-    return Text.translatable(key);
+    return net.minecraft.text.Text.translatable(key);
   }
 }

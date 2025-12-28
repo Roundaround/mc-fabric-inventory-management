@@ -8,14 +8,12 @@ import me.roundaround.inventorymanagement.roundalib.config.value.Position;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public abstract class InventoryManagementButton extends ButtonWidget {
@@ -36,7 +34,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       Position offset,
       boolean isPlayerInventory,
       PressAction onPress,
-      Text tooltip,
+      net.minecraft.text.Text tooltip,
       ButtonTextures textures
   ) {
     super(
@@ -71,7 +69,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
       Position offset,
       boolean isPlayerInventory,
       PressAction onPress,
-      Text tooltip,
+      net.minecraft.text.Text tooltip,
       ButtonTextures textures
   ) {
     super(
@@ -98,7 +96,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   }
 
   @Override
-  public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+  public void drawIcon(DrawContext context, int mouseX, int mouseY, float delta) {
     this.setX(this.parent.getX() + this.parent.getBackgroundWidth() + this.offset.x());
     this.setY(this.parent.getY() + this.referenceSlot.y + this.offset.y());
 
