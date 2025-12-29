@@ -1,5 +1,6 @@
 package me.roundaround.inventorymanagement.client.gui;
 
+import me.roundaround.inventorymanagement.client.gui.screen.ScreenPositioner;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
 import me.roundaround.inventorymanagement.generated.Constants;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
@@ -43,7 +44,7 @@ public class TransferAllButton extends InventoryManagementButton {
   }
 
   public TransferAllButton(
-      HandledScreenAccessor parent,
+      ScreenPositioner parent,
       Inventory inventory,
       Slot referenceSlot,
       Position offset,

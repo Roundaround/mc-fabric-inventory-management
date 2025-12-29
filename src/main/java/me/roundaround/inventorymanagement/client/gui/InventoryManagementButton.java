@@ -1,6 +1,7 @@
 package me.roundaround.inventorymanagement.client.gui;
 
 import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEditScreen;
+import me.roundaround.inventorymanagement.client.gui.screen.ScreenPositioner;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.inventorymanagement.mixin.ScreenAccessor;
 import me.roundaround.inventorymanagement.roundalib.client.gui.util.GuiUtil;
@@ -20,7 +21,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   public static final int WIDTH = 14;
   public static final int HEIGHT = 14;
 
-  private final HandledScreenAccessor parent;
+  private final ScreenPositioner positioner;
   private final Slot referenceSlot;
 
   private final ButtonTextures textures;
@@ -54,7 +55,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
         DEFAULT_NARRATION_SUPPLIER
     );
 
-    this.parent = (HandledScreenAccessor) parent;
+    this.positioner = new ScreenPositioner.HandledScreenWrapper(parent);
     this.referenceSlot = referenceSlot;
     this.textures = textures;
     this.offset = offset;
@@ -63,7 +64,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   }
 
   protected InventoryManagementButton(
-      HandledScreenAccessor parent,
+      ScreenPositioner parent,
       Inventory inventory,
       Slot referenceSlot,
       Position offset,
@@ -83,7 +84,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
         DEFAULT_NARRATION_SUPPLIER
     );
 
-    this.parent = parent;
+    this.positioner = parent;
     this.referenceSlot = referenceSlot;
     this.textures = textures;
     this.offset = offset;
@@ -97,8 +98,8 @@ public abstract class InventoryManagementButton extends ButtonWidget {
 
   @Override
   public void drawIcon(DrawContext context, int mouseX, int mouseY, float delta) {
-    this.setX(this.parent.getX() + this.parent.getBackgroundWidth() + this.offset.x());
-    this.setY(this.parent.getY() + this.referenceSlot.y + this.offset.y());
+    this.setX(this.positioner.getX() + this.positioner.getBackgroundWidth() + this.offset.x());
+    this.setY(this.positioner.getY() + this.referenceSlot.y + this.offset.y());
 
     Identifier texture = this.textures.get(this.isInteractable(), this.isSelected());
     context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, texture, this.getX(), this.getY(), this.width, this.height);

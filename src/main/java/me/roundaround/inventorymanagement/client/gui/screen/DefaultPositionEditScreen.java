@@ -25,7 +25,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class DefaultPositionEditScreen extends PositionEditScreen implements HandledScreenAccessor {
+public class DefaultPositionEditScreen extends PositionEditScreen implements ScreenPositioner {
   private static final Identifier BACKGROUND_TEXTURE = Identifier.ofVanilla("textures/gui/container/generic_54.png");
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 114 + 3 * 18;
@@ -194,14 +194,17 @@ public class DefaultPositionEditScreen extends PositionEditScreen implements Han
     matrices.popMatrix();
   }
 
+  @Override
   public int getX() {
     return (this.width - BACKGROUND_WIDTH) / 2;
   }
 
+  @Override
   public int getY() {
     return (this.height - BACKGROUND_HEIGHT) / 2;
   }
 
+  @Override
   public int getBackgroundWidth() {
     return BACKGROUND_WIDTH;
   }

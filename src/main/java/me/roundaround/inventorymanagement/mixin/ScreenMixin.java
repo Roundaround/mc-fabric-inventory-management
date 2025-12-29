@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Screen.class)
 public abstract class ScreenMixin {
-  @Inject(method = "keyPressed", at = @At(value = "HEAD"), cancellable = true)
+  @Inject(method = "Lnet/minecraft/client/gui/screen/Screen;keyPressed(Lnet/minecraft/client/input/KeyInput;)Z", at = @At(value = "HEAD"), cancellable = true)
   public void keyPressed(KeyInput input, CallbackInfoReturnable<Boolean> info) {
     if (HandleScreenInputCallback.EVENT.invoker().interact((Screen) (Object) this, input)) {
       info.setReturnValue(true);
