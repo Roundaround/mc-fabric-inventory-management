@@ -1,0 +1,49 @@
+{
+  "inventorymanagement.resource.dark": "背包管理 深色UI",
+  "inventorymanagement.config.title": "背包管理配置",
+
+  "inventorymanagement.button.sortPlayer": "整理背包",
+  "inventorymanagement.button.sortContainer": "整理容器",
+  "inventorymanagement.button.stackInto": "堆叠进容器",
+  "inventorymanagement.button.stackFrom": "从容器堆叠",
+  "inventorymanagement.button.transferInto": "全部放入",
+  "inventorymanagement.button.transferFrom": "全部取出",
+
+  "inventorymanagement.keybind.category": "背包管理",
+  "inventorymanagement.keybind.configure": "配置",
+  "inventorymanagement.keybind.sortContainer": "整理容器",
+  "inventorymanagement.keybind.sortPlayer": "整理玩家背包",
+  "inventorymanagement.keybind.sortAll": "整理所有",
+  "inventorymanagement.keybind.stackFromContainer": "从容器堆叠物品",
+  "inventorymanagement.keybind.stackIntoContainer": "堆叠物品进容器",
+  "inventorymanagement.keybind.transferFromContainer": "从容器转移所有",
+  "inventorymanagement.keybind.transferIntoContainer": "转移所有进容器",
+  "inventorymanagement.keybind.display": "快捷键: %s",
+
+  "inventorymanagement.positionEdit.title": "编辑按钮位置",
+  "inventorymanagement.defaultPositionEdit.title": "编辑默认按钮位置",
+
+  "inventorymanagement.modEnabled.label": "启用模组",
+  "inventorymanagement.showSort.label": "显示整理按钮",
+  "inventorymanagement.showTransfer.label": "显示转移按钮",
+  "inventorymanagement.showStack.label": "显示自动堆叠按钮",
+  "inventorymanagement.defaultPosition.label": "默认按钮位置",
+  "inventorymanagement.perScreenConfigs.label": "按界面配置",
+
+  "inventorymanagement.buttonVisibility.default": "默认/继承",
+  "inventorymanagement.buttonVisibility.show": "总是显示",
+  "inventorymanagement.buttonVisibility.hide": "从不显示",
+
+  "inventorymanagement.perScreen.value.none": "默认/继承",
+
+  "tag.item.inventorymanagement.concrete_powders": "混凝土粉末",
+  "tag.item.inventorymanagement.concretes": "混凝土",
+  "tag.item.inventorymanagement.glazed_terracottas": "带釉陶瓦",
+  "tag.item.c.dyes": "染料",
+  "tag.item.minecraft.banners": "旗帜",
+  "tag.item.minecraft.beds": "床",
+  "tag.item.minecraft.candles": "蜡烛",
+  "tag.item.minecraft.terracotta": "陶瓦",
+  "tag.item.minecraft.wool_carpets": "地毯",
+  "tag.item.minecraft.wools": "羊毛"
+}
