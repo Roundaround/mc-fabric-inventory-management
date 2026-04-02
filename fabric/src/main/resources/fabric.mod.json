@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "${modId}",
+  "version": "${version}",
+  "name": "Inventory Management",
+  "description": "Sort and transfer items with the click of a button.",
+  "authors": [
+    "Roundaround"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/inventory-management",
+    "sources": "https://github.com/Roundaround/mc-fabric-inventory-management",
+    "issues": "https://github.com/Roundaround/mc-fabric-inventory-management/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/inventorymanagement/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.roundaround.inventorymanagement.fabric.InventoryManagementMod"
+    ],
+    "client": [
+      "me.roundaround.inventorymanagement.fabric.client.InventoryManagementClientMod"
+    ],
+    "modmenu": [
+      "me.roundaround.inventorymanagement.fabric.compat.modmenu.ModMenuImpl"
+    ]
+  },
+  "mixins": [
+    "inventorymanagement.mixins.json",
+    "inventorymanagement-fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.2",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

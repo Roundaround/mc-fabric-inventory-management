@@ -1,0 +1,15 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+dependencies {
+    // Fabric Loader for @Environment annotations only
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+
+    // RoundaLib modules (from local Maven)
+    modImplementation "me.roundaround:roundalib-core:$rootProject.roundalib_version"
+    modImplementation "me.roundaround:roundalib-gui:$rootProject.roundalib_version"
+    modImplementation "me.roundaround:roundalib-config:$rootProject.roundalib_version"
+    modImplementation "me.roundaround:roundalib-config-gui:$rootProject.roundalib_version"
+    modImplementation "me.roundaround:roundalib-observables:$rootProject.roundalib_version"
+}

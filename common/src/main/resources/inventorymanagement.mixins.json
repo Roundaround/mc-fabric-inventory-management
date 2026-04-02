@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "me.roundaround.inventorymanagement.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+    "HandledScreenAccessor",
+    "ScreenAccessor"
+  ],
+  "mixins": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

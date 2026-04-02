@@ -1,0 +1,29 @@
+modLoader = "javafml"
+loaderVersion = "[10,)"
+license = "MIT"
+
+[[mods]]
+modId = "inventorymanagement"
+version = "${version}"
+displayName = "Inventory Management"
+authors = "Roundaround"
+description = '''
+Sort and transfer items with the click of a button.
+'''
+
+[[dependencies.inventorymanagement]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.10,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.inventorymanagement]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.10,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "inventorymanagement.mixins.json"
