@@ -1,12 +1,12 @@
 package me.roundaround.inventorymanagement.config;
 
 import me.roundaround.inventorymanagement.generated.Constants;
-import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
-import me.roundaround.inventorymanagement.roundalib.config.manage.ModConfigImpl;
-import me.roundaround.inventorymanagement.roundalib.config.manage.store.GameScopedFileStore;
-import me.roundaround.inventorymanagement.roundalib.config.option.BooleanConfigOption;
-import me.roundaround.inventorymanagement.roundalib.config.option.PositionConfigOption;
-import me.roundaround.inventorymanagement.roundalib.config.value.Position;
+import me.roundaround.roundalib.config.ConfigPath;
+import me.roundaround.roundalib.config.manage.ModConfigImpl;
+import me.roundaround.roundalib.config.manage.store.GameScopedFileStore;
+import me.roundaround.roundalib.config.option.BooleanConfigOption;
+import me.roundaround.roundalib.config.option.PositionConfigOption;
+import me.roundaround.roundalib.config.value.Position;
 
 public class InventoryManagementConfig extends ModConfigImpl implements GameScopedFileStore {
   private static InventoryManagementConfig instance;

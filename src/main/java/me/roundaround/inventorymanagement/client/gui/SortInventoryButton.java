@@ -4,23 +4,22 @@ import me.roundaround.inventorymanagement.client.gui.screen.ScreenPositioner;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
 import me.roundaround.inventorymanagement.generated.Constants;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
-import me.roundaround.inventorymanagement.roundalib.config.value.Position;
-import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import me.roundaround.roundalib.config.value.Position;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.Slot;
 
 public class SortInventoryButton extends InventoryManagementButton {
-  private static final ButtonTextures TEXTURES = new ButtonTextures(
-      Identifier.of(Constants.MOD_ID, "sort"),
-      Identifier.of(Constants.MOD_ID, "sort_highlighted")
+  private static final WidgetSprites TEXTURES = new WidgetSprites(
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "sort"),
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "sort_highlighted")
   );
 
   public SortInventoryButton(
-      HandledScreen<?> parent,
-      Inventory inventory,
+      AbstractContainerScreen<?> parent,
+      Container inventory,
       Slot referenceSlot,
       Position offset,
       boolean isPlayerInventory
@@ -39,7 +38,7 @@ public class SortInventoryButton extends InventoryManagementButton {
 
   public SortInventoryButton(
       ScreenPositioner parent,
-      Inventory inventory,
+      Container inventory,
       Slot referenceSlot,
       Position offset,
       boolean isPlayerInventory
@@ -56,10 +55,10 @@ public class SortInventoryButton extends InventoryManagementButton {
     );
   }
 
-  private static net.minecraft.text.Text getTooltip(boolean isPlayerInventory) {
+  private static net.minecraft.network.chat.Component getTooltip(boolean isPlayerInventory) {
     String key = isPlayerInventory ?
         "inventorymanagement.button.sort_player" :
         "inventorymanagement.button.sort_container";
-    return net.minecraft.text.Text.translatable(key);
+    return net.minecraft.network.chat.Component.translatable(key);
   }
 }

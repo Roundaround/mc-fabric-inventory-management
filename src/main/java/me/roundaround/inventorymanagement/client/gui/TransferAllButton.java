@@ -4,29 +4,28 @@ import me.roundaround.inventorymanagement.client.gui.screen.ScreenPositioner;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
 import me.roundaround.inventorymanagement.generated.Constants;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
-import me.roundaround.inventorymanagement.roundalib.config.value.Position;
-import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import me.roundaround.roundalib.config.value.Position;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.Slot;
 
 public class TransferAllButton extends InventoryManagementButton {
-  private static final ButtonTextures TEXTURES_FROM = new ButtonTextures(
-      Identifier.of(
+  private static final WidgetSprites TEXTURES_FROM = new WidgetSprites(
+      Identifier.fromNamespaceAndPath(
           Constants.MOD_ID,
           "transfer_from"
-  ), Identifier.of(Constants.MOD_ID, "transfer_from_highlighted")
+  ), Identifier.fromNamespaceAndPath(Constants.MOD_ID, "transfer_from_highlighted")
   );
-  private static final ButtonTextures TEXTURES_TO = new ButtonTextures(
-      Identifier.of(Constants.MOD_ID, "transfer_to"),
-      Identifier.of(Constants.MOD_ID, "transfer_to_highlighted")
+  private static final WidgetSprites TEXTURES_TO = new WidgetSprites(
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "transfer_to"),
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "transfer_to_highlighted")
   );
 
   public TransferAllButton(
-      HandledScreen<?> parent,
-      Inventory inventory,
+      AbstractContainerScreen<?> parent,
+      Container inventory,
       Slot referenceSlot,
       Position offset,
       boolean fromPlayerInventory
@@ -45,7 +44,7 @@ public class TransferAllButton extends InventoryManagementButton {
 
   public TransferAllButton(
       ScreenPositioner parent,
-      Inventory inventory,
+      Container inventory,
       Slot referenceSlot,
       Position offset,
       boolean fromPlayerInventory
@@ -62,10 +61,10 @@ public class TransferAllButton extends InventoryManagementButton {
     );
   }
 
-  private static net.minecraft.text.Text getTooltip(boolean fromPlayerInventory) {
+  private static net.minecraft.network.chat.Component getTooltip(boolean fromPlayerInventory) {
     String key = fromPlayerInventory ?
         "inventorymanagement.button.transfer_place" :
         "inventorymanagement.button.transfer_take";
-    return net.minecraft.text.Text.translatable(key);
+    return net.minecraft.network.chat.Component.translatable(key);
   }
 }

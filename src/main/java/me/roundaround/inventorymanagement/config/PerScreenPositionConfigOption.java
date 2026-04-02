@@ -1,15 +1,11 @@
 package me.roundaround.inventorymanagement.config;
 
-import me.roundaround.inventorymanagement.roundalib.config.ConfigPath;
-import me.roundaround.inventorymanagement.roundalib.config.option.ConfigOption;
-import me.roundaround.inventorymanagement.roundalib.config.value.Position;
-import me.roundaround.inventorymanagement.roundalib.nightconfig.core.Config;
-import net.minecraft.client.gui.screen.Screen;
+import me.roundaround.roundalib.config.ConfigPath;
+import me.roundaround.roundalib.config.option.ConfigOption;
+import me.roundaround.roundalib.config.value.Position;
+import net.minecraft.client.gui.screens.Screen;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public class PerScreenPositionConfigOption extends ConfigOption<Map<String, Position>> {
@@ -52,16 +48,17 @@ public class PerScreenPositionConfigOption extends ConfigOption<Map<String, Posi
   @Override
   @SuppressWarnings("unchecked")
   public void deserialize(Object data) {
-    Config config = (Config) data;
     Map<String, Position> deserialized = new HashMap<>();
 
-    config.valueMap().forEach((key, value) -> {
-      if (value instanceof List<?> listValue) {
-        deserialized.put(key, Position.fromList((List<Integer>) listValue));
-      } else {
-        deserialized.put(key, Position.fromString((String) value));
-      }
-    });
+    if (data instanceof Map<?, ?> mapData) {
+      mapData.forEach((key, value) -> {
+        if (value instanceof List<?> listValue) {
+          deserialized.put((String) key, Position.fromList((List<Integer>) listValue));
+        } else {
+          deserialized.put((String) key, Position.fromString((String) value));
+        }
+      });
+    }
 
     Map<String, Position> defaultValue = this.getDefaultValue();
     for (String key : defaultValue.keySet()) {
@@ -73,9 +70,9 @@ public class PerScreenPositionConfigOption extends ConfigOption<Map<String, Posi
 
   @Override
   public Object serialize() {
-    Config serialized = Config.inMemory();
+    Map<String, Object> serialized = new LinkedHashMap<>();
     this.getPendingValue().forEach((key, value) -> {
-      serialized.set(key, List.of(value.x(), value.y()));
+      serialized.put(key, List.of(value.x(), value.y()));
     });
     return serialized;
   }

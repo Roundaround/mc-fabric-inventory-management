@@ -4,55 +4,55 @@ import me.roundaround.inventorymanagement.client.gui.screen.PerScreenPositionEdi
 import me.roundaround.inventorymanagement.client.gui.screen.ScreenPositioner;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
 import me.roundaround.inventorymanagement.mixin.ScreenAccessor;
-import me.roundaround.inventorymanagement.roundalib.client.gui.util.GuiUtil;
-import me.roundaround.inventorymanagement.roundalib.config.value.Position;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.Identifier;
+import me.roundaround.roundalib.client.gui.util.GuiUtil;
+import me.roundaround.roundalib.config.value.Position;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.Slot;
 
-public abstract class InventoryManagementButton extends ButtonWidget {
+public abstract class InventoryManagementButton extends Button {
   public static final int WIDTH = 14;
   public static final int HEIGHT = 14;
 
   private final ScreenPositioner positioner;
   private final Slot referenceSlot;
 
-  private final ButtonTextures textures;
+  private final WidgetSprites textures;
 
   private Position offset;
 
   protected InventoryManagementButton(
-      HandledScreen<?> parent,
-      Inventory inventory,
+      AbstractContainerScreen<?> parent,
+      Container inventory,
       Slot referenceSlot,
       Position offset,
       boolean isPlayerInventory,
-      PressAction onPress,
-      net.minecraft.text.Text tooltip,
-      ButtonTextures textures
+      OnPress onPress,
+      net.minecraft.network.chat.Component tooltip,
+      WidgetSprites textures
   ) {
     super(
         ((HandledScreenAccessor) parent).getX() + ((HandledScreenAccessor) parent).getBackgroundWidth() + offset.x(),
         ((HandledScreenAccessor) parent).getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
-        ScreenTexts.EMPTY,
+        CommonComponents.EMPTY,
         (button) -> {
-          if (!((ScreenAccessor) parent).getClient().isCtrlPressed()) {
+          if (!((ScreenAccessor) parent).getMinecraft().hasControlDown()) {
             onPress.onPress(button);
             return;
           }
 
           GuiUtil.setScreen(new PerScreenPositionEditScreen(parent, isPlayerInventory));
         },
-        DEFAULT_NARRATION_SUPPLIER
+        DEFAULT_NARRATION
     );
 
     this.positioner = new ScreenPositioner.HandledScreenWrapper(parent);
@@ -60,28 +60,28 @@ public abstract class InventoryManagementButton extends ButtonWidget {
     this.textures = textures;
     this.offset = offset;
 
-    this.setTooltip(Tooltip.of(tooltip));
+    this.setTooltip(Tooltip.create(tooltip));
   }
 
   protected InventoryManagementButton(
       ScreenPositioner parent,
-      Inventory inventory,
+      Container inventory,
       Slot referenceSlot,
       Position offset,
       boolean isPlayerInventory,
-      PressAction onPress,
-      net.minecraft.text.Text tooltip,
-      ButtonTextures textures
+      OnPress onPress,
+      net.minecraft.network.chat.Component tooltip,
+      WidgetSprites textures
   ) {
     super(
         parent.getX() + parent.getBackgroundWidth() + offset.x(),
         parent.getY() + referenceSlot.y + offset.y(),
         WIDTH,
         HEIGHT,
-        ScreenTexts.EMPTY,
+        CommonComponents.EMPTY,
         (button) -> {
         },
-        DEFAULT_NARRATION_SUPPLIER
+        DEFAULT_NARRATION
     );
 
     this.positioner = parent;
@@ -89,7 +89,7 @@ public abstract class InventoryManagementButton extends ButtonWidget {
     this.textures = textures;
     this.offset = offset;
 
-    this.setTooltip(Tooltip.of(tooltip));
+    this.setTooltip(Tooltip.create(tooltip));
   }
 
   public void setOffset(Position position) {
@@ -97,16 +97,16 @@ public abstract class InventoryManagementButton extends ButtonWidget {
   }
 
   @Override
-  public void drawIcon(DrawContext context, int mouseX, int mouseY, float delta) {
+  public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
     this.setX(this.positioner.getX() + this.positioner.getBackgroundWidth() + this.offset.x());
     this.setY(this.positioner.getY() + this.referenceSlot.y + this.offset.y());
 
-    Identifier texture = this.textures.get(this.isInteractable(), this.isSelected());
-    context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, texture, this.getX(), this.getY(), this.width, this.height);
+    Identifier texture = this.textures.get(this.isActive(), this.isHoveredOrFocused());
+    graphics.blitSprite(RenderPipelines.GUI_TEXTURED, texture, this.getX(), this.getY(), this.width, this.height);
   }
 
   public void clearSelected() {
-    this.hovered = false;
+    this.isHovered = false;
     this.setFocused(false);
   }
 }

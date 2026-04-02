@@ -4,27 +4,27 @@ import me.roundaround.inventorymanagement.client.gui.screen.ScreenPositioner;
 import me.roundaround.inventorymanagement.client.network.ClientNetworking;
 import me.roundaround.inventorymanagement.generated.Constants;
 import me.roundaround.inventorymanagement.mixin.HandledScreenAccessor;
-import me.roundaround.inventorymanagement.roundalib.config.value.Position;
-import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import me.roundaround.roundalib.config.value.Position;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.Slot;
 
 public class AutoStackButton extends InventoryManagementButton {
-  private static final ButtonTextures TEXTURES_FROM = new ButtonTextures(
-      Identifier.of(Constants.MOD_ID, "stack_from"),
-      Identifier.of(Constants.MOD_ID, "stack_from_highlighted")
+  private static final WidgetSprites TEXTURES_FROM = new WidgetSprites(
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "stack_from"),
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "stack_from_highlighted")
   );
-  private static final ButtonTextures TEXTURES_TO = new ButtonTextures(
-      Identifier.of(Constants.MOD_ID, "stack_to"),
-      Identifier.of(Constants.MOD_ID, "stack_to_highlighted")
+  private static final WidgetSprites TEXTURES_TO = new WidgetSprites(
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "stack_to"),
+      Identifier.fromNamespaceAndPath(Constants.MOD_ID, "stack_to_highlighted")
   );
 
   public AutoStackButton(
-      HandledScreen<?> parent,
-      Inventory inventory,
+      AbstractContainerScreen<?> parent,
+      Container inventory,
       Slot referenceSlot,
       Position offset,
       boolean fromPlayerInventory
@@ -43,7 +43,7 @@ public class AutoStackButton extends InventoryManagementButton {
 
   public AutoStackButton(
       ScreenPositioner parent,
-      Inventory inventory,
+      Container inventory,
       Slot referenceSlot,
       Position offset,
       boolean fromPlayerInventory
@@ -60,10 +60,10 @@ public class AutoStackButton extends InventoryManagementButton {
     );
   }
 
-  private static net.minecraft.text.Text getTooltip(boolean fromPlayerInventory) {
+  private static Component getTooltip(boolean fromPlayerInventory) {
     String key = fromPlayerInventory ?
         "inventorymanagement.button.autostack_into" :
         "inventorymanagement.button.autostack_from";
-    return net.minecraft.text.Text.translatable(key);
+    return Component.translatable(key);
   }
 }

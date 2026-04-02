@@ -1,18 +1,18 @@
 package me.roundaround.inventorymanagement.client.gui.screen;
 
-import java.util.LinkedList;
-
 import me.roundaround.inventorymanagement.client.InventoryButtonsManager;
 import me.roundaround.inventorymanagement.client.gui.InventoryManagementButton;
 import me.roundaround.inventorymanagement.config.InventoryManagementConfig;
 import me.roundaround.inventorymanagement.generated.Constants;
-import me.roundaround.inventorymanagement.roundalib.client.gui.util.GuiUtil;
-import me.roundaround.inventorymanagement.roundalib.config.option.PositionConfigOption;
-import me.roundaround.inventorymanagement.roundalib.config.value.Position;
+import me.roundaround.roundalib.client.gui.util.GuiUtil;
+import me.roundaround.roundalib.config.option.PositionConfigOption;
+import me.roundaround.roundalib.config.value.Position;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+
+import java.util.LinkedList;
 
 public class PerScreenPositionEditScreen extends AnywherePositionEditScreen {
   private final LinkedList<InventoryManagementButton> buttons = new LinkedList<>();
@@ -21,9 +21,10 @@ public class PerScreenPositionEditScreen extends AnywherePositionEditScreen {
 
   public PerScreenPositionEditScreen(Screen parent, boolean isPlayerInventory) {
     super(
-        Text.translatable("inventorymanagement.position_edit.title"),
+        Component.translatable("inventorymanagement.position_edit.title"),
         parent,
-        generateDummyConfigOption(parent, isPlayerInventory));
+        generateDummyConfigOption(parent, isPlayerInventory)
+    );
     this.isPlayerInventory = isPlayerInventory;
   }
 
@@ -50,41 +51,42 @@ public class PerScreenPositionEditScreen extends AnywherePositionEditScreen {
       this.refreshButtonPositions(value);
     }));
 
-    this.buttons.addAll(this.isPlayerInventory
-        ? InventoryButtonsManager.INSTANCE.getPlayerButtons()
-        : InventoryButtonsManager.INSTANCE.getContainerButtons());
+    this.buttons.addAll(this.isPlayerInventory ?
+        InventoryButtonsManager.INSTANCE.getPlayerButtons() :
+        InventoryButtonsManager.INSTANCE.getContainerButtons());
 
-    Screens.getButtons(this.anywhereParent).removeIf((button) -> button instanceof InventoryManagementButton);
+    Screens.getWidgets(this.anywhereParent).removeIf((widget) -> widget instanceof InventoryManagementButton);
 
     this.refreshButtonPositions(this.getValue());
   }
 
   @Override
-  public void close() {
-    super.close();
+  public void onClose() {
+    super.onClose();
     InventoryManagementConfig.getInstance().writeToStore();
   }
 
   @Override
-  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-    context.createNewRootLayer();
-    this.anywhereParent.renderBackground(context, mouseX, mouseY, delta);
-    context.createNewRootLayer();
-    this.anywhereParent.render(context, mouseX, mouseY, delta);
-    context.createNewRootLayer();
+  public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    context.nextStratum();
+    this.anywhereParent.extractBackground(context, mouseX, mouseY, delta);
+    context.nextStratum();
+    this.anywhereParent.extractRenderState(context, mouseX, mouseY, delta);
+    context.nextStratum();
 
-    super.render(context, mouseX, mouseY, delta);
+    super.extractRenderState(context, mouseX, mouseY, delta);
 
     this.buttons.forEach((button) -> {
       button.clearSelected();
-      button.render(context, mouseX, mouseY, delta);
+      button.extractRenderState(context, mouseX, mouseY, delta);
     });
-    context.drawTextWithShadow(
-        this.textRenderer,
-        Text.literal(this.getValue().toString()),
+    context.text(
+        this.font,
+        Component.literal(this.getValue().toString()),
         GuiUtil.PADDING,
         GuiUtil.PADDING,
-        GuiUtil.LABEL_COLOR);
+        GuiUtil.LABEL_COLOR
+    );
   }
 
   private void refreshButtonPositions(Position value) {

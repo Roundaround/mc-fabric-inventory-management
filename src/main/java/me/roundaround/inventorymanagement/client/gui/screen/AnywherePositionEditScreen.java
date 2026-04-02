@@ -1,27 +1,24 @@
 package me.roundaround.inventorymanagement.client.gui.screen;
 
-import java.util.Objects;
-
-import me.roundaround.inventorymanagement.roundalib.client.gui.screen.PositionEditScreen;
-import me.roundaround.inventorymanagement.roundalib.config.option.PositionConfigOption;
-import me.roundaround.inventorymanagement.roundalib.observable.Subscription;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import me.roundaround.roundalib.client.gui.screen.PositionEditScreen;
+import me.roundaround.roundalib.config.option.PositionConfigOption;
+import me.roundaround.roundalib.observable.Subscription;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class AnywherePositionEditScreen extends PositionEditScreen {
   protected final Screen anywhereParent;
 
-  public AnywherePositionEditScreen(Text title, Screen parent, PositionConfigOption configOption) {
+  public AnywherePositionEditScreen(Component title, Screen parent, PositionConfigOption configOption) {
     super(title, null, configOption);
     this.anywhereParent = parent;
     this.anywhereParent.setFocused(null);
   }
 
   @Override
-  public void close() {
+  public void onClose() {
     this.subscriptions.forEach(Subscription::close);
     this.subscriptions.clear();
-
-    Objects.requireNonNull(this.client).setScreen(this.anywhereParent);
+    this.minecraft.setScreen(this.anywhereParent);
   }
 }
